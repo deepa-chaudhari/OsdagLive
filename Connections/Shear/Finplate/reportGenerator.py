@@ -6,7 +6,8 @@ Created on Dec 10, 2015
 import time
 
 def save_html(): # (outObj, uiObj, dictBeamData, dictColData)
-    fileName = '/home/deepa/finPlateReport.html'
+    fileName = 'output/finplate/finPlateReport.html'
+    # /home/deepa/EclipseWorkspace/OsdagLive/Connections/Shear/Finplate/output
     f = open(fileName,'w')
     f.write(t('html'))
     f.write(t('head'))
@@ -304,23 +305,23 @@ def save_html(): # (outObj, uiObj, dictBeamData, dictColData)
     
     rstr += t('/table')
     
-    rstr += t('table')
+    rstr += t('table border="1"')
     row = [0, "Views", " "]
     rstr += t('tr')
-    rstr += t('td class=" viewtbl"') + space(row[0]) + row[1] + t('/td')
-    rstr += t('td class=" viewtbl "') + row[2] + t('/td')
+    rstr += t('td colspan="2" class=" viewtbl header1_1"') + space(row[0]) + row[1] + t('/td')
+    #rstr += t('td class=" viewtbl "') + row[2] + t('/td')
     rstr += t('/tr')
     
-    row = [0, "1", " 1st "]
+    row = [0, '<img src="webconn.png" width = "600">', '<img src="finTop.png" width = "600"> ']
     rstr += t('tr')
-    rstr += t('td class=" viewtbl"') + space(row[0]) + row[1] + t('/td')
-    rstr += t('td class=" viewtbl"') + row[2] + t('/td')
+    rstr += t('td  align="center" class=" viewtbl"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td  align="center" class=" viewtbl"') + row[2] + t('/td')
     rstr += t('/tr')
     
-    row = [0, "2", "2nd "]
+    row = [0, '<img src="finSide.png" width = "250"> ', '<img src="finfrontreport.png" width = "600"> ']
     rstr += t('tr')
-    rstr += t('td class=" viewtbl"') + space(row[0]) + row[1] + t('/td')
-    rstr += t('td class=" viewtbl "') + row[2] + t('/td')
+    rstr += t('td align="center" class=" viewtbl"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td align="center" class=" viewtbl "') + row[2] + t('/td')
     rstr += t('/tr')
     
     rstr += t('/table')
