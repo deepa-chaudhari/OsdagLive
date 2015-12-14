@@ -24,7 +24,7 @@ from bolt import Bolt
 from nut import Nut 
 import os.path
 from utilities import osdagDisplayShape
-from OCC.Display.qtDisplay import qtViewer3d
+from OCC.Display.pyqt4Display import qtViewer3d
 from colWebBeamWebConnectivity import ColWebBeamWeb
 from colFlangeBeamWebConnectivity import ColFlangeBeamWeb
 from OCC import IGESControl
@@ -682,7 +682,7 @@ class MainController(QtGui.QMainWindow):
         if USED_BACKEND in ['pyqt4', 'pyside']:
             if USED_BACKEND == 'pyqt4':
                 from PyQt4 import QtCore, QtGui, QtOpenGL
-                from OCC.Display.qtDisplay import qtViewer3d
+                from OCC.Display.pyqt4Display import qtViewer3d
             
         self.ui.modelTab = qtViewer3d(self)
         #self.ui.model2dTab = qtViewer3d(self)
