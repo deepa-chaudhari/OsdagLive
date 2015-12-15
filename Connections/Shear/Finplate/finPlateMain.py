@@ -63,10 +63,11 @@ class MainController(QtGui.QMainWindow):
         self.ui.btnInput.clicked.connect(lambda: self.dockbtn_clicked(self.ui.inputDock))
         self.ui.btnOutput.clicked.connect(lambda: self.dockbtn_clicked(self.ui.outputDock))
         
-        self.ui.btn_front.clicked.connect(self.call_Frontview)
-        self.ui.btn_top.clicked.connect(self.call_Topview)
-        self.ui.btn_side.clicked.connect(self.call_Sideview)
+#         self.ui.btn_front.clicked.connect(self.call_Frontview)
+#         self.ui.btn_top.clicked.connect(self.call_Topview)
+#         self.ui.btn_side.clicked.connect(self.call_Sideview)
         
+        self.ui.btn_2D.clicked.connect(self.call2D_Drawing)
         self.ui.btn3D.clicked.connect(lambda:self.call_3DModel(True))
         self.ui.chkBxBeam.clicked.connect(self.call_3DBeam)
         self.ui.chkBxCol.clicked.connect(self.call_3DColumn)
@@ -103,7 +104,7 @@ class MainController(QtGui.QMainWindow):
         self.ui.actionZoom_in.triggered.connect(self.callZoomin)
         self.ui.actionZoom_out.triggered.connect(self.callZoomout)
         self.ui.actionSave_3D_model_as.triggered.connect(self.save3DcadImages)
-        self.ui.actionSave_current_2D_image_as.triggered.connect(self.save2DcadImages)
+        self.ui.actionSave_curren_image_as.triggered.connect(self.save2DcadImages)
         self.ui.actionView_2D_on_ZX.triggered.connect(self.call_Frontview)
         self.ui.actionView_2D_on_XY.triggered.connect(self.call_Topview)
         self.ui.actionView_2D_on_YZ.triggered.connect(self.call_Sideview)
@@ -180,9 +181,9 @@ class MainController(QtGui.QMainWindow):
         '''
         Disables the all buttons in toolbar
         '''
-        self.ui.btn_front.setEnabled(False)
-        self.ui.btn_top.setEnabled(False)
-        self.ui.btn_side.setEnabled(False)
+#         self.ui.btn_front.setEnabled(False)
+#         self.ui.btn_top.setEnabled(False)
+#         self.ui.btn_side.setEnabled(False)
         
         self.ui.btn3D.setEnabled(False)
         self.ui.chkBxBeam.setEnabled(False)
@@ -193,10 +194,10 @@ class MainController(QtGui.QMainWindow):
         '''
         Enables the all buttons in toolbar
         '''
-        self.ui.btn_front.setEnabled(True)
-        self.ui.btn_top.setEnabled(True)
-        self.ui.btn_side.setEnabled(True)
-        
+#         self.ui.btn_front.setEnabled(True)
+#         self.ui.btn_top.setEnabled(True)
+#         self.ui.btn_side.setEnabled(True)
+#         
         self.ui.btn3D.setEnabled(True)
         self.ui.chkBxBeam.setEnabled(True)
         self.ui.chkBxCol.setEnabled(True)
@@ -722,6 +723,7 @@ class MainController(QtGui.QMainWindow):
         self.display.SetModeShaded()
         display.DisableAntiAliasing()
         self.display.set_bg_gradient_color(23,1,32,23,1,32)
+        #self.display.set_bg_gradient_color(255,255,255,255,255,255)
         self.display.View_Front()
         self.display.View_Iso()
         self.display.FitAll()
