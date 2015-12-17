@@ -24,7 +24,7 @@ from bolt import Bolt
 from nut import Nut 
 import os.path
 from utilities import osdagDisplayShape
-from OCC.Display.qtDisplay import qtViewer3d
+from OCC.Display.pyqt4Display import qtViewer3d
 from colWebBeamWebConnectivity import ColWebBeamWeb
 from colFlangeBeamWebConnectivity import ColFlangeBeamWeb
 from OCC import IGESControl
@@ -63,10 +63,11 @@ class MainController(QtGui.QMainWindow):
         self.ui.btnInput.clicked.connect(lambda: self.dockbtn_clicked(self.ui.inputDock))
         self.ui.btnOutput.clicked.connect(lambda: self.dockbtn_clicked(self.ui.outputDock))
         
-        self.ui.btn_front.clicked.connect(self.call_Frontview)
-        self.ui.btn_top.clicked.connect(self.call_Topview)
-        self.ui.btn_side.clicked.connect(self.call_Sideview)
+#         self.ui.btn_front.clicked.connect(self.call_Frontview)
+#         self.ui.btn_top.clicked.connect(self.call_Topview)
+#         self.ui.btn_side.clicked.connect(self.call_Sideview)
         
+        self.ui.btn_2D.clicked.connect(self.call2D_Drawing)
         self.ui.btn3D.clicked.connect(lambda:self.call_3DModel(True))
         self.ui.chkBxBeam.clicked.connect(self.call_3DBeam)
         self.ui.chkBxCol.clicked.connect(self.call_3DColumn)
@@ -103,7 +104,7 @@ class MainController(QtGui.QMainWindow):
         self.ui.actionZoom_in.triggered.connect(self.callZoomin)
         self.ui.actionZoom_out.triggered.connect(self.callZoomout)
         self.ui.actionSave_3D_model_as.triggered.connect(self.save3DcadImages)
-        self.ui.actionSave_current_2D_image_as.triggered.connect(self.save2DcadImages)
+        self.ui.actionSave_curren_image_as.triggered.connect(self.save2DcadImages)
         self.ui.actionView_2D_on_ZX.triggered.connect(self.call_Frontview)
         self.ui.actionView_2D_on_XY.triggered.connect(self.call_Topview)
         self.ui.actionView_2D_on_YZ.triggered.connect(self.call_Sideview)
@@ -142,6 +143,7 @@ class MainController(QtGui.QMainWindow):
         self.connectivity = None
         self.fuse_model = None
         self.disableViewButtons()
+        self.resultObj = None
         
     def showFontDialogue(self):
         
@@ -179,9 +181,9 @@ class MainController(QtGui.QMainWindow):
         '''
         Disables the all buttons in toolbar
         '''
-        self.ui.btn_front.setEnabled(False)
-        self.ui.btn_top.setEnabled(False)
-        self.ui.btn_side.setEnabled(False)
+#         self.ui.btn_front.setEnabled(False)
+#         self.ui.btn_top.setEnabled(False)
+#         self.ui.btn_side.setEnabled(False)
         
         self.ui.btn3D.setEnabled(False)
         self.ui.chkBxBeam.setEnabled(False)
@@ -192,10 +194,10 @@ class MainController(QtGui.QMainWindow):
         '''
         Enables the all buttons in toolbar
         '''
-        self.ui.btn_front.setEnabled(True)
-        self.ui.btn_top.setEnabled(True)
-        self.ui.btn_side.setEnabled(True)
-        
+#         self.ui.btn_front.setEnabled(True)
+#         self.ui.btn_top.setEnabled(True)
+#         self.ui.btn_side.setEnabled(True)
+#         
         self.ui.btn3D.setEnabled(True)
         self.ui.chkBxBeam.setEnabled(True)
         self.ui.chkBxCol.setEnabled(True)
@@ -350,7 +352,7 @@ class MainController(QtGui.QMainWindow):
         '''(Dictionary)--> None
          
         '''
-        inputFile = QtCore.QFile('saveINPUT.txt')
+        inputFile = QtCore.QFile('Connections/Shear/Finplate/saveINPUT.txt')
         if not inputFile.open(QtCore.QFile.WriteOnly | QtCore.QFile.Text):
             QtGui.QMessageBox.warning(self, "Application",
                     "Cannot write file %s:\n%s." % (inputFile, file.errorString()))
@@ -361,7 +363,7 @@ class MainController(QtGui.QMainWindow):
     def get_prevstate(self):
         '''
         '''
-        fileName = 'saveINPUT.txt'
+        fileName = 'Connections/Shear/Finplate/saveINPUT.txt'
          
         if os.path.isfile(fileName):
             fileObject = open(fileName,'r')
@@ -627,7 +629,7 @@ class MainController(QtGui.QMainWindow):
         This method displaying Design messages(log messages)to textedit widget.
         '''
         
-        afile = QtCore.QFile('./fin.log')
+        afile = QtCore.QFile('Connections/Shear/Finplate/fin.log')
         
         if not afile.open(QtCore.QIODevice.ReadOnly):#ReadOnly
             QtGui.QMessageBox.information(None, 'info', afile.errorString())
@@ -682,7 +684,7 @@ class MainController(QtGui.QMainWindow):
         if USED_BACKEND in ['pyqt4', 'pyside']:
             if USED_BACKEND == 'pyqt4':
                 from PyQt4 import QtCore, QtGui, QtOpenGL
-                from OCC.Display.qtDisplay import qtViewer3d
+                from OCC.Display.pyqt4Display import qtViewer3d
             
         self.ui.modelTab = qtViewer3d(self)
         #self.ui.model2dTab = qtViewer3d(self)
@@ -721,6 +723,7 @@ class MainController(QtGui.QMainWindow):
         self.display.SetModeShaded()
         display.DisableAntiAliasing()
         self.display.set_bg_gradient_color(23,1,32,23,1,32)
+        #self.display.set_bg_gradient_color(255,255,255,255,255,255)
         self.display.View_Front()
         self.display.View_Iso()
         self.display.FitAll()
@@ -775,6 +778,9 @@ class MainController(QtGui.QMainWindow):
         
         '''
         dict = {5:4, 6:5, 8:6, 10:7, 12:8, 16:10, 20:12.5, 22:14, 24:15, 27:17, 30:18.7, 36:22.5 }
+        
+        import os
+        print(os.getcwd())
         return dict[boltDia]
         
         
@@ -834,7 +840,7 @@ class MainController(QtGui.QMainWindow):
         '''
         uiObj = self.getuser_inputs()
         print uiObj
-        resultObj = finConn(uiObj)
+        resultObj = self.resultObj
         
         dictbeamdata  = self.fetchBeamPara()
         ##### BEAM PARAMETERS #####
@@ -1064,16 +1070,16 @@ class MainController(QtGui.QMainWindow):
         uiObj = self.getuser_inputs()
         
         # FinPlate Design Calculations. 
-        resultObj = finConn(uiObj)
+        self.resultObj = finConn(uiObj)
         
         # Displaying Design Calculations To Output Window
-        self.display_output(resultObj)
+        self.display_output(self.resultObj)
         
         # Displaying Messages related to FinPlate Design.
         self.displaylog_totextedit()
 
         # Displaying 3D Cad model
-        status = resultObj['Bolt']['status']
+        status = self.resultObj['Bolt']['status']
         self.call_3DModel(status)
         
         self.call2D_Drawing()
@@ -1230,7 +1236,7 @@ class MainController(QtGui.QMainWindow):
         '''
         uiObj = self.getuser_inputs()
         
-        resultObj = finConn(uiObj)
+        resultObj = self.resultObj
         dictbeamdata  = self.fetchBeamPara()
         dictcoldata = self.fetchColumnPara()
         finCommonObj = FinCommonData(uiObj,resultObj,dictbeamdata,dictcoldata)
@@ -1314,7 +1320,7 @@ def set_osdaglogger():
     logger.setLevel(logging.DEBUG)
  
     # create the logging file handler
-    fh = logging.FileHandler("./fin.log", mode="a")
+    fh = logging.FileHandler("Connections/Shear/Finplate/fin.log", mode="a")
     
     #,datefmt='%a, %d %b %Y %H:%M:%S'
     #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -1335,11 +1341,11 @@ def launchFinPlateController(osdagMainWindow):
     set_osdaglogger()
     rawLogger = logging.getLogger("raw")
     rawLogger.setLevel(logging.INFO)
-    fh = logging.FileHandler("./Connections/Shear/Finplate/fin.log", mode="w")
+    fh = logging.FileHandler("Connections/Shear/Finplate/fin.log", mode="w")
     formatter = logging.Formatter('''%(message)s''')
     fh.setFormatter(formatter)
     rawLogger.addHandler(fh)
-    rawLogger.info('''<link rel="stylesheet" type="text/css" href="./Connections/Shear/Finplate/log.css"/>''')
+    rawLogger.info('''<link rel="stylesheet" type="text/css" href="Connections/Shear/Finplate/log.css"/>''')
      
     #app = QtGui.QApplication(sys.argv)
     window = MainController()
@@ -1360,11 +1366,11 @@ if __name__ == '__main__':
     set_osdaglogger()
     rawLogger = logging.getLogger("raw")
     rawLogger.setLevel(logging.INFO)
-    fh = logging.FileHandler("fin.log", mode="w")
+    fh = logging.FileHandler("Connections/Shear/Finplate/fin.log", mode="w")
     formatter = logging.Formatter('''%(message)s''')
     fh.setFormatter(formatter)
     rawLogger.addHandler(fh)
-    rawLogger.info('''<link rel="stylesheet" type="text/css" href="log.css"/>''')
+    rawLogger.info('''<link rel="stylesheet" type="text/css" href="Connections/Shear/Finplate/log.css"/>''')
        
     app = QtGui.QApplication(sys.argv)
     window = MainController()

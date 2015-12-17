@@ -248,7 +248,7 @@
       <widget class="QToolButton" name="btn3D">
        <property name="geometry">
         <rect>
-         <x>390</x>
+         <x>300</x>
          <y>0</y>
          <width>28</width>
          <height>28</height>
@@ -284,7 +284,7 @@
       <widget class="QCheckBox" name="chkBxBeam">
        <property name="geometry">
         <rect>
-         <x>430</x>
+         <x>340</x>
          <y>0</y>
          <width>71</width>
          <height>29</height>
@@ -307,7 +307,7 @@
       <widget class="QCheckBox" name="chkBxCol">
        <property name="geometry">
         <rect>
-         <x>510</x>
+         <x>420</x>
          <y>0</y>
          <width>91</width>
          <height>29</height>
@@ -330,7 +330,7 @@
       <widget class="QCheckBox" name="chkBxFinplate">
        <property name="geometry">
         <rect>
-         <x>600</x>
+         <x>510</x>
          <y>0</y>
          <width>92</width>
          <height>29</height>
@@ -350,7 +350,7 @@
         <string>Finplate</string>
        </property>
       </widget>
-      <widget class="QToolButton" name="btn_front">
+      <widget class="QToolButton" name="btn_2D">
        <property name="geometry">
         <rect>
          <x>270</x>
@@ -361,50 +361,10 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>10</pointsize>
+         <family>Droid Serif</family>
+         <pointsize>11</pointsize>
          <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="acceptDrops">
-        <bool>true</bool>
-       </property>
-       <property name="toolTip">
-        <string>Front View</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="ResourceFiles/icons.qrc">
-         <normaloff>:/newPrefix/images/Z-X.png</normaloff>:/newPrefix/images/Z-X.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>22</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QToolButton" name="btn_top">
-       <property name="geometry">
-        <rect>
-         <x>300</x>
-         <y>0</y>
-         <width>28</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-         <weight>75</weight>
+         <italic>true</italic>
          <bold>true</bold>
         </font>
        </property>
@@ -412,14 +372,10 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
-        <string>Top View</string>
+        <string>2D-Drawings</string>
        </property>
        <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="ResourceFiles/icons.qrc">
-         <normaloff>:/newPrefix/images/X-Y.png</normaloff>:/newPrefix/images/X-Y.png</iconset>
+        <string>2D</string>
        </property>
        <property name="iconSize">
         <size>
@@ -428,46 +384,7 @@
         </size>
        </property>
        <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QToolButton" name="btn_side">
-       <property name="geometry">
-        <rect>
-         <x>330</x>
-         <y>0</y>
-         <width>28</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="toolTip">
-        <string>Side View</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="ResourceFiles/icons.qrc">
-         <normaloff>:/newPrefix/images/Z-Y.png</normaloff>:/newPrefix/images/Z-Y.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>22</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </widget>
@@ -511,6 +428,9 @@
           <property name="font">
            <font>
             <pointsize>8</pointsize>
+            <weight>75</weight>
+            <italic>true</italic>
+            <bold>true</bold>
            </font>
           </property>
           <property name="focusPolicy">
@@ -559,7 +479,7 @@
      <x>0</x>
      <y>0</y>
      <width>1332</width>
-     <height>25</height>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -574,7 +494,7 @@
     <addaction name="separator"/>
     <addaction name="actionSave_3D_model_as"/>
     <addaction name="separator"/>
-    <addaction name="actionSave_current_2D_image_as"/>
+    <addaction name="actionSave_curren_image_as"/>
     <addaction name="separator"/>
     <addaction name="actionSave_log_messages"/>
     <addaction name="separator"/>
@@ -4202,9 +4122,9 @@
     <string>Save 3D model as</string>
    </property>
   </action>
-  <action name="actionSave_current_2D_image_as">
+  <action name="actionSave_curren_image_as">
    <property name="text">
-    <string>Save 2D image as</string>
+    <string>Save image as</string>
    </property>
   </action>
   <action name="actionSave_log_messages">
