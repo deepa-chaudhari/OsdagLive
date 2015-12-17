@@ -379,7 +379,7 @@ def finConn(uiObj):
         pass
     else:
         logger.error(": Weld thickness is not sufficient")
-        logger.warning(": Minimum weld thickness is required is %2.2f mm " % (weld_t_req))
+        logger.warning(": Minimum weld thickness required is %2.2f mm [Cl. 10.5.9]" % (weld_t_req))
     
     # End of calculation
     outputObj = {}

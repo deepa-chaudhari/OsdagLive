@@ -25,10 +25,10 @@ p11
 (dp12
 S'Width (mm)'
 p13
-I0
+I100
 sS'Height (mm)'
 p14
-I0
+I300
 sS'Thickness (mm)'
 p15
 I10
