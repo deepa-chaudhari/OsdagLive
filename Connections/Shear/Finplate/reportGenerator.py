@@ -3,66 +3,46 @@ Created on Dec 10, 2015
 
 @author: deepa
 '''
+'''
+Created on Dec 10, 2015
+
+@author: deepa
+'''
+import time
+
 def save_html(): # (outObj, uiObj, dictBeamData, dictColData)
     fileName = '/home/deepa/finPlateReport.html'
+    # /home/deepa/EclipseWorkspace/OsdagLive/Connections/Shear/Finplate/output
     f = open(fileName,'w')
     f.write(t('html'))
     f.write(t('head'))
     f.write(t('''link rel="stylesheet" type="text/css" href="mystyle.css"'''))
     f.write(t('/head'))
     f.write(t('body')) 
-    f.write(t('img src="Osdag.png" align = "middle" style="width:100px;height:100px;"'))       
-    f.write(t('img src="Osdagextd.png" align = "down" style="width:100px;height:35px;"'))     
-#     data = [
-#             [0, "Project Summary", ""],
-#             [1, "Project Title", "XXX"],
-#             [1, "Company", "XXX"],
-#             [1, "Designer", "XXX"],
-#             [0, "finplate", ""],
-#             [1, "Connection", ""],
-#             [2, "Connection Type", "Shear Connection"],
-#             [2, "Connectivity", "Column Flange Beam Web"],
-#             [2, "Beam Connection", "Bolted and Welded"],
-#             [1, "Load(Factored Load)", ""],
-#             [2, "Shear Force(kH)", "140"],
-#             [1, "Components", ""],
-#             [2, "Column Section", "ISSC200"],
-#             [3, "Steel Grade", "410"],
-#             [3, "Steel Type", "250"],
-#             [2, "Beam Section", "ISMB 400"],
-#             [2, "Plate Section", ""],
-#             [3, "Thickness", "xx"],
-#             [3, "Width", "xx"],
-#             [3, "Depth", "xx"],
-#             ]
+    f.write(t('div id="logodiv"'))
+    f.write(t('img src="osdag_logo.png" style="width:100px;height:100px;" '))
+  
 
-    
+    f.write(t('img src="osdagname.png"  style="width:300px;height:50px;"'))
+    f.write(t('/div'))    
+    f.write(t('div id="dateDiv"'))
+    f.write('Date:'+ time.strftime("%d/%m/%Y"))
+    f.write(t('/div'))   
+
     #---------------------
-    rstr = t('table')
-    rstr += t('''col width=70%''')
-    rstr += t('''col width=30%''')
-    
-    row  = [0,' ', '']
-    rstr += t('tr')
-    rstr += t('td img src="Osdag.png" alt="Mountain View"align = "middle" style="width:100px;height:100px;') + space(row[0]) + row[1] + t('/td')
-    rstr += t('/tr')
-    rstr = t('table')
+   
     
     rstr = t('table')
     rstr += t('''col width=70%''')
     rstr += t('''col width=30%''')
     
-#     row  = [0,' ', '']
-#     rstr += t('tr')
-#     rstr += t('td img src="Osdag.png" alt="Mountain View"align = "middle" style="width:100px;height:100px;') + space(row[0]) + row[1] + t('/td')
-#     rstr += t('/tr')
-    
+
     row = [0, 'Project Summary', ' ']
     rstr += t('tr')
     rstr += t('td colspan="2" class="header0"') + space(row[0]) + row[1] + t('/td')
     rstr += t('/tr')
 
-    row = [1, "Project Title", "FinPlate Connection"]
+    row = [1, "Project Title", "Finplate Connection"]
     rstr += t('tr')
     rstr += t('td class="header1"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td class="header1"') + row[2] + t('/td')
@@ -74,7 +54,7 @@ def save_html(): # (outObj, uiObj, dictBeamData, dictColData)
     rstr += t('td class="header1"') + row[2] + t('/td')
     rstr += t('/tr')
 
-    row = [1, "Designer", "Hashmi"]
+    row = [1, "Designer", "Hashmi Suhel"]
     rstr += t('tr')
     rstr += t('td class="header1"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td class="header1"') + row[2] + t('/td')
@@ -86,7 +66,13 @@ def save_html(): # (outObj, uiObj, dictBeamData, dictColData)
     rstr += t('td class="header1"') + row[2] + t('/td')
     rstr += t('/tr')
     
-    row = [1, "Design Code/Method", "IS800:2007/Limit state design"]
+    row = [1, "Design Code", "IS 800:2007"]
+    rstr += t('tr')
+    rstr += t('td class="header1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header1"') + row[2] + t('/td')
+    rstr += t('/tr')
+    
+    row = [1, "Method", "Limit state design (LSD)"]
     rstr += t('tr')
     rstr += t('td class="header1"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td class="header1"') + row[2] + t('/td')
@@ -135,13 +121,19 @@ def save_html(): # (outObj, uiObj, dictBeamData, dictColData)
     rstr += t('td colspan="2" class="header1"') + space(row[0]) + row[1] + t('/td')
     rstr += t('/tr')
     
-    row = [1, "Beam Connection", "Bolted and Welded"]
+    row = [1, "Connectivity", "Column Web Beam Web"]
     rstr += t('tr')
     rstr += t('td class="header2"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td class="header2 "') + row[2] + t('/td')
     rstr += t('/tr')
     
-    row = [1, "Connectivity", "Column Flange Beam Web"]
+    row = [1, "Beam Connection", "Bolted"]
+    rstr += t('tr')
+    rstr += t('td class="header2"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2 "') + row[2] + t('/td')
+    rstr += t('/tr')
+    
+    row = [1, "Column Connection", "Welded"]
     rstr += t('tr')
     rstr += t('td class="header2"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td class="header2 "') + row[2] + t('/td')
@@ -157,6 +149,7 @@ def save_html(): # (outObj, uiObj, dictBeamData, dictColData)
     rstr += t('td class="header2"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td class="header2 "') + row[2] + t('/td')
     rstr += t('/tr')
+    
     
     row = [0, "Components ", " "]
     rstr += t('tr')
@@ -319,13 +312,154 @@ def save_html(): # (outObj, uiObj, dictBeamData, dictColData)
     rstr += t('/table')
     
     rstr += t('table')
-    row = [0, "3D View", " "]
+    row = [0, "Views", " "]
     rstr += t('tr')
-    rstr += t('td colspan="2" class="header1_1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class=" viewtbl"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class=" viewtbl "') + row[2] + t('/td')
+    rstr += t('/tr')
+    
+    row = [0, "1", " 1st "]
+    rstr += t('tr')
+    rstr += t('td class=" viewtbl"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class=" viewtbl"') + row[2] + t('/td')
+    rstr += t('/tr')
+    
+    row = [0, "2", "2nd "]
+    rstr += t('tr')
+    rstr += t('td class=" viewtbl"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class=" viewtbl "') + row[2] + t('/td')
+    rstr += t('/tr')
+    
+    rstr += t('/table')
+    
+    rstr += t('table')
+    row = [0, "Design Check", " "]
+    rstr += t('tr')
+    rstr += t('td colspan="3" class="header1_1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('/tr')
+    
+    rstr += t('tr')
+    row =[0,"Check","Required","Provided"]
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[2] + t('/td')
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[3] + t('/td')
+    rstr += t('/tr')
+    
+    rstr += t('tr')
+    row =[0,"Bolt shear capacity (kN)","<i>V</i><sub>dsb</sub> = ((800*0.6123*20*20)/(&#8730;3*1.25*1000) = 90.53 <br> [cl. 10.3.3]",""]
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
+    rstr += t('/tr')
+    
+    rstr += t('tr')
+    row =[0,"Bolt bearing capacity (kN)","<i>V</i><sub>dsb</sub> = (2.5*0.5*20*8.9*410)  = 72.98<br> [cl. 10.3.4]",""]
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
+    rstr += t('/tr')
+    
+    rstr += t('tr')
+    row =[0,"Bolt Capacity (kN)","Min (90.53,72.98) = 72.98","<p align=right style=color:green><b>Pass</b></p>"]
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
+    rstr += t('/tr')
+    
+    rstr += t('tr')
+    row =[0,"No. of bolts","140/72.98 = 1.9","3"]
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
+    rstr += t('/tr')
+    
+    rstr += t('tr')
+    row =[0,"No.of column(s)","&#8804;2","1"]
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
+    rstr += t('/tr')
+    
+    rstr += t('tr')
+    row =[0,"No. of bolts per column"," ","3"]
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
+    rstr += t('/tr')
+    
+    rstr += t('tr')
+    row =[0,"Bolt pitch (mm)","&#8805;2.5*20 = 50, &#8804; Min(32*8.9, 300) = 300 <br> [cl. 10.2.2]","100"]
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
+    rstr += t('/tr')
+    
+    rstr += t('tr')
+    row =[0,"Bolt gauge (mm)","&#8805;2.5*20 = 50,&#8804; Min(32*8.9, 300) = 300 <br> [cl. 10.2.2]","0"]
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
+    rstr += t('/tr')
+    
+    rstr += t('tr')
+    row =[0,"End distance (mm)","&#8805;1.7* 22 = 37.4,&#8804;12*8.9 = 106.9 <br> [cl. 10.2.4]","50"]
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
+    rstr += t('/tr')
+    
+    rstr += t('tr')
+    row =[0,"Edge distance (mm)","&#8805; 1.7* 22 = 37.4,&#8804;12*8.9 = 106.9<br> [cl. 10.2.4]","50"]
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
+    rstr += t('/tr')
+    
+    
+    rstr += t('tr')
+    row =[0,"Plate thickness (mm)","9.33","10"]
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
+    rstr += t('/tr')
+    
+    rstr += t('tr')
+    row =[0,"Plate height (mm)","","300"]
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
+    rstr += t('/tr')
+    
+    rstr += t('tr')
+    row =[0,"Plate width (mm)","","100"]
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
+    rstr += t('/tr')
+    
+    rstr += t('tr')
+    row =[0,"Plate moment capacity (kNm)","18.1","<i>M</i><sub>d</sub> =1.2*250*Z = 40.9 <br>[cl. 8.2.1.2]<p align=right style=color:green><b>Pass</b></p>"]
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
+    rstr += t('/tr')
+    
+    rstr += t('tr')
+    row =[0,"Weld thickness (mm)","6","6"]
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
+    rstr += t('/tr')
+    
+    rstr += t('tr')
+    row =[0,"Weld strength (kN/mm)","0.699","<i>f</i><sub>v</sub>=(6*250)/(&#8730;3*1.25*1000)<br>= 0.96<br>[cl. 10.5.7] <p align=right style=color:green><b>Pass</b></p>"]
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
     rstr += t('/tr')
     rstr += t('/table')
     
-
+    
     f.write(rstr)
     f.write(t('/body'))        
     f.write(t('/html'))    
