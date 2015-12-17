@@ -5,7 +5,7 @@ Created on Dec 10, 2015
 '''
 import time
 
-def save_html(): # (outObj, uiObj, dictBeamData, dictColData)
+def save_html(outObj, uiObj, dictBeamData, dictColData):
     fileName = 'output/finplate/finPlateReport.html'
     # /home/deepa/EclipseWorkspace/OsdagLive/Connections/Shear/Finplate/output
     f = open(fileName,'w')
@@ -49,7 +49,7 @@ def save_html(): # (outObj, uiObj, dictBeamData, dictColData)
     rstr += t('td class="header1"') + row[2] + t('/td')
     rstr += t('/tr')
 
-    row = [1, "Designer", "Hashmi Suhel"]
+    row = [1, "Designer", "Subhrajit Dutta"]
     rstr += t('tr')
     rstr += t('td class="header1"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td class="header1"') + row[2] + t('/td')
@@ -156,7 +156,7 @@ def save_html(): # (outObj, uiObj, dictBeamData, dictColData)
     rstr += t('td class="header2 "') + row[2] + t('/td')
     rstr += t('/tr')
     
-    row = [2, "Material", "Fe250"]
+    row = [2, "Material", "Fe 410"]
     rstr += t('tr')
     rstr += t('td class="header2"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td class="header2 "') + row[2] + t('/td')
@@ -168,7 +168,7 @@ def save_html(): # (outObj, uiObj, dictBeamData, dictColData)
     rstr += t('td class="header2 "') + row[2] + t('/td')
     rstr += t('/tr')
     
-    row = [2, "Material", "Fe250"]
+    row = [2, "Material", "Fe 410"]
     rstr += t('tr')
     rstr += t('td class="header2"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td class="header2 "') + row[2] + t('/td')
@@ -445,19 +445,30 @@ def save_html(): # (outObj, uiObj, dictBeamData, dictColData)
     rstr += t('/tr')
     
     rstr += t('tr')
-    row =[0,"Weld thickness (mm)","&#8804;5.27","6"]
+    row =[0,"Effective weld length (mm)","","300 - 2*6 = 288"]
     rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
     rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
     rstr += t('/tr')
     
+    
+    
     rstr += t('tr')
-    row =[0,"Weld strength (kN/mm)","&#8730;[(18100*6)/(2*288)<sup>2</sup>]<sup>2</sup> + [140/(2*288)]<sup>2</sup> <br>=0.699","<i>f</i><sub>v</sub>=(6*250)/(&#8730;3*1.25*1000)<br>= 0.96<br>[cl. 10.5.7]"," <p align=right style=color:green><b>Pass</b></p>"]
+    row =[0,"Weld strength (kN/mm)","&#8730;[(18100*6)/(2*288)<sup>2</sup>]<sup>2</sup> + [140/(2*288)]<sup>2</sup> <br>=0.699","<i>f</i><sub>v</sub>=(0.7*6*410)/(&#8730;3*1.25)<br>= 0.795<br>[cl. 10.5.7]"," <p align=right style=color:green><b>Pass</b></p>"]
     rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
     rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
     rstr += t('td class="header2"') + space(row[0]) + row[4] + t('/td')
     rstr += t('/tr')
+    
+    rstr += t('tr')
+    row =[0,"Weld thickness (mm)","(0.699*&#8730;3*1.25)/(0.7*410)=5.27<br>[cl. 10.5.7]","6","<p align=right style=color:green><b>Pass</b></p>"]
+    rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
+    rstr += t('td class="header2"') + space(row[0]) + row[4] + t('/td')
+    rstr += t('/tr')
+    
     rstr += t('/table')
     
     
@@ -477,6 +488,6 @@ def t(n):
 def quote(m):
     return '"' + m + '"'
 
-if __name__ == '__main__':
-    save_html()
-    print "hiiiiii"
+# if __name__ == '__main__':
+#     save_html()
+#     print "hiiiiii"

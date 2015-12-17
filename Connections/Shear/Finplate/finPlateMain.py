@@ -407,10 +407,11 @@ class MainController(QtGui.QMainWindow):
         
         self.outdict = self.outputdict()
         self.inputdict = self.getuser_inputs()
-        self.save_yaml(self.outdict,self.inputdict)
+        #self.save_yaml(self.outdict,self.inputdict)
         dictBeamData  = self.fetchBeamPara()
         dictColData  = self.fetchColumnPara()
         save_html(self.outdict, self.inputdict, dictBeamData, dictColData)
+        QtGui.QMessageBox.about(self,'Information',"Report Saved")
     
         #self.save(self.outdict,self.inputdict)
         
@@ -452,7 +453,7 @@ class MainController(QtGui.QMainWindow):
           
         '''
         newDict = {"INPUT": uiObj, "OUTPUT": outObj} 
-        fileName = QtGui.QFileDialog.getSaveFileName(self,"Save File As","/home/deepa/SaveDesign","Text File (*.txt)")
+        fileName = QtGui.QFileDialog.getSaveFileName(self,"Save File As","/home/deepa/SaveDesign","Html File (*.html)")
         f = open(fileName,'w')
         yaml.dump(newDict,f,allow_unicode=True, default_flow_style=False)
         
@@ -548,7 +549,7 @@ class MainController(QtGui.QMainWindow):
         textStr = widget.text()
         val = int(textStr) 
         if( val < minVal or val > maxVal):
-            QtGui.QMessageBox.about(self,'Error','Please Enter a value between %s-%s' %(minVal, maxVal))
+            QtGui.QMessageBox.about(self,'Error','Please Enter a value between %s-%s [cl 2.2.4.2]' %(minVal, maxVal))
             widget.clear()
             widget.setFocus()
             palette = QtGui.QPalette()
@@ -1026,7 +1027,7 @@ class MainController(QtGui.QMainWindow):
             
         else:
             self.display.EraseAll()
-            self.display.DisplayMessage(gp_Pnt(1000,0,400),"Sorry, can not create 3D model",height = 23.0)       
+            #self.display.DisplayMessage(gp_Pnt(1000,0,400),"Sorry, can not create 3D model",height = 23.0)       
    
     def call_3DBeam(self):
         '''
