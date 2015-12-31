@@ -516,8 +516,7 @@ class Fin2DCreatorFront(object):
     
     
     def callCFBWfront(self):
-        
-        dwg = svgwrite.Drawing('finfront.svg', profile='full')
+        dwg = svgwrite.Drawing('output/finplate/finfront.svg', profile='full')
         smarker = dwg.marker(insert=(-2.5,0), size=(10,10), orient="auto")
         smarker.add(dwg.polyline([(-2.5,0), (0,3), (-10,0), (0,-3)], fill='black'))
         
@@ -694,7 +693,7 @@ class Fin2DCreatorFront(object):
         theta = 45
         offset = self.dataObj.col_B 
         textUp = "          z " + str(int(self.dataObj.weld_thick)) + " mm"
-        textDown = u"\u25C1"
+        textDown = "" #u"\u25C1
         self.dataObj.drawOrientedArrow(dwg, weldPt, theta, "NW", offset, textUp, textDown)
         
         # Bolt Information
@@ -717,7 +716,7 @@ class Fin2DCreatorFront(object):
         
         # 2D view name
         ptx =  self.FC + (self.dataObj.col_L/4)* np.array([0,1])
-        dwg.add(dwg.text('Front view', insert=(ptx), fill='black',font_family = "sans-serif",font_size = 30))
+        dwg.add(dwg.text('Front view', insert=(ptx), fill='black',font_family = "sans-serif",font_weight = 'bold',font_size = 30))
         
         dwg.save()
         print"########### Column Flange Beam Web Saved ############"
@@ -726,7 +725,7 @@ class Fin2DCreatorFront(object):
         
     def callCWBWfront(self):
         
-        dwg = svgwrite.Drawing('finfront.svg', profile='full')
+        dwg = svgwrite.Drawing('output/finplate/finfront.svg', profile='full')
         smarker = dwg.marker(insert=(-2.5,0), size=(10,10), orient="auto")
         smarker.add(dwg.polyline([(-2.5,0), (0,3), (-10,0), (0,-3)], fill='black'))
         
@@ -918,13 +917,13 @@ class Fin2DCreatorFront(object):
         theta = 45
         offset = self.dataObj.col_B 
         textUp = "          z " + str(self.dataObj.weld_thick) + " mm"
-        textDown = ""
+        textDown =  "" #u"\u25C1
         
         self.dataObj.drawOrientedArrow(dwg, weldPt, theta, "NW", offset, textUp, textDown)
         
         # 2D view name
         ptx =  self.C + (self.dataObj.col_L/4)* np.array([0,1])
-        dwg.add(dwg.text('Front view', insert=(ptx), fill='black',font_family = "sans-serif",font_size = 30))
+        dwg.add(dwg.text('Front view', insert=(ptx), fill='black',font_family = "sans-serif",font_weight ="bold",font_size = 30))
         
         dwg.save()
         print"########### Column Web Beam Web Saved ############"
@@ -1020,7 +1019,7 @@ class Fin2DCreatorTop(object):
     def callCFBWTop(self):
         '''
         '''
-        dwg = svgwrite.Drawing('finTop.svg', profile = 'full')
+        dwg = svgwrite.Drawing('output/finplate/finTop.svg', profile = 'full')
         
         dwg.add(dwg.polyline(points=[(self.FA),(self.FB),(self.FC),(self.FD),(self.FE),(self.FF),(self.FG),(self.FH),(self.FI),(self.FJ),(self.FK),(self.FL),(self.FA)], stroke='blue', fill='none', stroke_width=2.5))
         dwg.add(dwg.rect(insert=(self.FA1), size=(self.dataObj.beam_L, self.dataObj.beam_B),fill = 'none', stroke='blue', stroke_width=2.5))
@@ -1095,7 +1094,7 @@ class Fin2DCreatorTop(object):
         theta = 40
         offset = self.dataObj.weld_thick + self.dataObj.plate_thick + self.dataObj.beam_B /2 + 80
         textUp = "          z " + str(int(self.dataObj.weld_thick)) + " mm"
-        textDown = u"\u25C1"
+        textDown =  "" #u"\u25C1
         self.dataObj.drawOrientedArrow(dwg, weldPt, theta, "NW", offset, textUp, textDown)
 
         # Gap Informatoin
@@ -1114,14 +1113,14 @@ class Fin2DCreatorTop(object):
         
         # 2D view name
         ptx =  self.FG + (self.dataObj.col_B + 20)* np.array([0,1])
-        dwg.add(dwg.text('Top view', insert=(ptx), fill='black',font_family = "sans-serif",font_size = 30)) 
+        dwg.add(dwg.text('Top view', insert=(ptx), fill='black',font_family = "sans-serif",font_weight = 'bold',font_size = 30)) 
         dwg.save()
         print"$$$$$$$$$ Saved Column Flange Beam Web Top $$$$$$$$$$$$"
     
     def callCWBWTop(self):
         '''
         '''
-        dwg = svgwrite.Drawing('finTop.svg', profile='full')
+        dwg = svgwrite.Drawing('output/finplate/finTop.svg', profile='full')
         
         dwg.add(dwg.polyline(points=[(self.A),(self.B),(self.C),(self.D),(self.E),(self.F),(self.G),(self.H),(self.I),(self.J),(self.K),(self.L),(self.A)], stroke='blue', fill='none', stroke_width=2.5))
         dwg.add(dwg.rect(insert=(self.A1), size=(self.dataObj.beam_L, self.dataObj.beam_B),fill = 'none', stroke='blue', stroke_width=2.5))
@@ -1202,7 +1201,7 @@ class Fin2DCreatorTop(object):
         theta = 40
         offset = self.dataObj.weld_thick + self.dataObj.plate_thick + self.dataObj.beam_B /2 + 80
         textUp = "          z " + str(int(self.dataObj.weld_thick)) + " mm"
-        textDown = u"\u25C1"
+        textDown =  "" #u"\u25C1
         self.dataObj.drawOrientedArrow(dwg, weldPt, theta, "NW", offset, textUp, textDown)
         
         # Gap Informatoin
@@ -1221,7 +1220,7 @@ class Fin2DCreatorTop(object):
         
         # 2D view name
         ptx =  self.G + (self.dataObj.D_col + 30)* np.array([0,1])
-        dwg.add(dwg.text('Top view', insert=(ptx), fill='black',font_family = "sans-serif",font_size = 30)) 
+        dwg.add(dwg.text('Top view', insert=(ptx), fill='black',font_family = "sans-serif",font_weight = 'bold',font_size = 30)) 
         
         dwg.save()
         print"$$$$$$$$$ Saved Column Web Beam Web Top $$$$$$$$$$$"
@@ -1285,7 +1284,7 @@ class Fin2DCreatorSide(object):
     def callCWBWSide(self):
         '''
         '''
-        dwg = svgwrite.Drawing('finSide.svg', profile='full')
+        dwg = svgwrite.Drawing('output/finplate/finSide.svg', profile='full')
         dwg.add(dwg.rect(insert=(self.A), size=(self.dataObj.D_col, self.dataObj.col_L),fill = 'none', stroke='blue', stroke_width=2.5))
         dwg.add(dwg.line((self.C),(self.H)).stroke('blue',width = 2.5,linecap = 'square'))
         dwg.add(dwg.line((self.B),(self.G)).stroke('blue',width = 2.5,linecap = 'square'))
@@ -1361,12 +1360,12 @@ class Fin2DCreatorSide(object):
         theta = 45
         offset = self.dataObj.weld_thick + self.dataObj.plate_thick + self.dataObj.beam_B /2 + 80
         textUp = "          z " + str(int(self.dataObj.weld_thick)) + " mm"
-        textDown = u"\u25C1"
+        textDown =  "" #u"\u25C1
         self.dataObj.drawOrientedArrow(dwg, weldPt, theta, "NE", offset, textUp, textDown)
         
         # 2D view name
         ptx =  self.H + (self.dataObj.col_L/4)* np.array([0,1])
-        dwg.add(dwg.text('Side view', insert=(ptx), fill='black',font_family = "sans-serif",font_size = 30)) 
+        dwg.add(dwg.text('Side view', insert=(ptx), fill='black',font_family = "sans-serif",font_weight = 'bold',font_size = 30)) 
         
         dwg.save()
         print "********* Column Web Beam Web Side Saved ***********"
@@ -1374,7 +1373,7 @@ class Fin2DCreatorSide(object):
     def callCFBWSide(self):
         '''
         '''
-        dwg = svgwrite.Drawing('finSide.svg', profile='full')
+        dwg = svgwrite.Drawing('output/finplate/finSide.svg', profile='full')
         dwg.add(dwg.rect(insert=(self.FA), size=(self.dataObj.col_B, self.dataObj.col_L),fill = 'none', stroke='blue', stroke_width=2.5))
         dwg.add(dwg.polyline(points=[(self.FA1),(self.FA2),(self.FA3),(self.FA4),(self.FA5),(self.FA6),(self.FA7),(self.FA8),(self.FA9),(self.FA10),(self.FA11),(self.FA12),(self.FA1)], stroke='blue', fill='none', stroke_width=2.5))
         
@@ -1446,12 +1445,12 @@ class Fin2DCreatorSide(object):
         theta = 45
         offset = self.dataObj.weld_thick + self.dataObj.plate_thick + self.dataObj.beam_B /2 + 80
         textUp = "          z " + str(int(self.dataObj.weld_thick)) + " mm"
-        textDown = u"\u25C1"
+        textDown =  "" #u"\u25C1
         self.dataObj.drawOrientedArrow(dwg, weldPt, theta, "NE", offset, textUp, textDown)
         
         # 2D view name
         ptx =  self.FC + (self.dataObj.col_L/4)* np.array([0,1])
-        dwg.add(dwg.text('Side view', insert=(ptx), fill='black',font_family = "sans-serif",font_size = 30)) 
+        dwg.add(dwg.text('Side view', insert=(ptx), fill='black',font_family = "sans-serif",font_weight = 'bold',font_size = 30)) 
         
         dwg.save()
         print "********** Column Flange Beam Web Side Saved  *************"
