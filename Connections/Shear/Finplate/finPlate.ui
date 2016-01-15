@@ -57,6 +57,9 @@
        <property name="focusPolicy">
         <enum>Qt::NoFocus</enum>
        </property>
+       <property name="toolTip">
+        <string>Left Dock</string>
+       </property>
        <property name="layoutDirection">
         <enum>Qt::LeftToRight</enum>
        </property>
@@ -86,6 +89,9 @@
        <property name="focusPolicy">
         <enum>Qt::NoFocus</enum>
        </property>
+       <property name="toolTip">
+        <string>Right Dock</string>
+       </property>
        <property name="text">
         <string>...</string>
        </property>
@@ -100,10 +106,10 @@
         </size>
        </property>
       </widget>
-      <widget class="QToolButton" name="btnZmOut">
+      <widget class="QToolButton" name="btnTop">
        <property name="geometry">
         <rect>
-         <x>80</x>
+         <x>160</x>
          <y>0</y>
          <width>28</width>
          <height>28</height>
@@ -113,101 +119,14 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
-        <string>Zoom In</string>
+        <string>Top View</string>
        </property>
        <property name="text">
         <string>...</string>
        </property>
        <property name="icon">
         <iconset resource="ResourceFiles/icons.qrc">
-         <normaloff>:/newPrefix/images/zoom_in_01.png</normaloff>:/newPrefix/images/zoom_in_01.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>18</width>
-         <height>18</height>
-        </size>
-       </property>
-      </widget>
-      <widget class="QToolButton" name="btnZmIn">
-       <property name="geometry">
-        <rect>
-         <x>110</x>
-         <y>0</y>
-         <width>28</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="toolTip">
-        <string>Zoom Out</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="ResourceFiles/icons.qrc">
-         <normaloff>:/newPrefix/images/zoom_out_01.png</normaloff>:/newPrefix/images/zoom_out_01.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>18</width>
-         <height>18</height>
-        </size>
-       </property>
-      </widget>
-      <widget class="QToolButton" name="btnSvgSave">
-       <property name="geometry">
-        <rect>
-         <x>200</x>
-         <y>0</y>
-         <width>28</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="toolTip">
-        <string>Save 3D Images</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="ResourceFiles/icons.qrc">
-         <normaloff>:/newPrefix/images/save.png</normaloff>:/newPrefix/images/save.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>18</width>
-         <height>18</height>
-        </size>
-       </property>
-      </widget>
-      <widget class="QToolButton" name="btnTotatAcw">
-       <property name="geometry">
-        <rect>
-         <x>140</x>
-         <y>0</y>
-         <width>28</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="toolTip">
-        <string>Rotate Left</string>
-       </property>
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="ResourceFiles/icons.qrc">
-         <normaloff>:/newPrefix/images/rotate-ccw.png</normaloff>:/newPrefix/images/rotate-ccw.png</iconset>
+         <normaloff>:/newPrefix/images/X-Y.png</normaloff>:/newPrefix/images/X-Y.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -216,10 +135,10 @@
         </size>
        </property>
       </widget>
-      <widget class="QToolButton" name="btnRotatCw">
+      <widget class="QToolButton" name="btnFront">
        <property name="geometry">
         <rect>
-         <x>170</x>
+         <x>100</x>
          <y>0</y>
          <width>28</width>
          <height>28</height>
@@ -229,26 +148,55 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
-        <string>Rotate Right</string>
+        <string>Front View</string>
        </property>
        <property name="text">
         <string>...</string>
        </property>
        <property name="icon">
         <iconset resource="ResourceFiles/icons.qrc">
-         <normaloff>:/newPrefix/images/rotate-cw.png</normaloff>:/newPrefix/images/rotate-cw.png</iconset>
+         <normaloff>:/newPrefix/images/Z-X.png</normaloff>:/newPrefix/images/Z-X.png</iconset>
        </property>
        <property name="iconSize">
         <size>
-         <width>25</width>
-         <height>25</height>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="btnSide">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>0</y>
+         <width>28</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="toolTip">
+        <string>Side View</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="ResourceFiles/icons.qrc">
+         <normaloff>:/newPrefix/images/Z-Y.png</normaloff>:/newPrefix/images/Z-Y.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
         </size>
        </property>
       </widget>
       <widget class="QToolButton" name="btn3D">
        <property name="geometry">
         <rect>
-         <x>300</x>
+         <x>220</x>
          <y>0</y>
          <width>28</width>
          <height>28</height>
@@ -284,7 +232,7 @@
       <widget class="QCheckBox" name="chkBxBeam">
        <property name="geometry">
         <rect>
-         <x>340</x>
+         <x>260</x>
          <y>0</y>
          <width>71</width>
          <height>29</height>
@@ -300,6 +248,9 @@
        <property name="focusPolicy">
         <enum>Qt::NoFocus</enum>
        </property>
+       <property name="toolTip">
+        <string>3D Beam</string>
+       </property>
        <property name="text">
         <string>Beam</string>
        </property>
@@ -307,7 +258,7 @@
       <widget class="QCheckBox" name="chkBxCol">
        <property name="geometry">
         <rect>
-         <x>420</x>
+         <x>330</x>
          <y>0</y>
          <width>91</width>
          <height>29</height>
@@ -323,6 +274,9 @@
        <property name="focusPolicy">
         <enum>Qt::NoFocus</enum>
        </property>
+       <property name="toolTip">
+        <string>3D Column</string>
+       </property>
        <property name="text">
         <string>Column</string>
        </property>
@@ -330,7 +284,7 @@
       <widget class="QCheckBox" name="chkBxFinplate">
        <property name="geometry">
         <rect>
-         <x>510</x>
+         <x>410</x>
          <y>0</y>
          <width>92</width>
          <height>29</height>
@@ -346,45 +300,11 @@
        <property name="focusPolicy">
         <enum>Qt::NoFocus</enum>
        </property>
+       <property name="toolTip">
+        <string>3D Finplate</string>
+       </property>
        <property name="text">
         <string>Finplate</string>
-       </property>
-      </widget>
-      <widget class="QToolButton" name="btn_2D">
-       <property name="geometry">
-        <rect>
-         <x>270</x>
-         <y>0</y>
-         <width>28</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Droid Serif</family>
-         <pointsize>11</pointsize>
-         <weight>75</weight>
-         <italic>true</italic>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="focusPolicy">
-        <enum>Qt::NoFocus</enum>
-       </property>
-       <property name="toolTip">
-        <string>2D-Drawings</string>
-       </property>
-       <property name="text">
-        <string>2D</string>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>22</width>
-         <height>23</height>
-        </size>
-       </property>
-       <property name="checkable">
-        <bool>false</bool>
        </property>
       </widget>
      </widget>
@@ -479,7 +399,7 @@
      <x>0</x>
      <y>0</y>
      <width>1332</width>
-     <height>28</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

@@ -5,6 +5,7 @@ comment
 @author: deepa
 '''
 from PyQt4.QtCore import QString, pyqtSignal
+
 from OCC.TopoDS import topods, TopoDS_Shape
 from OCC.gp import gp_Pnt
 from nutBoltPlacement import NutBoltArray
@@ -15,7 +16,7 @@ from finPlateCalc import finConn
 import yaml
 import pickle
 from OCC.BRepAlgoAPI import BRepAlgoAPI_Fuse
-from OCC.Quantity import Quantity_NOC_RED,Quantity_NOC_BLUE1,Quantity_NOC_SADDLEBROWN
+from OCC.Quantity import Quantity_NOC_SADDLEBROWN
 from ISection import ISection
 from OCC.Graphic3d import Graphic3d_NOT_2D_ALUMINUM
 from weld import  Weld
@@ -24,7 +25,7 @@ from bolt import Bolt
 from nut import Nut 
 import os.path
 from utilities import osdagDisplayShape
-from OCC.Display.pyqt4Display import qtViewer3d
+from OCC.Display.qtDisplay import qtViewer3d
 from colWebBeamWebConnectivity import ColWebBeamWeb
 from colFlangeBeamWebConnectivity import ColFlangeBeamWeb
 from OCC import IGESControl
@@ -34,6 +35,8 @@ from OCC.Interface import Interface_Static_SetCVal
 from OCC.IFSelect import IFSelect_RetDone
 from OCC.StlAPI import StlAPI_Writer
 from drawing_2D import FinCommonData
+from PyQt4.QtWebKit import *
+from PyQt4.Qt import QPrinter
 # Developed by deepa
 from reportGenerator import *
 
@@ -63,11 +66,7 @@ class MainController(QtGui.QMainWindow):
         self.ui.btnInput.clicked.connect(lambda: self.dockbtn_clicked(self.ui.inputDock))
         self.ui.btnOutput.clicked.connect(lambda: self.dockbtn_clicked(self.ui.outputDock))
         
-#         self.ui.btn_front.clicked.connect(self.call_Frontview)
-#         self.ui.btn_top.clicked.connect(self.call_Topview)
-#         self.ui.btn_side.clicked.connect(self.call_Sideview)
-        
-        self.ui.btn_2D.clicked.connect(self.call2D_Drawing)
+        #self.ui.btn_2D.clicked.connect(self.call2D_Drawing)
         self.ui.btn3D.clicked.connect(lambda:self.call_3DModel(True))
         self.ui.chkBxBeam.clicked.connect(self.call_3DBeam)
         self.ui.chkBxCol.clicked.connect(self.call_3DColumn)
@@ -105,9 +104,6 @@ class MainController(QtGui.QMainWindow):
         self.ui.actionZoom_out.triggered.connect(self.callZoomout)
         self.ui.actionSave_3D_model_as.triggered.connect(self.save3DcadImages)
         self.ui.actionSave_curren_image_as.triggered.connect(self.save2DcadImages)
-        self.ui.actionView_2D_on_ZX.triggered.connect(self.call_Frontview)
-        self.ui.actionView_2D_on_XY.triggered.connect(self.call_Topview)
-        self.ui.actionView_2D_on_YZ.triggered.connect(self.call_Sideview)
         self.ui.actionPan.triggered.connect(self.call_Pannig)
         
         # self.ui.combo_Beam.addItems(get_beamcombolist())
@@ -127,9 +123,13 @@ class MainController(QtGui.QMainWindow):
         # Saving and Restoring the finPlate window state.
         #self.retrieve_prevstate()
         
-        self.ui.btnZmIn.clicked.connect(self.callZoomin)
-        self.ui.btnZmOut.clicked.connect(self.callZoomout)
-        self.ui.btnRotatCw.clicked.connect(self.callRotation)
+#         self.ui.btnZmIn.clicked.connect(self.callZoomin)
+#         self.ui.btnZmOut.clicked.connect(self.callZoomout)
+#         self.ui.btnRotatCw.clicked.connect(self.callRotation)
+        self.ui.btnFront.clicked.connect(lambda:self.call2D_Drawing("Front"))
+        self.ui.btnSide.clicked.connect(lambda:self.call2D_Drawing("Side"))
+        self.ui.btnTop.clicked.connect(lambda:self.call2D_Drawing("Top"))
+        
         self.ui.btn_Reset.clicked.connect(self.resetbtn_clicked)
         
         self.ui.btn_Design.clicked.connect(self.design_btnclicked)
@@ -137,7 +137,7 @@ class MainController(QtGui.QMainWindow):
         # Initialising the qtviewer
         self.display,_ = self.init_display(backend_str="pyqt4")
         
-        self.ui.btnSvgSave.clicked.connect(self.save3DcadImages)
+        #self.ui.btnSvgSave.clicked.connect(self.save3DcadImages)
         #self.ui.btnSvgSave.clicked.connect(lambda:self.saveTopng(self.display))
         
         self.connectivity = None
@@ -167,6 +167,7 @@ class MainController(QtGui.QMainWindow):
     
         
     def save2DcadImages(self):
+        
         files_types = "PNG (*.png);;JPG (*.jpg);;GIF (*.gif)"
         fileName  = QtGui.QFileDialog.getSaveFileName(self, 'Export', "/home/deepa/Cadfiles/untitled.png", files_types )
         fName = str(fileName)
@@ -181,10 +182,10 @@ class MainController(QtGui.QMainWindow):
         '''
         Disables the all buttons in toolbar
         '''
-#         self.ui.btn_front.setEnabled(False)
-#         self.ui.btn_top.setEnabled(False)
-#         self.ui.btn_side.setEnabled(False)
-        
+        #self.ui.btn_2D.setEnabled(False)
+        self.ui.btnFront.setEnabled(False)
+        self.ui.btnSide.setEnabled(False)
+        self.ui.btnTop.setEnabled(False)
         self.ui.btn3D.setEnabled(False)
         self.ui.chkBxBeam.setEnabled(False)
         self.ui.chkBxCol.setEnabled(False)
@@ -194,10 +195,10 @@ class MainController(QtGui.QMainWindow):
         '''
         Enables the all buttons in toolbar
         '''
-#         self.ui.btn_front.setEnabled(True)
-#         self.ui.btn_top.setEnabled(True)
-#         self.ui.btn_side.setEnabled(True)
-#         
+        #self.ui.btn_2D.setEnabled(True)
+        self.ui.btnFront.setEnabled(True)
+        self.ui.btnSide.setEnabled(True)
+        self.ui.btnTop.setEnabled(True)
         self.ui.btn3D.setEnabled(True)
         self.ui.chkBxBeam.setEnabled(True)
         self.ui.chkBxCol.setEnabled(True)
@@ -402,6 +403,21 @@ class MainController(QtGui.QMainWindow):
         
         return outObj
     
+    def htmlToPdf(self):
+        
+        global web 
+        web.load(QtCore.QUrl("file:///home/deepa/EclipseWorkspace/OsdagLive/output/finplate/finPlateReport.html"))
+        printer = QtGui.QPrinter(QtGui.QPrinter.HighResolution)
+        printer.setPageSize(QPrinter.A4)
+        printer.setOutputFormat(QPrinter.PdfFormat)
+        printer.setColorMode(QPrinter.Color)
+        printer.setOutputFileName("output/finplate/designReport.pdf")
+        
+        def convertIt():
+            web.print_(printer)
+          
+        QtCore.QObject.connect(web, QtCore.SIGNAL("loadFinished(bool)"), convertIt)
+    
     
     def save_design(self):
         
@@ -411,6 +427,8 @@ class MainController(QtGui.QMainWindow):
         dictBeamData  = self.fetchBeamPara()
         dictColData  = self.fetchColumnPara()
         save_html(self.outdict, self.inputdict, dictBeamData, dictColData)
+        self.htmlToPdf()
+        
         QtGui.QMessageBox.about(self,'Information',"Report Saved")
     
         #self.save(self.outdict,self.inputdict)
@@ -685,7 +703,7 @@ class MainController(QtGui.QMainWindow):
         if USED_BACKEND in ['pyqt4', 'pyside']:
             if USED_BACKEND == 'pyqt4':
                 from PyQt4 import QtCore, QtGui, QtOpenGL
-                from OCC.Display.pyqt4Display import qtViewer3d
+                from OCC.Display.qtDisplay import qtViewer3d
             
         self.ui.modelTab = qtViewer3d(self)
         #self.ui.model2dTab = qtViewer3d(self)
@@ -778,11 +796,8 @@ class MainController(QtGui.QMainWindow):
            |  |
         
         '''
-        dict = {5:4, 6:5, 8:6, 10:7, 12:8, 16:10, 20:12.5, 22:14, 24:15, 27:17, 30:18.7, 36:22.5 }
-        
-        import os
-        print(os.getcwd())
-        return dict[boltDia]
+        boltHeadThick = {5:4, 6:5, 8:6, 10:7, 12:8, 16:10, 20:12.5, 22:14, 24:15, 27:17, 30:18.7, 36:22.5 }
+        return boltHeadThick[boltDia]
         
         
     def boltHeadDia_Calculation(self,boltDia):
@@ -799,8 +814,8 @@ class MainController(QtGui.QMainWindow):
            |  |
         
         '''
-        dict = {5:7, 6:8, 8:10, 10:15, 12:20, 16:27, 20:34, 22:36, 24:41, 27:46, 30:50, 36:60 }
-        return dict[boltDia]
+        boltHeadDia = {5:7, 6:8, 8:10, 10:15, 12:20, 16:27, 20:34, 22:36, 24:41, 27:46, 30:50, 36:60 }
+        return boltHeadDia[boltDia]
     
     def boltLength_Calculation(self,boltDia):
         '''
@@ -822,17 +837,17 @@ class MainController(QtGui.QMainWindow):
            |__|    ___|__ 
         
         '''
-        dict = {5:40, 6:40, 8:40, 10:40, 12:40, 16:50, 20:50, 22:50, 24:50, 27:60, 30:65, 36:75 }
+        boltHeadDia = {5:40, 6:40, 8:40, 10:40, 12:40, 16:50, 20:50, 22:50, 24:50, 27:60, 30:65, 36:75 }
        
-        return dict[boltDia]
+        return boltHeadDia[boltDia]
     
     def nutThick_Calculation(self,boltDia):
         '''
         Returns the thickness of the nut depending upon the nut diameter as per IS1363-3(2002)
         '''
-        dict = {5:5, 6:5.65, 8:7.15, 10:8.75, 12:11.3, 16:15, 20:17.95, 22:19.0, 24:21.25, 27:23, 30:25.35, 36:30.65 }
+        nutDia = {5:5, 6:5.65, 8:7.15, 10:8.75, 12:11.3, 16:15, 20:17.95, 22:19.0, 24:21.25, 27:23, 30:25.35, 36:30.65 }
         
-        return dict[boltDia]
+        return nutDia[boltDia]
           
     def create3DColWebBeamWeb(self):
         '''
@@ -994,7 +1009,7 @@ class MainController(QtGui.QMainWindow):
         
     
     def call_3DModel(self,flag): 
-        self.ui.btnSvgSave.setEnabled(True)
+        #self.ui.btnSvgSave.setEnabled(True)
         if self.ui.btn3D.isEnabled():
             self.ui.chkBxBeam.setChecked(QtCore.Qt.Unchecked)
             self.ui.chkBxCol.setChecked(QtCore.Qt.Unchecked)
@@ -1083,7 +1098,7 @@ class MainController(QtGui.QMainWindow):
         status = self.resultObj['Bolt']['status']
         self.call_3DModel(status)
         
-        self.call2D_Drawing()
+        #self.call2D_Drawing()
         
     def create2Dcad(self,connectivity):
         ''' Returns the fuse model of finplate
@@ -1157,147 +1172,30 @@ class MainController(QtGui.QMainWindow):
             self.display.View_Right()
         else:
             pass
-
-    def display2DModel(self, final_model, viewName):
-        
-        #display, start_display, _, _ = self.simpleGUI()
-        #self.display2d,_,_ = self.init_display(backend_str="pyqt4")
-        self.display.EraseAll()      
-
-        self.display.set_bg_gradient_color(255, 255, 255, 255, 255, 255)
-        
-        self.display.SetModeHLR()
-        #self.display.SetModeShaded()
-        # Get Context
-        ais_context = self.display.GetContext().GetObject()
-
-        # Get Prs3d_drawer from previous context
-        drawer_handle = ais_context.DefaultDrawer()
-        drawer = drawer_handle.GetObject()
-        drawer.EnableDrawHiddenLine()
-        
-        hla = drawer.HiddenLineAspect().GetObject()
-        hla.SetWidth(2)
-        hla.SetColor(Quantity_NOC_RED)
-        
-        # increase line width in the current viewer
-        # This is only viewed in the HLR mode (hit 'e' key for instance)
-        
-        line_aspect = drawer.SeenLineAspect().GetObject()
-        line_aspect.SetWidth(2.8)
-        line_aspect.SetColor(Quantity_NOC_BLUE1)
-        
-        self.display.DisplayShape(final_model, update = False)
-        
-        if (viewName == "Front"):
-            self.display.View_Front()
-        elif (viewName == "Top"):
-            self.display.View_Top()
-        elif (viewName == "Right"):
-            self.display.View_Right()
-        elif (viewName == "Left"):
-            self.display.View_Left()
-        else:
-            pass
-            
-        #start_display()
-
-    def call_Frontview(self):
-        
-        '''Displays front view of 2Dmodel
-        '''
-        self.ui.btnSvgSave.setEnabled(False)
-        self.ui.chkBxBeam.setChecked(QtCore.Qt.Unchecked)
-        self.ui.chkBxCol.setChecked(QtCore.Qt.Unchecked)
-        self.ui.chkBxFinplate.setChecked(QtCore.Qt.Unchecked)
-        if self.ui.comboConnLoc.currentText()== "Column web-Beam web":
-            self.display.EraseAll()
-            self.ui.mytabWidget.setCurrentIndex(1)
-            if self.connectivity == None:
-                self.connectivity =  self.create3DColWebBeamWeb()
-            if self.fuse_model == None:
-                self.fuse_model = self.create2Dcad(self.connectivity)
-            self.display2DModel( self.fuse_model,"Front")
-            
-            
-        else:
-            self.display.EraseAll()
-            self.ui.mytabWidget.setCurrentIndex(0)
-            if self.connectivity == None:
-                self.connectivity =  self.create3DColFlangeBeamWeb()
-            if self.fuse_model == None:
-                self.fuse_model = self.create2Dcad(self.connectivity)
-            self.display2DModel( self.fuse_model,"Left") 
-           
-    
              
-    def call2D_Drawing(self):
+    def call2D_Drawing(self,view):
         ''' This routine saves the 2D SVG image as per the connectivity selected
         SVG image created through svgwrite pacage which takes design INPUT and OUTPUT parameters from Finplate GUI.
         '''
+        
+        fileName = QtGui.QFileDialog.getSaveFileName(self,
+                "Save SVG", 'output/finplate/untitle.svg',
+                "SVG files (*.svg)")
+        f = open(fileName,'w')
+        #getSaveFileName(parent='', caption='Save File', dir=None, filter='All Files (*)', accept_label='Save', accept_mode=1, file_mode=0, **kwargs)
+        
         uiObj = self.getuser_inputs()
         
         resultObj = self.resultObj
         dictbeamdata  = self.fetchBeamPara()
         dictcoldata = self.fetchColumnPara()
         finCommonObj = FinCommonData(uiObj,resultObj,dictbeamdata,dictcoldata)
-        finCommonObj.saveToSvg()
+        finCommonObj.saveToSvg(str(fileName),view)
+        
+        f.close()
         
             
-    def call_Topview(self):
-        
-        '''Displays Top view of 2Dmodel
-        '''
-        self.ui.btnSvgSave.setEnabled(False)
-        self.ui.chkBxBeam.setChecked(QtCore.Qt.Unchecked)
-        self.ui.chkBxCol.setChecked(QtCore.Qt.Unchecked)
-        self.ui.chkBxFinplate.setChecked(QtCore.Qt.Unchecked)
-        
-        if self.ui.comboConnLoc.currentText()== "Column web-Beam web":    
-            self.display.EraseAll()
-            self.ui.mytabWidget.setCurrentIndex(1)
-            
-            if self.connectivity == None:
-                self.connectivity =  self.create3DColWebBeamWeb()
-            if self.fuse_model == None:
-                self.fuse_model = self.create2Dcad(self.connectivity)
-            self.display2DModel( self.fuse_model,"Top")
-        else:
-            self.display.EraseAll()
-            self.ui.mytabWidget.setCurrentIndex(0)
-            
-            if self.connectivity == None:
-                self.connectivity =  self.create3DColFlangeBeamWeb()
-            if self.fuse_model == None:
-                self.fuse_model = self.create2Dcad(self.connectivity)
-            self.display2DModel( self.fuse_model,"Top")
-        
-        
-    def call_Sideview(self):
-        
-        '''Displays Side view of the 2Dmodel'
-        '''
-        self.ui.btnSvgSave.setEnabled(False)
-        self.ui.chkBxBeam.setChecked(QtCore.Qt.Unchecked)
-        self.ui.chkBxCol.setChecked(QtCore.Qt.Unchecked)
-        self.ui.chkBxFinplate.setChecked(QtCore.Qt.Unchecked)
-        
-        if self.ui.comboConnLoc.currentText()== "Column web-Beam web": 
-            self.ui.mytabWidget.setCurrentIndex(1)
-            
-            if self.connectivity == None:
-                self.connectivity =  self.create3DColWebBeamWeb()
-            if self.fuse_model == None:
-                self.fuse_model = self.create2Dcad(self.connectivity)
-            self.display2DModel( self.fuse_model,"Right")
-        else:
-            self.ui.mytabWidget.setCurrentIndex(0)
-            
-            if self.connectivity == None:
-                self.connectivity =  self.create3DColFlangeBeamWeb()
-            if self.fuse_model == None:
-                self.fuse_model = self.create2Dcad(self.connectivity)
-            self.display2DModel( self.fuse_model,"Front")
+
             
     def closeEvent(self, event):
         '''
@@ -1374,6 +1272,7 @@ if __name__ == '__main__':
     rawLogger.info('''<link rel="stylesheet" type="text/css" href="Connections/Shear/Finplate/log.css"/>''')
        
     app = QtGui.QApplication(sys.argv)
+    web = QWebView()
     window = MainController()
     window.show()
     sys.exit(app.exec_())
