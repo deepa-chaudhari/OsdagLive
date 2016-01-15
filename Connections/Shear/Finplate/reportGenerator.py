@@ -3,7 +3,7 @@ Created on Dec 10, 2015
 
 @author: deepa
 '''
-<<<<<<< HEAD
+
 '''
 Created on Dec 10, 2015
 
@@ -11,15 +11,10 @@ Created on Dec 10, 2015
 '''
 import time
 
-def save_html(): # (outObj, uiObj, dictBeamData, dictColData)
-    fileName = '/home/deepa/finPlateReport.html'
-=======
-import time
+
 
 def save_html(outObj, uiObj, dictBeamData, dictColData):
     fileName = 'output/finplate/finPlateReport.html'
->>>>>>> origin/master
-    # /home/deepa/EclipseWorkspace/OsdagLive/Connections/Shear/Finplate/output
     f = open(fileName,'w')
     f.write(t('html'))
     f.write(t('head'))
@@ -129,29 +124,27 @@ def save_html(outObj, uiObj, dictBeamData, dictColData):
     rstr += t('/tr')
     
     row = [1, "Connectivity", "Column Web Beam Web"]
-<<<<<<< HEAD
+
     rstr += t('tr')
     rstr += t('td class="header2"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td class="header2 "') + row[2] + t('/td')
     rstr += t('/tr')
     
     row = [1, "Beam Connection", "Bolted"]
-=======
->>>>>>> origin/master
+
     rstr += t('tr')
     rstr += t('td class="header2"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td class="header2 "') + row[2] + t('/td')
     rstr += t('/tr')
     
-<<<<<<< HEAD
-=======
+
     row = [1, "Beam Connection", "Bolted"]
     rstr += t('tr')
     rstr += t('td class="header2"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td class="header2 "') + row[2] + t('/td')
     rstr += t('/tr')
     
->>>>>>> origin/master
+
     row = [1, "Column Connection", "Welded"]
     rstr += t('tr')
     rstr += t('td class="header2"') + space(row[0]) + row[1] + t('/td')
@@ -337,13 +330,13 @@ def save_html(outObj, uiObj, dictBeamData, dictColData):
     #rstr += t('td class=" viewtbl "') + row[2] + t('/td')
     rstr += t('/tr')
     
-    row = [0, '<img src="webconnWBg.png" width = "600">', '<img src="finTop.png" width = "600"> ']
+    row = [0, '<img src="webconnWBg.png" width = "600">', '<object type="image/svg+xml" data="finTop.svg"width ="400"></object>']
     rstr += t('tr')
     rstr += t('td  align="center" class=" viewtbl"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td  align="center" class=" viewtbl"') + row[2] + t('/td')
     rstr += t('/tr')
     
-    row = [0, '<img src="finSide.png" width = "300"> ', '<img src="finfront.png" width = "600"> ']
+    row = [0, '<img src="finSide.svg" width="300">', '<img src="finfront.svg" width="580" >']
     rstr += t('tr')
     rstr += t('td align="center" class=" viewtbl"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td align="center" class=" viewtbl "') + row[2] + t('/td')
@@ -352,24 +345,9 @@ def save_html(outObj, uiObj, dictBeamData, dictColData):
     rstr += t('/table')
     
     rstr += t('table')
-<<<<<<< HEAD
-    row = [0, "Views", " "]
-    rstr += t('tr')
-    rstr += t('td class=" viewtbl"') + space(row[0]) + row[1] + t('/td')
-    rstr += t('td class=" viewtbl "') + row[2] + t('/td')
-    rstr += t('/tr')
+
     
-    row = [0, "1", " 1st "]
-    rstr += t('tr')
-    rstr += t('td class=" viewtbl"') + space(row[0]) + row[1] + t('/td')
-    rstr += t('td class=" viewtbl"') + row[2] + t('/td')
-    rstr += t('/tr')
-    
-    row = [0, "2", "2nd "]
-    rstr += t('tr')
-    rstr += t('td class=" viewtbl"') + space(row[0]) + row[1] + t('/td')
-    rstr += t('td class=" viewtbl "') + row[2] + t('/td')
-=======
+
     row = [0, "Design Check", " "]
     rstr += t('tr')
     rstr += t('td colspan="4" class="header1_1"') + space(row[0]) + row[1] + t('/td')
@@ -510,12 +488,11 @@ def save_html(outObj, uiObj, dictBeamData, dictColData):
     rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
     rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
     rstr += t('td class="header2"') + space(row[0]) + row[4] + t('/td')
->>>>>>> origin/master
+
     rstr += t('/tr')
     
     rstr += t('/table')
-    
-<<<<<<< HEAD
+
     rstr += t('table')
     row = [0, "Design Check", " "]
     rstr += t('tr')
@@ -644,8 +621,6 @@ def save_html(outObj, uiObj, dictBeamData, dictColData):
     
     rstr += t('/table')
     
-=======
->>>>>>> origin/master
     
     f.write(rstr)
     f.write(t('/body'))        
@@ -663,6 +638,4 @@ def t(n):
 def quote(m):
     return '"' + m + '"'
 
-# if __name__ == '__main__':
-#     save_html()
-#     print "hiiiiii"
+
