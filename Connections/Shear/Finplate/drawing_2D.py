@@ -61,10 +61,18 @@ class FinCommonData(object):
         
         :param dwg :
         :type dwg : svgwrite (obj) ( Container for all svg elements)
+        
         '''
-        smarker = dwg.marker(insert=(-8,0), size =(8,6), orient="auto")
-        smarker.add(dwg.polyline([(-2.5,0), (0,3), (-8,0), (0,-3)], fill='black'))
+        
+        smarker = dwg.marker(insert=(8,3), size=(30,30),orient="auto")
+        
+        smarker.add(dwg.path(d =" M0,0 L3,3 L0,6 L8,3 L0,0", fill='black'))
         dwg.defs.add(smarker)
+        
+        #smarker = dwg.marker(insert=(-8,0), size =(30,20), orient="auto")
+        #smarker.add(dwg.polyline([(-2.5,0), (0,3), (-8,0), (0,-3)], fill='black'))
+        #smarker.add(dwg.polyline([(0,0), (3,3), (0,6), (8,3),(0,0)], fill='black'))
+        
         return smarker
     
     
@@ -76,11 +84,24 @@ class FinCommonData(object):
         :type dwg : svgwrite  ( Container for all svg elements)
         
         '''
-        emarker = dwg.marker(insert=(8,0), size =(8,6), orient="auto")
-        emarker.add(dwg.polyline([(2.5,0), (0,3), (8,0), (0,-3)], fill='black'))
+        #emarker = dwg.marker(insert=(8,0), size =(30,20), orient="auto")
+        emarker = dwg.marker(insert=(0,3), size=(30,20),orient="auto")
+        #emarker.add(dwg.polyline([(2.5,0), (0,3), (8,0), (0,-3)], fill='black'))
+        #emarker.add(dwg.polyline([(0,3), (8,6), (5,3), (8,0),(0,3)], fill='black'))
+        #emarker.add(dwg.path(d="M2,2 L2,13 L8,7 L2,2"", fill='red'))
+        emarker.add(dwg.path(d =" M0,3 L8,6 L5,3 L8,0 L0,3", fill='black'))
         dwg.defs.add(emarker)
         return emarker
     
+    def drawArrow(self,line,s_arrow,e_arrow):
+        line['marker-start'] = s_arrow.get_funciri()
+        line['marker-end'] = e_arrow.get_funciri()
+
+    def drawStartArrow(self,line,s_arrow):
+        line['marker-start'] = s_arrow.get_funciri()
+
+    def drawEndArrow(self,line,e_arrow):
+        line['marker-end'] = e_arrow.get_funciri()
     
     def drawFaintLine(self,ptOne,ptTwo,dwg):
         '''
@@ -131,8 +152,8 @@ class FinCommonData(object):
         Q1 = pt1 + params["offset"] * normalUnitVec
         Q2 = pt2 + params["offset"] * normalUnitVec
         line = dwg.add(dwg.line(Q1, Q2).stroke('black', width = 2.5, linecap = 'square'))
-        self.drawStartArrow(line, smarker)
-        self.drawEndArrow(line, emarker)
+        self.drawStartArrow(line, emarker)
+        self.drawEndArrow(line, smarker)
 
         Q12mid = 0.5 * (Q1 + Q2)
         txtPt = Q12mid + params["textoffset"] * normalUnitVec
@@ -170,6 +191,8 @@ class FinCommonData(object):
         :type params["arrowlen"]: float (Size of the arrow)
         '''
         
+        #smarker = self.addSMarker(dwg)
+        #emarker = self.addEMarker(dwg)  
         smarker = self.addSMarker(dwg)
         emarker = self.addEMarker(dwg)  
         
@@ -188,21 +211,15 @@ class FinCommonData(object):
         B3 = ptB + params["arrowlen"]* uUnit
         
         line = dwg.add(dwg.line(A3, ptA).stroke('black', width = 2.5, linecap = 'square'))
-        self.drawEndArrow(line, emarker)
-        line = dwg.add(dwg.line(B3, ptB).stroke('black', width = 2.5, linecap = 'square'))
-        self.drawEndArrow(line, emarker)
+        self.drawEndArrow(line, smarker)
+        #self.drawStartArrow(line, emarker)
+        line = dwg.add(dwg.line(B3, ptB).stroke('black', width = 2.5, linecap = 'butt'))
+        self.drawEndArrow(line, smarker)
+        #self.drawStartArrow(line, emarker)
         txtPt = B3 + params["textoffset"] * uUnit
         dwg.add(dwg.text(text, insert=(txtPt), fill='black',font_family = "sans-serif",font_size = 28))
         
-    def drawArrow(self,line,s_arrow,e_arrow):
-        line['marker-start'] = s_arrow.get_funciri()
-        line['marker-end'] = e_arrow.get_funciri()
-
-    def drawStartArrow(self,line,s_arrow):
-        line['marker-start'] = s_arrow.get_funciri()
-
-    def drawEndArrow(self,line,e_arrow):
-        line['marker-end'] = e_arrow.get_funciri()
+    
         
         
     def drawOrientedArrow(self, dwg, pt, theta, orientation, offset, textUp,textDown):
@@ -283,8 +300,10 @@ class FinCommonData(object):
         line = dwg.add(dwg.polyline(points=[p1, p2, p3], fill= 'none', stroke='black', stroke_width = 2.5))
         
         
-        smarker = self.addSMarker(dwg)
-        self.drawStartArrow(line, smarker)
+        #smarker = self.addSMarker(dwg)
+        emarker = self.addEMarker(dwg)
+        #self.drawStartArrow(line, smarker)
+        self.drawStartArrow(line, emarker)
         
         dwg.add(dwg.text(textUp, insert=(txtPtUp), fill='black',font_family = "sans-serif",font_size = 28))
         dwg.add(dwg.text(textDown, insert=(txtPtDwn), fill='black',font_family = "sans-serif",font_size = 28))
@@ -306,15 +325,30 @@ class FinCommonData(object):
                 fin2DFront.callCFBWfront(fileName)
             elif view == "Side":
                 fin2DSide.callCFBWSide(fileName)
-            else:
+            elif view == "Top":
                 fin2DTop.callCFBWTop(fileName)
+            else:
+                fileName = 'output/finplate/finFront.svg'
+                fin2DFront.callCFBWfront(fileName)
+                fileName = 'output/finplate/finSide.svg'
+                fin2DSide.callCFBWSide(fileName)
+                fileName = 'output/finplate/finTop.svg'
+                fin2DTop.callCFBWTop(fileName)
+                
             
         elif self.connectivity == 'Column web-Beam web':
             if view == "Front":
                 fin2DFront.callCWBWfront(fileName)
             elif view =="Side":
                 fin2DSide.callCWBWSide(fileName)
+            elif view == "Top":
+                fin2DTop.callCWBWTop(fileName)
             else:
+                fileName = 'output/finplate/finFront.svg'
+                fin2DFront.callCWBWfront(fileName)
+                fileName = 'output/finplate/finSide.svg'
+                fin2DSide.callCWBWSide(fileName)
+                fileName = 'output/finplate/finTop.svg'
                 fin2DTop.callCWBWTop(fileName)
             
         else:
@@ -1113,7 +1147,7 @@ class Fin2DCreatorTop(object):
     def callCWBWTop(self,fileName):
         '''
         '''
-        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('-30 -300 800 800'))
+        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('-30 -300 800 850'))
         
         dwg.add(dwg.polyline(points=[(self.A),(self.B),(self.C),(self.D),(self.E),(self.F),(self.G),(self.H),(self.I),(self.J),(self.K),(self.L),(self.A)], stroke='blue', fill='none', stroke_width=2.5))
         dwg.add(dwg.rect(insert=(self.A1), size=(self.dataObj.beam_L, self.dataObj.beam_B),fill = 'none', stroke='blue', stroke_width=2.5))
@@ -1174,12 +1208,12 @@ class Fin2DCreatorTop(object):
         self.dataObj.drawOrientedArrow(dwg, beam_pt, theta, "NE", offset, textUp, textDown)
         
         # column  Information
-        col_pt = self.H + self.dataObj.col_T/2 * np.array([0,-1])
-        theta = 0.5
-        offset = 0.5 #self.dataObj.beam_B /2 + 100
+        col_pt = self.H 
+        theta = 45
+        offset = 250
         textUp = "Column " + self.dataObj.col_Designation
         textDown = " " 
-        self.dataObj.drawOrientedArrow(dwg, col_pt, theta, "SW", offset, textUp, textDown)
+        self.dataObj.drawOrientedArrow(dwg, col_pt, theta, "SE", offset, textUp, textDown)
         
         # Plate  Information
         plt_pt = self.P3 
@@ -1199,30 +1233,30 @@ class Fin2DCreatorTop(object):
         self.dataObj.drawOrientedArrow(dwg, bltPt, theta, "NE", offset, textUp,textDown)
         
         # Weld Information
-        weldPt = self.P
-        theta = 40
-        offset = self.dataObj.col_tw + self.dataObj.col_B/2 + 20
+        weldPt = self.Y
+        theta = 45
+        offset = self.dataObj.D_col* 3/4 + 50
         textUp = "          z " + str(int(self.dataObj.weld_thick)) + " mm"
         textDown = u"\u25C1"
-        self.dataObj.drawOrientedArrow(dwg, weldPt, theta, "NW", offset, textUp, textDown)
+        self.dataObj.drawOrientedArrow(dwg, weldPt, theta, "SE", offset, textUp, textDown)
         
         # Gap Informatoin
-        ptG1 = self.E + 50 * np.array([0,1])
+        ptG1 = self.D + 250 * np.array([0,-1])
         ptG2 = ptG1 + self.dataObj.gap * np.array([1,0]) 
         offset = 100
         params = {"offset": offset, "textoffset": 10, "lineori": "left", "endlinedim":10,"arrowlen":50}
         self.dataObj.draw_dimension_innerArrow(dwg, ptG1, ptG2, str(self.dataObj.gap) + " mm", params)
             # Draw Faint Lines to representation of Gap distance #
-        ptA = self.E
-        ptB = ptA + (85) * np.array([0,1])
+        ptA = self.D
+        ptB = ptA + (285) * np.array([0,-1])
         self.dataObj.drawFaintLine(ptA,ptB,dwg)
-        ptC = self.A4
-        ptD = ptC + (100) * np.array([0,1])
+        ptC = self.A1
+        ptD = ptC + (300) * np.array([0,-1])
         self.dataObj.drawFaintLine(ptC,ptD,dwg)
         
         # 2D view name
-        ptx =  self.G + (self.dataObj.D_col + 30)* np.array([0,1])
-        dwg.add(dwg.text('Top view', insert=(ptx), fill='black',font_family = "sans-serif",font_size = 30)) 
+        ptx =  self.G + (80)* np.array([1,0]) + (self.dataObj.D_col + 130)* np.array([0,1])
+        dwg.add(dwg.text('Top view', insert=(ptx), fill='black',font_family = "sans-serif",font_size = 32)) 
         
         dwg.save()
         print"$$$$$$$$$ Saved Column Web Beam Web Top $$$$$$$$$$$"

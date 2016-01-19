@@ -144,6 +144,7 @@ class MainController(QtGui.QMainWindow):
         self.fuse_model = None
         self.disableViewButtons()
         self.resultObj = None
+        self.uiObj = None
         
     def showFontDialogue(self):
         
@@ -421,6 +422,7 @@ class MainController(QtGui.QMainWindow):
     
     def save_design(self):
         
+        self.call2D_Drawing("All")
         self.outdict = self.outputdict()
         self.inputdict = self.getuser_inputs()
         #self.save_yaml(self.outdict,self.inputdict)
@@ -760,6 +762,7 @@ class MainController(QtGui.QMainWindow):
                 osdagDisplayShape(self.display,nutbolt,color = Quantity_NOC_SADDLEBROWN,update = True)
             #self.display.DisplayShape(self.connectivity.nutBoltArray.getModels(), color = Quantity_NOC_SADDLEBROWN, update=True)
         elif component == "Model":
+            self.display.View_Iso()
             osdagDisplayShape(self.display, self.connectivity.columnModel, update=True)
             osdagDisplayShape(self.display, self.connectivity.beamModel, material = Graphic3d_NOT_2D_ALUMINUM, update=True)
             osdagDisplayShape(self.display, self.connectivity.weldModelLeft, color = 'red', update = True)
@@ -1083,10 +1086,12 @@ class MainController(QtGui.QMainWindow):
         
         #self.set_designlogger()
         # Getting User Inputs.
-        uiObj = self.getuser_inputs()
+        self.uiObj = self.getuser_inputs()
+        
         
         # FinPlate Design Calculations. 
-        self.resultObj = finConn(uiObj)
+        self.resultObj = finConn(self.uiObj)
+        
         
         # Displaying Design Calculations To Output Window
         self.display_output(self.resultObj)
@@ -1098,7 +1103,7 @@ class MainController(QtGui.QMainWindow):
         status = self.resultObj['Bolt']['status']
         self.call_3DModel(status)
         
-        #self.call2D_Drawing()
+       
         
     def create2Dcad(self,connectivity):
         ''' Returns the fuse model of finplate
@@ -1177,24 +1182,38 @@ class MainController(QtGui.QMainWindow):
         ''' This routine saves the 2D SVG image as per the connectivity selected
         SVG image created through svgwrite pacage which takes design INPUT and OUTPUT parameters from Finplate GUI.
         '''
+        if view == "All":
+            fileName = ''
+            self.callDesired_View(fileName, view)
+            
+            self.display.set_bg_gradient_color(255,255,255,255,255,255)
+            self.display.ExportToImage('output/finplate/3D_Model.png')
+            
+        else:
+            
+            fileName = QtGui.QFileDialog.getSaveFileName(self,
+                    "Save SVG", 'output/finplate/untitle.svg',
+                    "SVG files (*.svg)")
+            f = open(fileName,'w')
+            
+            self.callDesired_View(fileName, view)
+           
+            f.close()
         
-        fileName = QtGui.QFileDialog.getSaveFileName(self,
-                "Save SVG", 'output/finplate/untitle.svg',
-                "SVG files (*.svg)")
-        f = open(fileName,'w')
-        #getSaveFileName(parent='', caption='Save File', dir=None, filter='All Files (*)', accept_label='Save', accept_mode=1, file_mode=0, **kwargs)
+    def callDesired_View(self,fileName,view):
         
-        uiObj = self.getuser_inputs()
-        
+        uiObj = self.uiObj
         resultObj = self.resultObj
         dictbeamdata  = self.fetchBeamPara()
         dictcoldata = self.fetchColumnPara()
         finCommonObj = FinCommonData(uiObj,resultObj,dictbeamdata,dictcoldata)
         finCommonObj.saveToSvg(str(fileName),view)
         
-        f.close()
+      
+   
         
-            
+        
+
 
             
     def closeEvent(self, event):
