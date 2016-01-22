@@ -719,7 +719,7 @@ class Fin2DCreatorFront(object):
         theta = 45
         offset = self.dataObj.col_B 
         textUp = "          z " + str(int(self.dataObj.weld_thick)) + " mm"
-        textDown = u"\u25C1"
+        textDown = ""#u"\u25C1"
         self.dataObj.drawOrientedArrow(dwg, weldPt, theta, "NW", offset, textUp, textDown)
         
         # Bolt Information
@@ -1121,7 +1121,7 @@ class Fin2DCreatorTop(object):
         theta = 40
         offset = self.dataObj.weld_thick + self.dataObj.plate_thick + self.dataObj.beam_B /2 + 80
         textUp = "          z " + str(int(self.dataObj.weld_thick)) + " mm"
-        textDown = u"\u25C1"
+        textDown = ""#u"\u25C1"
         self.dataObj.drawOrientedArrow(dwg, weldPt, theta, "NW", offset, textUp, textDown)
 
         # Gap Informatoin
@@ -1237,7 +1237,7 @@ class Fin2DCreatorTop(object):
         theta = 45
         offset = self.dataObj.D_col* 3/4 + 50
         textUp = "          z " + str(int(self.dataObj.weld_thick)) + " mm"
-        textDown = u"\u25C1"
+        textDown = ""#u"\u25C1"
         self.dataObj.drawOrientedArrow(dwg, weldPt, theta, "SE", offset, textUp, textDown)
         
         # Gap Informatoin
@@ -1320,7 +1320,7 @@ class Fin2DCreatorSide(object):
     def callCWBWSide(self,fileName):
         '''
         '''
-        dwg = svgwrite.Drawing(fileName,size=('100%', '100%'), viewBox=('0 0 600 1050'))
+        dwg = svgwrite.Drawing(fileName,size=('100%', '100%'), viewBox=('-10 -10 600 1050'))
         dwg.add(dwg.rect(insert=(self.A), size=(self.dataObj.D_col, self.dataObj.col_L),fill = 'none', stroke='blue', stroke_width=2.5))
         dwg.add(dwg.line((self.C),(self.H)).stroke('blue',width = 2.5,linecap = 'square'))
         dwg.add(dwg.line((self.B),(self.G)).stroke('blue',width = 2.5,linecap = 'square'))
@@ -1396,7 +1396,7 @@ class Fin2DCreatorSide(object):
         theta = 45
         offset = self.dataObj.weld_thick + self.dataObj.plate_thick + self.dataObj.beam_B /2 + 80
         textUp = "          z " + str(int(self.dataObj.weld_thick)) + " mm"
-        textDown = u"\u25C1"
+        textDown = ""#u"\u25C1"
         self.dataObj.drawOrientedArrow(dwg, weldPt, theta, "NE", offset, textUp, textDown)
         
         # 2D view name
@@ -1409,7 +1409,7 @@ class Fin2DCreatorSide(object):
     def callCFBWSide(self,fileName):
         '''
         '''
-        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('0 0 600 1050'))
+        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('-10 -10 600 1050'))
         dwg.add(dwg.rect(insert=(self.FA), size=(self.dataObj.col_B, self.dataObj.col_L),fill = 'none', stroke='blue', stroke_width=2.5))
         dwg.add(dwg.polyline(points=[(self.FA1),(self.FA2),(self.FA3),(self.FA4),(self.FA5),(self.FA6),(self.FA7),(self.FA8),(self.FA9),(self.FA10),(self.FA11),(self.FA12),(self.FA1)], stroke='blue', fill='none', stroke_width=2.5))
         
@@ -1481,7 +1481,7 @@ class Fin2DCreatorSide(object):
         theta = 45
         offset = self.dataObj.weld_thick + self.dataObj.plate_thick + self.dataObj.beam_B /2 + 80
         textUp = "          z " + str(int(self.dataObj.weld_thick)) + " mm"
-        textDown = u"\u25C1"
+        textDown = "" #u"\u25C1"
         self.dataObj.drawOrientedArrow(dwg, weldPt, theta, "NE", offset, textUp, textDown)
         
         # 2D view name

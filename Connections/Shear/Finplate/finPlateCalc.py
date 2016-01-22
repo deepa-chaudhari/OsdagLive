@@ -16,7 +16,7 @@ Design a web side plate connection (welded to the column and site bolted to the 
 to factored loads. The connection is to the flange of an ISSC 200 column.
 
 '''
-import cmath;
+import math;
 import math
 import sys;
 
@@ -62,8 +62,8 @@ module_setup()
 #FUNCTION DEFINITIONS---------------
 #BOLT: determination of shear capacity = fu * n * A / (root(3) * Y)
 def bolt_shear(dia, n, fu):
-    A = cmath.pi * dia * dia * 0.25 * 0.78; #threaded area = 0.78 x shank area
-    root3 = cmath.sqrt(3);
+    A = math.pi * dia * dia * 0.25 * 0.78; #threaded area = 0.78 x shank area
+    root3 = math.sqrt(3);
     Vs = fu * n * A / (root3 * 1.25 * 1000);
     Vs = round(Vs.real,3);
     return Vs
@@ -104,6 +104,7 @@ def finConn(uiObj):
               
     weld_t = uiObj["Weld"]['Size (mm)']
     weld_fu = 410
+    kb = 0.5
 
     bolt_planes = 1 
     dictbeamdata  = get_beamdata(beam_sec)
@@ -217,7 +218,7 @@ def finConn(uiObj):
     else:
         min_end_dist = min_end_dist;
         
-    max_edge_dist = int((12 * t_thinner * cmath.sqrt(250/beam_fy)).real)-1;
+    max_edge_dist = int((12 * t_thinner * math.sqrt(250/beam_fy)).real)-1;
 
     # Determine single or double line of bolts
     
@@ -409,6 +410,23 @@ def finConn(uiObj):
     outputObj['Plate']['momentcapacity'] = moment_capacity
     outputObj['Plate']['height'] = float(web_plate_l)
     outputObj['Plate']['width'] = float(web_plate_w)
+    
+    
+    # Parameters dictionary for design report
+    
+    outputObj['Bolt']['bolt_fu'] = bolt_fu
+    outputObj['Bolt']['bolt_dia'] = bolt_dia
+    outputObj['Bolt']['k_b'] = kb
+    outputObj['Bolt']['beam_w_t'] = beam_w_t
+    outputObj['Bolt']['web_plate_t'] = web_plate_t
+    outputObj['Bolt']['beam_fu'] = beam_fu
+    outputObj['Bolt']['shearforce'] = shear_load
+    outputObj['Bolt']['dia_hole'] = dia_hole
+    
+    outputObj['Plate']['web_plate_fy'] = web_plate_fy
+    
+    outputObj['Weld']['weld_fu'] = weld_fu
+    outputObj['Weld']['effectiveWeldlength'] = weld_l
     
     
     #return outputObj

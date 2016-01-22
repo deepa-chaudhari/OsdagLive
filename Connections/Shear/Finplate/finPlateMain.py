@@ -423,8 +423,8 @@ class MainController(QtGui.QMainWindow):
     def save_design(self):
         
         self.call2D_Drawing("All")
-        self.outdict = self.outputdict()
-        self.inputdict = self.getuser_inputs()
+        self.outdict = self.resultObj#self.outputdict()
+        self.inputdict = self.uiObj#self.getuser_inputs()
         #self.save_yaml(self.outdict,self.inputdict)
         dictBeamData  = self.fetchBeamPara()
         dictColData  = self.fetchColumnPara()
@@ -858,7 +858,6 @@ class MainController(QtGui.QMainWindow):
         
         '''
         uiObj = self.getuser_inputs()
-        print uiObj
         resultObj = self.resultObj
         
         dictbeamdata  = self.fetchBeamPara()
@@ -933,8 +932,8 @@ class MainController(QtGui.QMainWindow):
         Creating 3d cad model with column flange beam web connection
         
         '''
-        uiObj = self.getuser_inputs()
-        resultObj = finConn(uiObj)
+        uiObj = self.uiObj#self.getuser_inputs()
+        resultObj = self.resultObj#finConn(uiObj)
         
         dictbeamdata  = self.fetchBeamPara()
         fillet_length = resultObj['Plate']['height']
@@ -1209,12 +1208,6 @@ class MainController(QtGui.QMainWindow):
         finCommonObj = FinCommonData(uiObj,resultObj,dictbeamdata,dictcoldata)
         finCommonObj.saveToSvg(str(fileName),view)
         
-      
-   
-        
-        
-
-
             
     def closeEvent(self, event):
         '''
