@@ -39,12 +39,16 @@ from PyQt4.QtWebKit import *
 from PyQt4.Qt import QPrinter
 # Developed by deepa
 from reportGenerator import *
+from Connections.Shear.Finplate.ModelUtils import getGpPt
+##### Testing imports
+from OCC.BRepPrimAPI import BRepPrimAPI_MakeSphere
 
 class MainController(QtGui.QMainWindow):
     
     closed = pyqtSignal()
-    def __init__(self):
+    def __init__(self,web):
         QtGui.QMainWindow.__init__(self)
+        self.web = web
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         
@@ -406,8 +410,7 @@ class MainController(QtGui.QMainWindow):
     
     def htmlToPdf(self):
         
-        global web 
-        web.load(QtCore.QUrl("file:///home/deepa/EclipseWorkspace/OsdagLive/output/finplate/finPlateReport.html"))
+        self.web.load(QtCore.QUrl("file:///home/deepa/EclipseWorkspace/OsdagLive/output/finplate/finPlateReport.html"))
         printer = QtGui.QPrinter(QtGui.QPrinter.HighResolution)
         printer.setPageSize(QPrinter.A4)
         printer.setOutputFormat(QPrinter.PdfFormat)
@@ -415,9 +418,9 @@ class MainController(QtGui.QMainWindow):
         printer.setOutputFileName("output/finplate/designReport.pdf")
         
         def convertIt():
-            web.print_(printer)
+            self.web.print_(printer)
           
-        QtCore.QObject.connect(web, QtCore.SIGNAL("loadFinished(bool)"), convertIt)
+        QtCore.QObject.connect(self.web, QtCore.SIGNAL("loadFinished(bool)"), convertIt)
     
     
     def save_design(self):
@@ -437,7 +440,7 @@ class MainController(QtGui.QMainWindow):
         
     def save_log(self):
         
-        fileName,pat =QtGui.QFileDialog.getSaveFileNameAndFilter(self,"Save File As","/home/deepa/SaveMessages","Text files (*.txt)")
+        fileName,pat =QtGui.QFileDialog.getSaveFileNameAndFilter(self,"Save File As","/home/deepa/","Text files (*.txt)")
         return self.save_file(fileName+".txt")
           
     def save_file(self, fileName):
@@ -1029,6 +1032,11 @@ class MainController(QtGui.QMainWindow):
                 self.fuse_model = None
 
             self.display3Dmodel("Model")
+            columnOri = self.connectivity.column.secOrigin
+            gpcolOri = getGpPt(columnOri)
+            my_testSphere = BRepPrimAPI_MakeSphere(gpcolOri,3.5).Shape()
+            self.display.DisplayShape(my_testSphere,color = 'red',update = True)
+            
             # beamOrigin = self.connectivity.beam.secOrigin + self.connectivity.beam.t/2 * (-self.connectivity.beam.uDir)
             # gpBeamOrigin = getGpPt(beamOrigin)
             # my_sphere2 = BRepPrimAPI_MakeSphere(gpBeamOrigin,1).Shape()
@@ -1259,7 +1267,8 @@ def launchFinPlateController(osdagMainWindow):
     rawLogger.info('''<link rel="stylesheet" type="text/css" href="Connections/Shear/Finplate/log.css"/>''')
      
     #app = QtGui.QApplication(sys.argv)
-    window = MainController()
+    web = QWebView()
+    window = MainController(web)
     osdagMainWindow.hide()
      
     window.show()
@@ -1285,7 +1294,7 @@ if __name__ == '__main__':
        
     app = QtGui.QApplication(sys.argv)
     web = QWebView()
-    window = MainController()
+    window = MainController(web)
     window.show()
     sys.exit(app.exec_())
 

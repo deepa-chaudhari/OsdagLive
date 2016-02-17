@@ -20,14 +20,13 @@ def save_html(outObj, uiObj, dictBeamData, dictColData):
     f = open(fileName,'w')
     f.write(t('html'))
     f.write(t('head'))
-    f.write(t('''link rel="stylesheet" type="text/css" href="mystyle.css"'''))
+    f.write(t('''link rel="stylesheet" type="text/css" P.breakhere {page-break-before: always} href="mystyle.css"'''))
     f.write(t('/head'))
     f.write(t('body')) 
     f.write(t('div id="logodiv"'))
-    f.write(t('img src="osdag_logo.png" style="width:100px;height:100px;" '))
-  
-
-    f.write(t('img src="osdagname.png"  style="width:300px;height:50px;"'))
+    #f.write(t('img src="osdag_logo.png" style="width:100px;height:100px;" '))
+    #f.write(t('img src="osdagname.png"  style="width:300px;height:50px;"'))
+    f.write(t('img src="Osdag_header.png"  style="width:300px;height:80px;"'))
     f.write(t('/div'))    
     f.write(t('div id="dateDiv"'))
     f.write('Date:'+ time.strftime("%d/%m/%Y"))
@@ -389,6 +388,18 @@ def save_html(outObj, uiObj, dictBeamData, dictColData):
     
     rstr += t('/table')
     
+#     rstr += t('p style="page-break-after:always;"')
+#     rstr += t('/p')
+    rstr +=t('footer')
+#     rstr += t('p>Posted by: Deepa</p')
+#     rstr += t('p>Posted by: Deepa</p')
+#     rstr += t('p>Posted by: Deepa</p')
+#     rstr += t('p>Posted by: Deepa</p')
+#     rstr += t('p>Posted by: Deepa</p')
+#     rstr += t('p>Posted by: Deepa</p')
+    rstr += t('/footer')
+    rstr += t('P CLASS="breakhere"')
+    
     rstr += t('table border="1"')
     row = [0, "Views", " "]
     rstr += t('tr')
@@ -409,10 +420,13 @@ def save_html(outObj, uiObj, dictBeamData, dictColData):
     rstr += t('/tr')
     
     rstr += t('/table')
-    
+#     rstr += t('p style="page-break-after:always;"')
+#     rstr += t('/p')
     rstr += t('table')
+    rstr += t('P CLASS="breakhere"')
 
     row = [0, "Design Check", " "]
+    
     rstr += t('tr')
     rstr += t('td colspan="4" class="header1_1"') + space(row[0]) + row[1] + t('/td')
     rstr += t('/tr')
