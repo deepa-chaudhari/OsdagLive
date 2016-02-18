@@ -713,6 +713,7 @@ class MainController(QtGui.QMainWindow):
         self.ui.modelTab = qtViewer3d(self)
         #self.ui.model2dTab = qtViewer3d(self)
         
+        
         self.setWindowTitle("Osdag-%s 3d viewer ('%s' backend)" % (VERSION, USED_BACKEND))
         self.ui.mytabWidget.resize(size[0], size[1])
         self.ui.mytabWidget.addTab(self.ui.modelTab,"")
@@ -745,9 +746,10 @@ class MainController(QtGui.QMainWindow):
         self.display.EraseAll()
         
         self.display.SetModeShaded()
+        
         display.DisableAntiAliasing()
-        self.display.set_bg_gradient_color(23,1,32,23,1,32)
-        #self.display.set_bg_gradient_color(255,255,255,255,255,255)
+        #self.display.set_bg_gradient_color(23,1,32,23,1,32)
+        self.display.set_bg_gradient_color(255,255,255,255,255,255)
         self.display.View_Front()
         self.display.View_Iso()
         self.display.FitAll()
@@ -774,7 +776,7 @@ class MainController(QtGui.QMainWindow):
             nutboltlist = self.connectivity.nutBoltArray.getModels()
             for nutbolt in nutboltlist:
                 osdagDisplayShape(self.display,nutbolt,color = Quantity_NOC_SADDLEBROWN,update = True)
-            #self.display.DisplayShape(self.connectivity.nutBoltArray.getModels(), color = Quantity_NOC_SADDLEBROWN, update=True)
+            ##self.display.DisplayShape(self.connectivity.nutBoltArray.getModels(), color = Quantity_NOC_SADDLEBROWN, update=True)
         
     def fetchBeamPara(self):
         beam_sec = self.ui.combo_Beam.currentText()
@@ -1032,11 +1034,6 @@ class MainController(QtGui.QMainWindow):
                 self.fuse_model = None
 
             self.display3Dmodel("Model")
-            columnOri = self.connectivity.column.secOrigin
-            gpcolOri = getGpPt(columnOri)
-            my_testSphere = BRepPrimAPI_MakeSphere(gpcolOri,3.5).Shape()
-            self.display.DisplayShape(my_testSphere,color = 'red',update = True)
-            
             # beamOrigin = self.connectivity.beam.secOrigin + self.connectivity.beam.t/2 * (-self.connectivity.beam.uDir)
             # gpBeamOrigin = getGpPt(beamOrigin)
             # my_sphere2 = BRepPrimAPI_MakeSphere(gpBeamOrigin,1).Shape()
