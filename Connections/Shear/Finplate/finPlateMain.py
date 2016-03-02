@@ -54,6 +54,7 @@ class MainController(QtGui.QMainWindow):
         
         self.ui.combo_Beam.addItems(get_beamcombolist())
         self.ui.comboColSec.addItems(get_columncombolist())
+        # Check for column "D" and beam "B"
         
         self.ui.inputDock.setFixedSize(310,710)
         
@@ -67,6 +68,7 @@ class MainController(QtGui.QMainWindow):
         
         self.ui.comboConnLoc.currentIndexChanged[str].connect(self.setimage_connection)
         self.retrieve_prevstate()
+        self.ui.comboColSec.currentIndexChanged[str].connect(self.checkBeam_B)
         self.ui.btnInput.clicked.connect(lambda: self.dockbtn_clicked(self.ui.inputDock))
         self.ui.btnOutput.clicked.connect(lambda: self.dockbtn_clicked(self.ui.outputDock))
         
@@ -97,6 +99,11 @@ class MainController(QtGui.QMainWindow):
         self.ui.txtFy.editingFinished.connect(lambda: self.check_range(self.ui.txtFy,self.ui.lbl_fy, minfyVal, maxfyVal))
        
         ##### MenuBar #####
+        # File Menu
+       
+        self.ui.actionSave_Front_View.triggered.connect(lambda:self.call2D_Drawing("Front"))
+        self.ui.actionSave_Side_View.triggered.connect(lambda:self.call2D_Drawing("Side"))
+        self.ui.actionSave_Top_View.triggered.connect(lambda:self.call2D_Drawing("Top"))
         self.ui.actionQuit_fin_plate_design.setShortcut('Ctrl+Q')
         self.ui.actionQuit_fin_plate_design.setStatusTip('Exit application')
         self.ui.actionQuit_fin_plate_design.triggered.connect(QtGui.qApp.quit)
@@ -109,6 +116,13 @@ class MainController(QtGui.QMainWindow):
         self.ui.actionSave_3D_model_as.triggered.connect(self.save3DcadImages)
         self.ui.actionSave_curren_image_as.triggered.connect(self.save2DcadImages)
         self.ui.actionPan.triggered.connect(self.call_Pannig)
+        #graphics
+        self.ui.actionBeam_2.triggered.connect(self.call_3DBeam)
+        self.ui.actionColumn_2.triggered.connect(self.call_3DColumn)
+        self.ui.actionFinplate_2.triggered.connect(self.call_3DFinplate)
+        self.ui.actionChange_background.triggered.connect(self.showColorDialog)
+        
+        
         
         # self.ui.combo_Beam.addItems(get_beamcombolist())
         # self.ui.comboColSec.addItems(get_columncombolist())
@@ -730,6 +744,7 @@ class MainController(QtGui.QMainWindow):
         # display black trihedron
         display.display_trihedron()
         display.View.SetProj(1, 1, 1)
+        
         def centerOnScreen(self):
                     '''Centers the window on the screen.'''
                     resolution = QtGui.QDesktopWidget().screenGeometry()
@@ -742,17 +757,29 @@ class MainController(QtGui.QMainWindow):
           
         return display, start_display
     
+    def showColorDialog(self):
+      
+        col = QtGui.QColorDialog.getColor()
+        colorTup = col.getRgb()
+        r = colorTup[0]
+        g = colorTup[1]
+        b = colorTup[2]
+        self.display.set_bg_gradient_color(r,g,b,255,255,255)
+    
+    
     def display3Dmodel(self, component):
         self.display.EraseAll()
         
         self.display.SetModeShaded()
         
         display.DisableAntiAliasing()
-        #self.display.set_bg_gradient_color(23,1,32,23,1,32)
-        self.display.set_bg_gradient_color(255,255,255,255,255,255)
+        self.display.set_bg_gradient_color(23,1,32,255,255,255)
+        #self.display.set_bg_gradient_color(255,255,255,255,255,255)
+        
         self.display.View_Front()
         self.display.View_Iso()
         self.display.FitAll()
+     
         if component == "Column":
             osdagDisplayShape(self.display, self.connectivity.columnModel, update=True)
         elif component == "Beam":
@@ -789,6 +816,23 @@ class MainController(QtGui.QMainWindow):
         dictcoldata = get_columndata(column_sec)
         print dictcoldata
         return dictcoldata
+    
+    def checkBeam_B(self):
+        loc = self.ui.comboConnLoc.currentText()
+        if loc  == "Column web-Beam web":
+            dictBeamData = self.fetchBeamPara()
+            dictColData = self.fetchColumnPara()
+            column_D = float(dictColData[QString("D")])
+            column_T = float(dictColData[QString("T")])
+            column_R1 = float(dictColData[QString("R1")])
+            columnWebDepth = column_D - 2.0 *( column_T)
+            
+            beam_B = float(dictBeamData[QString("B")])
+            if columnWebDepth < beam_B:
+                QtGui.QMessageBox.about(self,'Information',"Beam flange is wider than clear depth of column web (No provision in Osdag till now)")
+            
+    
+    
     
     def boltHeadThick_Calculation(self,boltDia):
         '''

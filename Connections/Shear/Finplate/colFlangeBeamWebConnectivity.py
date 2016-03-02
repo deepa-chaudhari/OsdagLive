@@ -79,10 +79,10 @@ class ColFlangeBeamWeb(object):
         
     def createPlateGeometry(self):
         
-        #plateOrigin = (((self.column.secOrigin + self.column.D/2 ) * (- self.column.vDir)) +
-        #              (self.column.length/2 * self.column.wDir) + ((self.beam.t/2.0 )* (-self.beam.uDir))) + ((self.plate.T/2.0) * (-self.beam.uDir))
         plateOrigin = (((self.column.secOrigin + self.column.D/2 ) * (- self.column.vDir)) +
-                       (self.column.length/2 * self.column.wDir) + ((self.beam.t/2.0 )* (self.beam.uDir))) + ((self.plate.T/2.0) * (self.beam.uDir))
+                      (self.column.length/2 * self.column.wDir) + ((self.beam.t/2.0 )* (-self.beam.uDir))) + ((self.plate.T/2.0) * (-self.beam.uDir))
+#         plateOrigin = (((self.column.secOrigin + self.column.D/2 ) * (- self.column.vDir)) +
+#                        (self.column.length/2 * self.column.wDir) + ((self.beam.t/2.0 )* (self.beam.uDir))) + ((self.plate.T/2.0) * (self.beam.uDir))
         uDir = numpy.array([1.0, 0.0, 0])
         wDir = numpy.array([0.0, -1.0, 0.0])
         self.plate.place(plateOrigin, uDir, wDir)
@@ -99,17 +99,18 @@ class ColFlangeBeamWeb(object):
         self.weldRight.place(filletWeld2Origin,uDir1,wDir1)
 
     def createNutBoltArray(self):
-        # nutboltArrayOrigin = self.plate.secOrigin 
-        # nutboltArrayOrigin -= self.plate.T/2.0 * self.plate.uDir  
-        # nutboltArrayOrigin += self.plate.L/2.0 * self.plate.vDir
-        
         nutboltArrayOrigin = self.plate.secOrigin 
-        nutboltArrayOrigin = nutboltArrayOrigin +self.plate.T/2.0 * self.plate.uDir  
-        nutboltArrayOrigin = nutboltArrayOrigin + self.plate.L/2.0 * self.plate.vDir
+        nutboltArrayOrigin -= self.plate.T/2.0 * self.plate.uDir  
+        nutboltArrayOrigin += self.plate.L/2.0 * self.plate.vDir
+        
+#         nutboltArrayOrigin = self.plate.secOrigin 
+#         nutboltArrayOrigin = nutboltArrayOrigin +self.plate.T/2.0 * self.plate.uDir  
+#         nutboltArrayOrigin = nutboltArrayOrigin + self.plate.L/2.0 * self.plate.vDir
         
         gaugeDir = self.plate.wDir
         pitchDir = -self.plate.vDir
-        boltDir = -self.plate.uDir
+        #boltDir = -self.plate.uDir
+        boltDir = self.plate.uDir
         self.nutBoltArray.place(nutboltArrayOrigin, gaugeDir, pitchDir, boltDir)
     
     def get_models(self):

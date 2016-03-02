@@ -17,162 +17,6 @@
    <layout class="QGridLayout" name="gridLayout_5">
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0" colspan="2">
-       <widget class="QListWidget" name="myListWidget">
-        <property name="minimumSize">
-         <size>
-          <width>300</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QListWidget::item {
-  color:#00ff00;
- background-color:#825051;
-  }
-QListWidget{background-color:#83AC30;
-}
- QListWidget:item:selected:active {
-                                     background: #5930ac;}</string>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::Box</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <property name="lineWidth">
-         <number>4</number>
-        </property>
-        <property name="midLineWidth">
-         <number>2</number>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>48</width>
-          <height>48</height>
-         </size>
-        </property>
-        <property name="spacing">
-         <number>5</number>
-        </property>
-        <item>
-         <property name="text">
-          <string> Design:</string>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="flags">
-          <set>ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Connection</string>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-           <weight>50</weight>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../../Pictures/images (3).jpg</normaloff>../../Pictures/images (3).jpg</iconset>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Tension Member</string>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../../Pictures/images (3).jpg</normaloff>../../Pictures/images (3).jpg</iconset>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Compression Member</string>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../../Pictures/images (3).jpg</normaloff>../../Pictures/images (3).jpg</iconset>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Flexural Member</string>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../../Pictures/images (3).jpg</normaloff>../../Pictures/images (3).jpg</iconset>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Beam-Column</string>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../../Pictures/images (3).jpg</normaloff>../../Pictures/images (3).jpg</iconset>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Plate Girder</string>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../../Pictures/images (3).jpg</normaloff>../../Pictures/images (3).jpg</iconset>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Gantry Girder</string>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../../Pictures/images (3).jpg</normaloff>../../Pictures/images (3).jpg</iconset>
-         </property>
-        </item>
-       </widget>
-      </item>
       <item row="1" column="1">
        <widget class="QPushButton" name="pushButton_2">
         <property name="styleSheet">
@@ -449,6 +293,162 @@ QPushButton:pressed { background-color: #000000 }
           </property>
          </widget>
         </widget>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="2">
+       <widget class="QListWidget" name="myListWidget">
+        <property name="minimumSize">
+         <size>
+          <width>300</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QListWidget::item {
+  color:#00ff00;
+ background-color:#825051;
+  }
+QListWidget{background-color:#83AC30;
+}
+ QListWidget:item:selected:active {
+                                     background: #5930ac;}</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <property name="lineWidth">
+         <number>4</number>
+        </property>
+        <property name="midLineWidth">
+         <number>2</number>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>48</width>
+          <height>48</height>
+         </size>
+        </property>
+        <property name="spacing">
+         <number>5</number>
+        </property>
+        <item>
+         <property name="text">
+          <string> Design:</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="flags">
+          <set>ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Connection</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../Pictures/images (3).jpg</normaloff>../../Pictures/images (3).jpg</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Tension Member</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../Pictures/images (3).jpg</normaloff>../../Pictures/images (3).jpg</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Compression Member</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../Pictures/images (3).jpg</normaloff>../../Pictures/images (3).jpg</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Flexural Member</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../Pictures/images (3).jpg</normaloff>../../Pictures/images (3).jpg</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Beam-Column</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../Pictures/images (3).jpg</normaloff>../../Pictures/images (3).jpg</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Plate Girder</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../Pictures/images (3).jpg</normaloff>../../Pictures/images (3).jpg</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Gantry Girder</string>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../Pictures/images (3).jpg</normaloff>../../Pictures/images (3).jpg</iconset>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>
