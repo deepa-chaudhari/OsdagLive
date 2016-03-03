@@ -681,7 +681,7 @@ QMenu::item:selected {
       <string>000.0</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_3">
+    <widget class="QLabel" name="lbl_column">
      <property name="geometry">
       <rect>
        <x>6</x>

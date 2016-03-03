@@ -42,10 +42,16 @@ from reportGenerator import *
 from Connections.Shear.Finplate.ModelUtils import getGpPt
 ##### Testing imports
 from OCC.BRepPrimAPI import BRepPrimAPI_MakeSphere
+import OCC.V3d
+
 
 class MainController(QtGui.QMainWindow):
     
     closed = pyqtSignal()
+
+    
+    
+    
     def __init__(self,web):
         QtGui.QMainWindow.__init__(self)
         self.web = web
@@ -54,7 +60,7 @@ class MainController(QtGui.QMainWindow):
         
         self.ui.combo_Beam.addItems(get_beamcombolist())
         self.ui.comboColSec.addItems(get_columncombolist())
-        # Check for column "D" and beam "B"
+       
         
         self.ui.inputDock.setFixedSize(310,710)
         
@@ -65,9 +71,9 @@ class MainController(QtGui.QMainWindow):
         self.ui.comboType.currentIndexChanged[str].connect(self.combotype_currentindexchanged)
         self.ui.comboType.setCurrentIndex(0)
         
-        
         self.ui.comboConnLoc.currentIndexChanged[str].connect(self.setimage_connection)
         self.retrieve_prevstate()
+        self.ui.comboConnLoc.currentIndexChanged[str].connect(self.convertColComboToBeam)
         self.ui.comboColSec.currentIndexChanged[str].connect(self.checkBeam_B)
         self.ui.btnInput.clicked.connect(lambda: self.dockbtn_clicked(self.ui.inputDock))
         self.ui.btnOutput.clicked.connect(lambda: self.dockbtn_clicked(self.ui.outputDock))
@@ -158,12 +164,26 @@ class MainController(QtGui.QMainWindow):
         #self.ui.btnSvgSave.clicked.connect(self.save3DcadImages)
         #self.ui.btnSvgSave.clicked.connect(lambda:self.saveTopng(self.display))
         
+        self.loc = self.ui.comboConnLoc.currentText()
         self.connectivity = None
         self.fuse_model = None
         self.disableViewButtons()
         self.resultObj = None
         self.uiObj = None
+    
+    
+    def convertColComboToBeam(self):
+        loc = self.ui.comboConnLoc.currentText()
+        if loc == "Beam-Beam":
+            self.ui.lbl_column.setText("Beam Section *")
+            self.ui.comboColSec.clear()
+            self.ui.comboColSec.addItems(get_beamcombolist())
+        else:
+            self.ui.lbl_column.setText("Column Section *")
+            self.ui.comboColSec.clear()
+            self.ui.comboColSec.addItems(get_columncombolist())
         
+    
     def showFontDialogue(self):
         
         font, ok = QtGui.QFontDialog.getFont()
@@ -178,12 +198,11 @@ class MainController(QtGui.QMainWindow):
     def callZoomout(self):
         self.display.ZoomFactor(0.5)
         
-        
     def callRotation(self):
         self.display.Rotation(15,0)
+        
     def call_Pannig(self):
         self.display.Pan(50,0)
-    
         
     def save2DcadImages(self):
         
@@ -196,7 +215,6 @@ class MainController(QtGui.QMainWindow):
             self.display.ExportToImage(fName)
         QtGui.QMessageBox.about(self,'Information',"File saved")
             
-    
     def disableViewButtons(self):
         '''
         Disables the all buttons in toolbar
@@ -209,6 +227,8 @@ class MainController(QtGui.QMainWindow):
         self.ui.chkBxBeam.setEnabled(False)
         self.ui.chkBxCol.setEnabled(False)
         self.ui.chkBxFinplate.setEnabled(False)
+        # Disable Menubar 
+        self.ui.menubar.setEnabled(False)
     
     def enableViewButtons(self):
         '''
@@ -222,6 +242,7 @@ class MainController(QtGui.QMainWindow):
         self.ui.chkBxBeam.setEnabled(True)
         self.ui.chkBxCol.setEnabled(True)
         self.ui.chkBxFinplate.setEnabled(True)
+        self.ui.menubar.setEnabled(True)
         
     def fillPlateThickCombo(self):
         
@@ -438,14 +459,14 @@ class MainController(QtGui.QMainWindow):
     
     
     def save_design(self):
-        
+        fileName,pat =QtGui.QFileDialog.getSaveFileNameAndFilter(self,"Save File As","output/finplate","All Files (*);;Html Files (*.html)")
         self.call2D_Drawing("All")
         self.outdict = self.resultObj#self.outputdict()
         self.inputdict = self.uiObj#self.getuser_inputs()
         #self.save_yaml(self.outdict,self.inputdict)
         dictBeamData  = self.fetchBeamPara()
         dictColData  = self.fetchColumnPara()
-        save_html(self.outdict, self.inputdict, dictBeamData, dictColData)
+        save_html(self.outdict, self.inputdict, dictBeamData, dictColData,fileName)
         self.htmlToPdf()
         
         QtGui.QMessageBox.about(self,'Information',"Report Saved")
@@ -454,7 +475,7 @@ class MainController(QtGui.QMainWindow):
         
     def save_log(self):
         
-        fileName,pat =QtGui.QFileDialog.getSaveFileNameAndFilter(self,"Save File As","/home/deepa/","Text files (*.txt)")
+        fileName,pat = QtGui.QFileDialog.getSaveFileNameAndFilter(self,"Save File As","/home/deepa/","Text files (*.txt)")
         return self.save_file(fileName+".txt")
           
     def save_file(self, fileName):
@@ -476,8 +497,6 @@ class MainController(QtGui.QMainWindow):
         
         #QtGui.QMessageBox.about(self,'Information',"File saved")
        
-    
-    ################
     def save_yaml(self,outObj,uiObj):
         '''(dictiionary,dictionary) -> NoneType
         Saving input and output to file in following format.
@@ -768,17 +787,22 @@ class MainController(QtGui.QMainWindow):
     
     
     def display3Dmodel(self, component):
+        
         self.display.EraseAll()
         
         self.display.SetModeShaded()
         
         display.DisableAntiAliasing()
-        self.display.set_bg_gradient_color(23,1,32,255,255,255)
-        #self.display.set_bg_gradient_color(255,255,255,255,255,255)
         
-        self.display.View_Front()
-        self.display.View_Iso()
-        self.display.FitAll()
+        #self.display.set_bg_gradient_color(23,1,32,150,150,170)
+        self.display.set_bg_gradient_color(51,51,102,150,150,170)
+        
+        loc = self.ui.comboConnLoc.currentText()
+        if loc == "Column flange-Beam web":
+            self.display.View.SetProj(OCC.V3d.V3d_XnegYnegZpos)
+        else:
+            self.display.View_Iso()
+            self.display.FitAll()
      
         if component == "Column":
             osdagDisplayShape(self.display, self.connectivity.columnModel, update=True)
@@ -794,7 +818,6 @@ class MainController(QtGui.QMainWindow):
                 osdagDisplayShape(self.display,nutbolt,color = Quantity_NOC_SADDLEBROWN,update = True)
             #self.display.DisplayShape(self.connectivity.nutBoltArray.getModels(), color = Quantity_NOC_SADDLEBROWN, update=True)
         elif component == "Model":
-            self.display.View_Iso()
             osdagDisplayShape(self.display, self.connectivity.columnModel, update=True)
             osdagDisplayShape(self.display, self.connectivity.beamModel, material = Graphic3d_NOT_2D_ALUMINUM, update=True)
             osdagDisplayShape(self.display, self.connectivity.weldModelLeft, color = 'red', update = True)
@@ -806,9 +829,14 @@ class MainController(QtGui.QMainWindow):
             ##self.display.DisplayShape(self.connectivity.nutBoltArray.getModels(), color = Quantity_NOC_SADDLEBROWN, update=True)
         
     def fetchBeamPara(self):
-        beam_sec = self.ui.combo_Beam.currentText()
-        dictbeamdata  = get_beamdata(beam_sec)
-        print dictbeamdata
+        #loc = self.ui.comboConnLoc.currentText()
+        if self.loc  == "Column web-Beam web":
+            beam_sec = self.ui.combo_Beam.currentText()
+            dictbeamdata  = get_beamdata(beam_sec)
+            print dictbeamdata
+        else:
+            beam_sec = self.ui.comboColSec.currentText()
+            dictbeamdata = get_beamdata(beam_sec)
         return dictbeamdata
     
     def fetchColumnPara(self):
@@ -829,9 +857,17 @@ class MainController(QtGui.QMainWindow):
             
             beam_B = float(dictBeamData[QString("B")])
             if columnWebDepth < beam_B:
+                self.ui.btn_Design.setDisabled(True)
                 QtGui.QMessageBox.about(self,'Information',"Beam flange is wider than clear depth of column web (No provision in Osdag till now)")
-            
+            else:
+                self.ui.btn_Design.setEnabled(True)
+               
     
+    def validateInputsOnDesignBtn(self):
+        if self.ui.comboConnLoc.currentIndex()== 0:
+            QtGui.QMessageBox.about(self,"Information","Please select connectivity")
+        
+        pass
     
     
     def boltHeadThick_Calculation(self,boltDia):
@@ -1136,7 +1172,7 @@ class MainController(QtGui.QMainWindow):
         # Getting User Inputs.
         self.uiObj = self.getuser_inputs()
         
-        
+        self.validateInputsOnDesignBtn()
         # FinPlate Design Calculations. 
         self.resultObj = finConn(self.uiObj)
         

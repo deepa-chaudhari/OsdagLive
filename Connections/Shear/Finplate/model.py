@@ -59,7 +59,6 @@ def get_beamcombolist():
     comboList.append("Select Designation")
     while(beamQuery.next()):
         comboList.append(beamQuery.value(0).toString())
-    print "printing comboList"
     print comboList
     return comboList
 

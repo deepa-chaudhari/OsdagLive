@@ -15,8 +15,8 @@ import math
 from PyQt4.QtCore import QString
 
 
-def save_html(outObj, uiObj, dictBeamData, dictColData):
-    fileName = 'output/finplate/finPlateReport.html'
+def save_html(outObj, uiObj, dictBeamData, dictColData,fname):
+    fileName = fname #'output/finplate/finPlateReport.html'
     f = open(fileName,'w')
     f.write(t('html'))
     f.write(t('head'))
