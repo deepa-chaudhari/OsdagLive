@@ -56,10 +56,9 @@ def get_beamcombolist():
     '''      
     comboList = []
     beamQuery = QSqlQuery("Select Designation from Beams")
-    comboList.append("Select Designation")
+    comboList.append("Select section")
     while(beamQuery.next()):
         comboList.append(beamQuery.value(0).toString())
-    print comboList
     return comboList
 
 
@@ -72,9 +71,7 @@ def get_beamdata(sect):
     queryStr = "Select * from Beams where Designation = '%s'" % section
     
     designQuery = QSqlQuery(queryStr)
-    print(designQuery)
 
-    print designQuery.size()
     retDict = {}
     record = designQuery.record()
     
@@ -92,8 +89,9 @@ def get_columncombolist():
     This function returns the list of Indian Standard Column Designation.
     '''      
     comboList = []
-    columnQuery = QSqlQuery("SELECT Designation FROM Columns")
-    comboList.append("Select Column")
+    columnQuery = QSqlQuery("SELECT Designation FROM Columns order by id ASC")
+
+    comboList.append("Select section")
     while(columnQuery.next()):
         comboList.append(columnQuery.value(0).toString())
     return comboList
@@ -108,9 +106,7 @@ def get_columndata(sect):
     queryStr = "Select * from Columns where Designation = '%s'" % section
     
     designQuery = QSqlQuery(queryStr)
-    print(designQuery)
     
-    print designQuery.size()
     retDict = {}
     record = designQuery.record()
     

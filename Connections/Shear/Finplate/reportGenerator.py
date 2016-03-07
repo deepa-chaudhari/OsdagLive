@@ -413,7 +413,7 @@ def save_html(outObj, uiObj, dictBeamData, dictColData,fname):
     rstr += t('td  align="center" class=" viewtbl"') + row[2] + t('/td')
     rstr += t('/tr')
     
-    row = [0, '<object type="image/svg+xml" data="finSide.svg"width ="320"></object>', '<object type="image/svg+xml" data="finFront.svg"width ="650"></object>']
+    row = [0, '<object type="image/svg+xml" data="finSide.svg"width ="380"></object>', '<object type="image/svg+xml" data="finFront.svg"width ="650"></object>']
     rstr += t('tr')
     rstr += t('td align="center" class=" viewtbl"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td align="center" class=" viewtbl "') + row[2] + t('/td')

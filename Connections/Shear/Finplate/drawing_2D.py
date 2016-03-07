@@ -1423,7 +1423,8 @@ class Fin2DCreatorSide(object):
         self.P = self.A11 + (self.dataObj.beam_R1 + 3) * np.array([0,1])
         self.P1 = self.P + (self.dataObj.end_dist)* np.array([0,1])
         self.Q = self.P + self.dataObj.plate_thick * np.array([-1,0])
-        self.X = self.Q + self.dataObj.weld_thick * np.array([-1,0])
+        # Hashing for weld is 8mm so self.X shfited in 8mm distance in -X axis direction
+        self.X = self.Q + 8 * np.array([-1,0])
         self.R = self.P + self.dataObj.plate_ht * np.array([0,1])
         self.Y = self.R + (self.dataObj.plate_thick + self.dataObj.weld_thick) * np.array([-1,0])
         
@@ -1450,7 +1451,7 @@ class Fin2DCreatorSide(object):
         self.FP = self.FA4 + (self.dataObj.beam_R1 + 3) * np.array([0,1])
         self.FP1 = self.FP + (self.dataObj.end_dist) * np.array([0,1])
         self.FQ = self.FP + self.dataObj.plate_thick * np.array([-1,0])
-        self.FX = self.FQ + self.dataObj.weld_thick * np.array([-1,0])
+        self.FX = self.FQ + 8 * np.array([-1,0])
         self.FR = self.FP + self.dataObj.plate_ht * np.array([0,1])
         self.FY = self.FX + self.dataObj.plate_ht * np.array([0,1])
     
@@ -1566,13 +1567,15 @@ class Fin2DCreatorSide(object):
         dwg.add(dwg.rect(insert=(self.FA), size=(self.dataObj.col_B, self.dataObj.col_L),fill = 'none', stroke='blue', stroke_width=2.5))
         dwg.add(dwg.polyline(points=[(self.FA1),(self.FA2),(self.FA3),(self.FA4),(self.FA5),(self.FA6),(self.FA7),(self.FA8),(self.FA9),(self.FA10),(self.FA11),(self.FA12),(self.FA1)], stroke='blue', fill='#E0E0E0', stroke_width=2.5))
         
+        
+        dwg.add(dwg.rect(insert=(self.FQ), size=(self.dataObj.plate_thick, self.dataObj.plate_ht),fill = 'none', stroke='blue', stroke_width=2.5))#dwg.add(dwg.line((self.ptMid),(self.ptMid1)).stroke('green',width = 2.5,linecap = 'square'))
         # Diagonal Hatching for WELD
         pattern = dwg.defs.add(dwg.pattern(id ="diagonalHatch",size=(6, 8), patternUnits="userSpaceOnUse",patternTransform="rotate(45 2 2)"))
         pattern.add(dwg.path(d = "M -1,2 l 6,0", stroke='#000000',stroke_width = 2.5))
         #12 mm thickness is provided for weld to get clear visibility of weld hashed lines
-        dwg.add(dwg.rect(insert=(self.FX), size=(6, self.dataObj.plate_ht),fill = "url(#diagonalHatch)", stroke='white', stroke_width=1.0))
+        dwg.add(dwg.rect(insert=(self.FX ), size=(8, self.dataObj.plate_ht),fill = "url(#diagonalHatch)", stroke='white', stroke_width=1.0))
         
-        dwg.add(dwg.rect(insert=(self.FQ), size=(self.dataObj.plate_thick, self.dataObj.plate_ht),fill = 'none', stroke='blue', stroke_width=2.5))#dwg.add(dwg.line((self.ptMid),(self.ptMid1)).stroke('green',width = 2.5,linecap = 'square'))
+        
 
         nr = self.dataObj.no_of_rows
         pitchPts = []

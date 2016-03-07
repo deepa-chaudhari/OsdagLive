@@ -866,6 +866,9 @@ QMenu::item:selected {
      <property name="styleSheet">
       <string notr="true">QComboBox { combobox-popup: 0; }</string>
      </property>
+     <property name="currentIndex">
+      <number>-1</number>
+     </property>
      <property name="maxVisibleItems">
       <number>5</number>
      </property>
@@ -3146,6 +3149,9 @@ QMenu::item:selected {
      <property name="styleSheet">
       <string notr="true">QComboBox { combobox-popup: 0; }</string>
      </property>
+     <property name="currentIndex">
+      <number>-1</number>
+     </property>
      <property name="maxVisibleItems">
       <number>5</number>
      </property>
@@ -3237,7 +3243,7 @@ QMenu::item:selected {
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QLabel" name="label_9">
+    <widget class="QLabel" name="lbl_beam">
      <property name="geometry">
       <rect>
        <x>6</x>
