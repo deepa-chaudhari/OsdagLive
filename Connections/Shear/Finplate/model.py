@@ -94,6 +94,7 @@ def get_columncombolist():
     comboList.append("Select section")
     while(columnQuery.next()):
         comboList.append(columnQuery.value(0).toString())
+    print comboList
     return comboList
 
 def get_columndata(sect):

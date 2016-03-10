@@ -666,7 +666,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>247</y>
+       <y>217</y>
        <width>161</width>
        <height>25</height>
       </rect>
@@ -685,7 +685,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>6</x>
-       <y>155</y>
+       <y>127</y>
        <width>151</width>
        <height>22</height>
       </rect>
@@ -742,7 +742,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>217</y>
+       <y>187</y>
        <width>161</width>
        <height>25</height>
       </rect>
@@ -838,7 +838,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>6</x>
-       <y>217</y>
+       <y>187</y>
        <width>120</width>
        <height>25</height>
       </rect>
@@ -858,7 +858,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>155</y>
+       <y>127</y>
        <width>161</width>
        <height>25</height>
       </rect>
@@ -877,7 +877,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>6</x>
-       <y>242</y>
+       <y>212</y>
        <width>120</width>
        <height>25</height>
       </rect>
@@ -897,7 +897,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>1</x>
-       <y>270</y>
+       <y>240</y>
        <width>170</width>
        <height>25</height>
       </rect>
@@ -917,7 +917,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>6</x>
-       <y>300</y>
+       <y>270</y>
        <width>151</width>
        <height>25</height>
       </rect>
@@ -937,7 +937,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>297</y>
+       <y>267</y>
        <width>161</width>
        <height>25</height>
       </rect>
@@ -953,7 +953,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>1</x>
-       <y>330</y>
+       <y>300</y>
        <width>150</width>
        <height>25</height>
       </rect>
@@ -976,7 +976,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>390</y>
+       <y>360</y>
        <width>160</width>
        <height>25</height>
       </rect>
@@ -995,7 +995,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>6</x>
-       <y>420</y>
+       <y>390</y>
        <width>100</width>
        <height>25</height>
       </rect>
@@ -1015,7 +1015,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>420</y>
+       <y>390</y>
        <width>160</width>
        <height>25</height>
       </rect>
@@ -1031,7 +1031,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>6</x>
-       <y>360</y>
+       <y>330</y>
        <width>131</width>
        <height>25</height>
       </rect>
@@ -1051,7 +1051,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>6</x>
-       <y>390</y>
+       <y>360</y>
        <width>100</width>
        <height>25</height>
       </rect>
@@ -1071,7 +1071,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>360</y>
+       <y>330</y>
        <width>160</width>
        <height>27</height>
       </rect>
@@ -1149,7 +1149,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>6</x>
-       <y>540</y>
+       <y>510</y>
        <width>111</width>
        <height>25</height>
       </rect>
@@ -1169,7 +1169,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>1</x>
-       <y>450</y>
+       <y>420</y>
        <width>100</width>
        <height>25</height>
       </rect>
@@ -1189,7 +1189,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>6</x>
-       <y>480</y>
+       <y>450</y>
        <width>131</width>
        <height>25</height>
       </rect>
@@ -1209,7 +1209,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>510</y>
+       <y>480</y>
        <width>160</width>
        <height>25</height>
       </rect>
@@ -1225,7 +1225,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>6</x>
-       <y>510</y>
+       <y>480</y>
        <width>111</width>
        <height>25</height>
       </rect>
@@ -1245,7 +1245,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>480</y>
+       <y>450</y>
        <width>160</width>
        <height>25</height>
       </rect>
@@ -1266,11 +1266,6 @@ QMenu::item:selected {
      <property name="maxVisibleItems">
       <number>5</number>
      </property>
-     <item>
-      <property name="text">
-       <string>Select plate thickness</string>
-      </property>
-     </item>
      <item>
       <property name="text">
        <string>6</string>
@@ -1316,7 +1311,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>1</x>
-       <y>570</y>
+       <y>540</y>
        <width>66</width>
        <height>25</height>
       </rect>
@@ -1334,7 +1329,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>6</x>
-       <y>600</y>
+       <y>570</y>
        <width>131</width>
        <height>25</height>
       </rect>
@@ -3085,7 +3080,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>540</y>
+       <y>510</y>
        <width>160</width>
        <height>25</height>
       </rect>
@@ -3101,7 +3096,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>650</y>
+       <y>620</y>
        <width>100</width>
        <height>30</height>
       </rect>
@@ -3121,7 +3116,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>140</x>
-       <y>650</y>
+       <y>620</y>
        <width>100</width>
        <height>30</height>
       </rect>
@@ -3141,7 +3136,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>125</y>
+       <y>157</y>
        <width>161</width>
        <height>25</height>
       </rect>
@@ -3160,7 +3155,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>150</x>
-       <y>600</y>
+       <y>570</y>
        <width>160</width>
        <height>25</height>
       </rect>
@@ -3184,11 +3179,9 @@ QMenu::item:selected {
      <property name="maxVisibleItems">
       <number>5</number>
      </property>
-     <item>
-      <property name="text">
-       <string>Select weld thickness</string>
-      </property>
-     </item>
+     <property name="sizeAdjustPolicy">
+      <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+     </property>
      <item>
       <property name="text">
        <string>3</string>
@@ -3247,7 +3240,7 @@ QMenu::item:selected {
      <property name="geometry">
       <rect>
        <x>6</x>
-       <y>125</y>
+       <y>157</y>
        <width>131</width>
        <height>22</height>
       </rect>
@@ -3262,64 +3255,6 @@ QMenu::item:selected {
      <property name="text">
       <string>Beam section *</string>
      </property>
-    </widget>
-    <widget class="QLabel" name="label_11">
-     <property name="geometry">
-      <rect>
-       <x>5</x>
-       <y>185</y>
-       <width>151</width>
-       <height>22</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Ubuntu</family>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Steel grade</string>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="comboBox">
-     <property name="geometry">
-      <rect>
-       <x>150</x>
-       <y>185</y>
-       <width>161</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Ubuntu</family>
-       <pointsize>11</pointsize>
-       <weight>50</weight>
-       <bold>false</bold>
-      </font>
-     </property>
-     <item>
-      <property name="text">
-       <string>Grade of steel</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>250</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>415</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>500</string>
-      </property>
-     </item>
     </widget>
    </widget>
   </widget>
