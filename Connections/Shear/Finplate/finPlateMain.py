@@ -103,7 +103,7 @@ class MainController(QtGui.QMainWindow):
         minfyVal = 165
         maxfyVal = 450
         self.ui.txtFy.editingFinished.connect(lambda: self.check_range(self.ui.txtFy,self.ui.lbl_fy, minfyVal, maxfyVal))
-       
+        # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         ##### MenuBar #####
         # File Menu
        
@@ -127,16 +127,16 @@ class MainController(QtGui.QMainWindow):
         self.ui.actionColumn_2.triggered.connect(self.call_3DColumn)
         self.ui.actionFinplate_2.triggered.connect(self.call_3DFinplate)
         self.ui.actionChange_background.triggered.connect(self.showColorDialog)
+        #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         
-        
-        
+        #  $$$$$$$$$$$$$$ CHECKS NEEDS TO BE MODIFIED TO ARVIND AND SASIR
         self.ui.combo_Beam.currentIndexChanged[int].connect(lambda:self.fillPlateThickCombo("combo_Beam"))
         self.ui.combo_Beam.currentIndexChanged[str].connect(self.checkBeam_B)
         self.ui.comboColSec.currentIndexChanged[str].connect(self.checkBeam_B)
-        self.ui.comboColSec.currentIndexChanged[int].connect(lambda:self.populateWeldThickCombo("comboColSec"))
+        #self.ui.comboColSec.currentIndexChanged[int].connect(lambda:self.populateWeldThickCombo("comboColSec"))
         #self.ui.comboConnLoc.currentIndexChanged[str].connect(self.populateWeldThickCombo)
         self.ui.comboPlateThick_2.currentIndexChanged[int].connect(lambda:self.populateWeldThickCombo("comboPlateThick_2"))
-        
+        # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         
         self.ui.menuView.addAction(self.ui.inputDock.toggleViewAction())
         self.ui.menuView.addAction(self.ui.outputDock.toggleViewAction())
@@ -289,7 +289,7 @@ class MainController(QtGui.QMainWindow):
             plateThickness = [6,8,10,12,14,16,18,20]
             newlist = ['Select plate thickness']
             newlist =[]
-            for ele in plateThickness[1:]:
+            for ele in plateThickness[:]:
                 item = int(ele)
                 if item >= beam_tw:
                     newlist.append(str(item))
@@ -349,8 +349,8 @@ class MainController(QtGui.QMainWindow):
                     column_tw = float(dictcoldata[QString("tw")])
                     thickerPart = column_tw > plate_thick[0] and column_tw or plate_thick[0]
             else:
-                
-                thickerPart = beam_tw > plate_thick[0] and beam_tw or plate_thick[0]
+                PBeam_tw = float(dictcoldata[QString("tw")])
+                thickerPart = PBeam_tw > plate_thick[0] and PBeam_tw or plate_thick[0]
                 
             if thickerPart in range(0,11):
                 weld_index = weldlist.index(3)
@@ -956,7 +956,7 @@ class MainController(QtGui.QMainWindow):
         
         pass
     
-    
+    #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     def boltHeadThick_Calculation(self,boltDia):
         '''
         This routine takes the bolt diameter and return bolt head thickness as per IS:3757(1989)
@@ -1024,6 +1024,7 @@ class MainController(QtGui.QMainWindow):
         
         return nutDia[boltDia]
     
+    #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     
     def create3DBeamWebBeamWeb(self):
         '''
@@ -1045,9 +1046,9 @@ class MainController(QtGui.QMainWindow):
         beam_length = 500.0 # This parameter as per view of 3D cad model
         
         #beam = ISection(B = 140, T = 16,D = 400,t = 8.9, R1 = 14, R2 = 7, alpha = 98,length = 500)
-        beam = ISection(B = beam_B, T = beam_T,D = beam_D,t = beam_tw,
-                        R1 = beam_R1, R2 = beam_R2, alpha = beam_alpha,
-                        length = beam_length)
+        #beam = ISection(B = beam_B, T = beam_T,D = beam_D,t = beam_tw,
+                        #R1 = beam_R1, R2 = beam_R2, alpha = beam_alpha,
+                        #length = beam_length)
         
         ##### SECONDARY BEAM PARAMETERS ######
         dictbeamdata2 = self.fetchColumnPara()
@@ -1080,22 +1081,22 @@ class MainController(QtGui.QMainWindow):
         nut_Ht = 12.2 #150
         
         #plate = Plate(L= 300,W =100, T = 10)
-        plate = Plate(L= fillet_length,W =plate_width, T = plate_thick)
+        #plate = Plate(L= fillet_length,W =plate_width, T = plate_thick)
         
         #Fweld1 = FilletWeld(L= 300,b = 6, h = 6)
-        Fweld1 = FilletWeld(L= fillet_length,b = fillet_thickness, h = fillet_thickness)
+        #Fweld1 = FilletWeld(L= fillet_length,b = fillet_thickness, h = fillet_thickness)
 
         #bolt = Bolt(R = bolt_R,T = bolt_T, H = 38.0, r = 4.0 )
-        bolt = Bolt(R = bolt_R,T = bolt_T, H = bolt_Ht, r = bolt_r )
+        #bolt = Bolt(R = bolt_R,T = bolt_T, H = bolt_Ht, r = bolt_r )
          
         #nut =Nut(R = bolt_R, T = 10.0,  H = 11, innerR1 = 4.0, outerR2 = 8.3)
-        nut = Nut(R = bolt_R, T = nut_T,  H = nut_Ht, innerR1 = bolt_r)
+        #nut = Nut(R = bolt_R, T = nut_T,  H = nut_Ht, innerR1 = bolt_r)
         
         gap = beam_tw + plate_thick+ nut_T
         
-        nutBoltArray = NutBoltArray(resultObj,nut,bolt,gap)
-        
-        beamwebconn =  BeamWebBeamWeb(column,beam,Fweld1,plate,nutBoltArray)
+        #nutBoltArray = NutBoltArray(resultObj,nut,bolt,gap)
+        #beamwebconn =  BeamWebBeamWeb(column,beam,Fweld1,plate,nutBoltArray)
+        beamwebconn =  BeamWebBeamWeb(column)
         beamwebconn.create_3dmodel()
         
         return  beamwebconn
@@ -1273,9 +1274,15 @@ class MainController(QtGui.QMainWindow):
                 #self.create3DColWebBeamWeb()
                 self.connectivity =  self.create3DColWebBeamWeb()
                 self.fuse_model = None
-            else:
+                
+            elif self.ui.comboConnLoc.currentText()== "Column flange-Beam web":    
                 self.ui.mytabWidget.setCurrentIndex(0)
                 self.connectivity =  self.create3DColFlangeBeamWeb()
+                self.fuse_model = None
+                
+            else:
+                self.ui.mytabWidget.setCurrentIndex(0)
+                self.connectivity =  self.create3DBeamWebBeamWeb()
                 self.fuse_model = None
 
             self.display3Dmodel("Model")
