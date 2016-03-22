@@ -23,6 +23,7 @@ from weld import  Weld
 from plate import Plate
 from bolt import Bolt
 from nut import Nut 
+from notch import Notch
 import os.path
 from utilities import osdagDisplayShape
 from OCC.Display.qtDisplay import qtViewer3d
@@ -187,8 +188,8 @@ class MainController(QtGui.QMainWindow):
             dictcoldata = get_columndata(column_sec)
         return dictcoldata
     
+    
     def convertColComboToBeam(self):
-        print "hi"
         loc = self.ui.comboConnLoc.currentText()
         if loc == "Beam-Beam":
             self.ui.lbl_beam.setText(" Secondary beam *")
@@ -199,6 +200,9 @@ class MainController(QtGui.QMainWindow):
             #self.ui.comboSecondaryBeam.addItems(get_beamcombolist())
             self.ui.comboColSec.addItems(get_beamcombolist())
             #self.ui.comboColSec.currentIndex()
+            self.ui.combo_Beam.setCurrentIndex(0)
+            self.ui.comboColSec.setCurrentIndex(0)
+
             
         elif loc == "Column web-Beam web" or loc == "Column flange-Beam web":
             
@@ -206,7 +210,6 @@ class MainController(QtGui.QMainWindow):
             self.ui.lbl_beam.setText("Beam section *")
             self.ui.comboColSec.clear()
             self.ui.comboColSec.addItems(get_columncombolist())
-            print"changes the current index"
             self.ui.combo_Beam.setCurrentIndex(0)
             self.ui.comboColSec.setCurrentIndex(0)
 
@@ -277,8 +280,6 @@ class MainController(QtGui.QMainWindow):
         
         '''Populates the plate thickness on the basis of beam web thickness and plate thickness check
         '''
-        print "culprit is " + culprit
-        print "culprit.currentText(): "+ self.ui.combo_Beam.currentText()
         if self.ui.combo_Beam.currentText() == "Select section":
             self.ui.comboPlateThick_2.setCurrentIndex(0)
             self.ui.comboWldSize.setCurrentIndex(0)
@@ -313,8 +314,6 @@ class MainController(QtGui.QMainWindow):
         ThickerPart between column Flange and plate thickness again get checked according to the IS 800 Table 21 (Name of the table :Minimum Size of First Rum or of a
         Single Run Fillet Weld)
         '''
-        print "populateWeldThickCombo called"
-        print "culprit.currentText(): "+ self.ui.comboColSec.currentText()
         if self.ui.combo_Beam.currentText() == "Select section":
             self.ui.comboPlateThick_2.setCurrentIndex(0)
             self.ui.comboWldSize.setCurrentIndex(0)
@@ -330,8 +329,6 @@ class MainController(QtGui.QMainWindow):
             #column_tw = float(dictcoldata[QString("tw")])
             plate_thickness =  self.ui.comboPlateThick_2.currentText()
             plate_thick = plate_thickness.toFloat()
-            print"$$$$$$$$$$$$$$$$$$$$$$$$$$$"
-            print  plate_thick[0]
             
             if self.ui.comboConnLoc.currentText() == "Column flange-Beam web":
                 if self.ui.comboColSec.currentText()== "Select section":
@@ -913,9 +910,8 @@ class MainController(QtGui.QMainWindow):
         if loc  == "Column web-Beam web":
             if self.ui.comboColSec.currentIndex()== 0:
                 QtGui.QMessageBox.about(self,"Information", "Please select column section")
-                return
+            return
             column = self.ui.comboColSec.currentText()
-            print column
             dictBeamData = self.fetchBeamPara()
             dictColData = self.fetchColumnPara()
             column_D = float(dictColData[QString("D")])
@@ -931,11 +927,11 @@ class MainController(QtGui.QMainWindow):
             else:
                 self.ui.btn_Design.setDisabled(False)
         elif loc == "Beam-Beam":
-            if self.ui.comboColSec.currentIndex()== 0 or self.ui.combo_Beam.currentIndex()==0:
+            if self.ui.comboColSec.currentIndex()== 0:
                 QtGui.QMessageBox.about(self,"Information", "Please select column section")
-                return
-            primaryBeam = self.ui.comboColSec.currentText()
-            print primaryBeam
+            elif self.ui.combo_Beam.currentIndex()==0:
+                QtGui.QMessageBox.about(self,"Information", "Please select beam section")
+            return
             dictSBeamData = self.fetchBeamPara()
             dictPBeamData = self.fetchColumnPara()
             PBeam_D = float(dictPBeamData[QString("D")])
@@ -1034,113 +1030,42 @@ class MainController(QtGui.QMainWindow):
         uiObj = self.uiObj
         resultObj = self.resultObj
         
-        dictbeamdata  = self.fetchBeamPara()
         ##### PRIMARY BEAM PARAMETERS #####
-        beam_D = int(dictbeamdata[QString("D")])
-        beam_B = int(dictbeamdata[QString("B")])
-        beam_tw = float(dictbeamdata[QString("tw")])
-        beam_T = float(dictbeamdata[QString("T")])
-        beam_alpha = float(dictbeamdata[QString("FlangeSlope")])
-        beam_R1 = float(dictbeamdata[QString("R1")])
-        beam_R2 = float(dictbeamdata[QString("R2")])
-        beam_length = 500.0 # This parameter as per view of 3D cad model
         
-        #beam = ISection(B = 140, T = 16,D = 400,t = 8.9, R1 = 14, R2 = 7, alpha = 98,length = 500)
-        #beam = ISection(B = beam_B, T = beam_T,D = beam_D,t = beam_tw,
-                        #R1 = beam_R1, R2 = beam_R2, alpha = beam_alpha,
-                        #length = beam_length)
+        dictbeamdata  = self.fetchColumnPara()
+        pBeam_D = int(dictbeamdata[QString("D")])
+        pBeam_B = int(dictbeamdata[QString("B")])
+        pBeam_tw = float(dictbeamdata[QString("tw")])
+        pBeam_T = float(dictbeamdata[QString("T")])
+        pBeam_alpha = float(dictbeamdata[QString("FlangeSlope")])
+        pBeam_R1 = float(dictbeamdata[QString("R1")])
+        pBeam_R2 = float(dictbeamdata[QString("R2")])
+        pBeam_length = 800.0 # This parameter as per view of 3D cad model
+        
+        #beam = ISectionold(B = 140, T = 16,D = 400,t = 8.9, R1 = 14, R2 = 7, alpha = 98,length = 500)
+        column = ISection(B = pBeam_B, T = pBeam_T,D = pBeam_D,t = pBeam_tw,
+                        R1 = pBeam_R1, R2 = pBeam_R2, alpha = pBeam_alpha,
+                        length = pBeam_length,notchObj = None)
         
         ##### SECONDARY BEAM PARAMETERS ######
-        dictbeamdata2 = self.fetchColumnPara()
+        dictbeamdata2 = self.fetchBeamPara()
         
-        beam2_D = int(dictbeamdata2[QString("D")])
-        beam2_B = int(dictbeamdata2[QString("B")])
-        beam2_tw = float(dictbeamdata2[QString("tw")])
-        beam2_T = float(dictbeamdata2[QString("T")])
-        beam2_alpha = float(dictbeamdata2[QString("FlangeSlope")])
-        beam2_R1 = float(dictbeamdata2[QString("R1")])
-        beam2_R2 = float(dictbeamdata2[QString("R2")])
+        sBeam_D = int(dictbeamdata2[QString("D")])
+        sBeam_B = int(dictbeamdata2[QString("B")])
+        sBeam_tw = float(dictbeamdata2[QString("tw")])
+        sBeam_T = float(dictbeamdata2[QString("T")])
+        sBeam_alpha = float(dictbeamdata2[QString("FlangeSlope")])
+        sBeam_R1 = float(dictbeamdata2[QString("R1")])
+        sBeam_R2 = float(dictbeamdata2[QString("R2")])
         
-        #column = ISection(B = 83, T = 14.1, D = 250, t = 11, R1 = 12, R2 = 3.2, alpha = 98, length = 1000)
-        column = ISection(B = beam2_B, T = beam2_T, D = beam2_D,
-                           t = beam2_tw, R1 = beam2_R1, R2 = beam2_R2, alpha = beam2_alpha, length = 800)
-        #### WELD,PLATE,BOLT AND NUT PARAMETERS #####
+        #--Notch dimensions
+        notchObj = Notch(R1 = pBeam_R1, height = (pBeam_T + pBeam_R1), width= ((pBeam_B -(pBeam_tw + 40))/2.0 + 10),length = sBeam_B )
+        #column = ISectionold(B = 83, T = 14.1, D = 250, t = 11, R1 = 12, R2 = 3.2, alpha = 98, length = 1000)
+        beam = ISection(B = sBeam_B, T = sBeam_T, D = sBeam_D,
+                           t = sBeam_tw, R1 = sBeam_R1, R2 = sBeam_R2, 
+                           alpha = sBeam_alpha, length = 500, notchObj = notchObj)
         
-        fillet_length = resultObj['Plate']['height']
-        fillet_thickness =  resultObj['Weld']['thickness']
-        plate_width = resultObj['Plate']['width']
-        plate_thick = uiObj['Plate']['Thickness (mm)']
-        bolt_dia = uiObj["Bolt"]["Diameter (mm)"]
-        bolt_r = bolt_dia/2
-        bolt_R = self.boltHeadDia_Calculation(bolt_dia) /2
-        nut_R = bolt_R
-        bolt_T = self.boltHeadThick_Calculation(bolt_dia) 
-        bolt_Ht = self.boltLength_Calculation(bolt_dia)
-        #bolt_Ht = 50.0 # minimum bolt length as per Indian Standard IS 3757(1989)
-        nut_T = self.nutThick_Calculation(bolt_dia)# bolt_dia = nut_dia
-        nut_Ht = 12.2 #150
         
-        #plate = Plate(L= 300,W =100, T = 10)
-        #plate = Plate(L= fillet_length,W =plate_width, T = plate_thick)
-        
-        #Fweld1 = FilletWeld(L= 300,b = 6, h = 6)
-        #Fweld1 = FilletWeld(L= fillet_length,b = fillet_thickness, h = fillet_thickness)
-
-        #bolt = Bolt(R = bolt_R,T = bolt_T, H = 38.0, r = 4.0 )
-        #bolt = Bolt(R = bolt_R,T = bolt_T, H = bolt_Ht, r = bolt_r )
-         
-        #nut =Nut(R = bolt_R, T = 10.0,  H = 11, innerR1 = 4.0, outerR2 = 8.3)
-        #nut = Nut(R = bolt_R, T = nut_T,  H = nut_Ht, innerR1 = bolt_r)
-        
-        gap = beam_tw + plate_thick+ nut_T
-        
-        #nutBoltArray = NutBoltArray(resultObj,nut,bolt,gap)
-        #beamwebconn =  BeamWebBeamWeb(column,beam,Fweld1,plate,nutBoltArray)
-        beamwebconn =  BeamWebBeamWeb(column)
-        beamwebconn.create_3dmodel()
-        
-        return  beamwebconn
-        
-    
-       
-    def create3DColWebBeamWeb(self):
-        '''
-        creating 3d cad model with column web beam web
-        
-        '''
-        uiObj = self.uiObj
-        resultObj = self.resultObj
-        
-        dictbeamdata  = self.fetchBeamPara()
-        ##### BEAM PARAMETERS #####
-        beam_D = int(dictbeamdata[QString("D")])
-        beam_B = int(dictbeamdata[QString("B")])
-        beam_tw = float(dictbeamdata[QString("tw")])
-        beam_T = float(dictbeamdata[QString("T")])
-        beam_alpha = float(dictbeamdata[QString("FlangeSlope")])
-        beam_R1 = float(dictbeamdata[QString("R1")])
-        beam_R2 = float(dictbeamdata[QString("R2")])
-        beam_length = 500.0 # This parameter as per view of 3D cad model
-        
-        #beam = ISection(B = 140, T = 16,D = 400,t = 8.9, R1 = 14, R2 = 7, alpha = 98,length = 500)
-        beam = ISection(B = beam_B, T = beam_T,D = beam_D,t = beam_tw,
-                        R1 = beam_R1, R2 = beam_R2, alpha = beam_alpha,
-                        length = beam_length)
-        
-        ##### COLUMN PARAMETERS ######
-        dictcoldata = self.fetchColumnPara()
-        
-        column_D = int(dictcoldata[QString("D")])
-        column_B = int(dictcoldata[QString("B")])
-        column_tw = float(dictcoldata[QString("tw")])
-        column_T = float(dictcoldata[QString("T")])
-        column_alpha = float(dictcoldata[QString("FlangeSlope")])
-        column_R1 = float(dictcoldata[QString("R1")])
-        column_R2 = float(dictcoldata[QString("R2")])
-        
-        #column = ISection(B = 83, T = 14.1, D = 250, t = 11, R1 = 12, R2 = 3.2, alpha = 98, length = 1000)
-        column = ISection(B = column_B, T = column_T, D = column_D,
-                           t = column_tw, R1 = column_R1, R2 = column_R2, alpha = column_alpha, length = 1000)
         #### WELD,PLATE,BOLT AND NUT PARAMETERS #####
         
         fillet_length = resultObj['Plate']['height']
@@ -1167,6 +1092,81 @@ class MainController(QtGui.QMainWindow):
         bolt = Bolt(R = bolt_R,T = bolt_T, H = bolt_Ht, r = bolt_r )
          
         #nut =Nut(R = bolt_R, T = 10.0,  H = 11, innerR1 = 4.0, outerR2 = 8.3)
+        nut = Nut(R = bolt_R, T = nut_T,  H = nut_Ht, innerR1 = bolt_r)
+        
+        gap = sBeam_tw + plate_thick + nut_T
+        
+        nutBoltArray = NutBoltArray(resultObj,nut,bolt,gap)
+        beamwebconn =  BeamWebBeamWeb(column,beam,notchObj,plate,Fweld1,nutBoltArray)
+        beamwebconn.create_3dmodel()
+        
+        return  beamwebconn
+        
+    
+       
+    def create3DColWebBeamWeb(self):
+        '''
+        creating 3d cad model with column web beam web
+        
+        '''
+        uiObj = self.uiObj
+        resultObj = self.resultObj
+        
+        dictbeamdata  = self.fetchBeamPara()
+        ##### BEAM PARAMETERS #####
+        beam_D = int(dictbeamdata[QString("D")])
+        beam_B = int(dictbeamdata[QString("B")])
+        beam_tw = float(dictbeamdata[QString("tw")])
+        beam_T = float(dictbeamdata[QString("T")])
+        beam_alpha = float(dictbeamdata[QString("FlangeSlope")])
+        beam_R1 = float(dictbeamdata[QString("R1")])
+        beam_R2 = float(dictbeamdata[QString("R2")])
+        beam_length = 500.0 # This parameter as per view of 3D cad model
+        
+        #beam = ISectionold(B = 140, T = 16,D = 400,t = 8.9, R1 = 14, R2 = 7, alpha = 98,length = 500)
+        beam = ISection(B = beam_B, T = beam_T,D = beam_D,t = beam_tw,
+                        R1 = beam_R1, R2 = beam_R2, alpha = beam_alpha,
+                        length = beam_length,notchObj = None)
+        
+        ##### COLUMN PARAMETERS ######
+        dictcoldata = self.fetchColumnPara()
+        
+        column_D = int(dictcoldata[QString("D")])
+        column_B = int(dictcoldata[QString("B")])
+        column_tw = float(dictcoldata[QString("tw")])
+        column_T = float(dictcoldata[QString("T")])
+        column_alpha = float(dictcoldata[QString("FlangeSlope")])
+        column_R1 = float(dictcoldata[QString("R1")])
+        column_R2 = float(dictcoldata[QString("R2")])
+        
+        #column = ISectionold(B = 83, T = 14.1, D = 250, t = 11, R1 = 12, R2 = 3.2, alpha = 98, length = 1000)
+        column = ISection(B = column_B, T = column_T, D = column_D,
+                           t = column_tw, R1 = column_R1, R2 = column_R2, alpha = column_alpha, length = 1000,notchObj = None)
+        #### WELD,PLATE,BOLT AND NUT PARAMETERS #####
+        
+        fillet_length = resultObj['Plate']['height']
+        fillet_thickness =  resultObj['Weld']['thickness']
+        plate_width = resultObj['Plate']['width']
+        plate_thick = uiObj['Plate']['Thickness (mm)']
+        bolt_dia = uiObj["Bolt"]["Diameter (mm)"]
+        bolt_r = bolt_dia/2
+        bolt_R = self.boltHeadDia_Calculation(bolt_dia) /2
+        nut_R = bolt_R
+        bolt_T = self.boltHeadThick_Calculation(bolt_dia) 
+        bolt_Ht = self.boltLength_Calculation(bolt_dia)
+        #bolt_Ht = 50.0 # minimum bolt length as per Indian Standard IS 3757(1989)
+        nut_T = self.nutThick_Calculation(bolt_dia)# bolt_dia = nut_dia
+        nut_Ht = 12.2 #150
+        
+        #plate = Plate(L= 300,W =100, T = 10)
+        plate = Plate(L= fillet_length,W =plate_width, T = plate_thick)
+        
+        #Fweld1 = FilletWeld(L= 300,b = 6, h = 6)
+        Fweld1 = FilletWeld(L= fillet_length,b = fillet_thickness, h = fillet_thickness)
+
+        #bolt = Bolt(R = 17,T = 12.5, H = 50.0, r = 10.0 )
+        bolt = Bolt(R = bolt_R,T = bolt_T, H = bolt_Ht, r = bolt_r )
+        #nut =Nut(R = 17, T = 17.95,  H = 12.2, innerR1 = 10.0)
         nut = Nut(R = bolt_R, T = nut_T,  H = nut_Ht, innerR1 = bolt_r)
         
         gap = beam_tw + plate_thick+ nut_T
@@ -1201,10 +1201,9 @@ class MainController(QtGui.QMainWindow):
         beam_R2 = float(dictbeamdata[QString("R2")])
         beam_length = 500.0 # This parameter as per view of 3D cad model
         
-        #beam = ISection(B = 140, T = 16,D = 400,t = 8.9, R1 = 14, R2 = 7, alpha = 98,length = 500)
+        #beam = ISectionold(B = 140, T = 16,D = 400,t = 8.9, R1 = 14, R2 = 7, alpha = 98,length = 500)
         beam = ISection(B = beam_B, T = beam_T,D = beam_D,t = beam_tw,
-                        R1 = beam_R1, R2 = beam_R2, alpha = beam_alpha,
-                        length = beam_length)
+                        R1 = beam_R1, R2 = beam_R2, alpha = beam_alpha,length = beam_length, notchObj = None)
         
         ##### COLUMN PARAMETERS ######
         dictcoldata = self.fetchColumnPara()
@@ -1217,9 +1216,9 @@ class MainController(QtGui.QMainWindow):
         column_R1 = float(dictcoldata[QString("R1")])
         column_R2 = float(dictcoldata[QString("R2")])
         
-        #column = ISection(B = 83, T = 14.1, D = 250, t = 11, R1 = 12, R2 = 3.2, alpha = 98, length = 1000)
+        #column = ISectionold(B = 83, T = 14.1, D = 250, t = 11, R1 = 12, R2 = 3.2, alpha = 98, length = 1000)
         column = ISection(B = column_B, T = column_T, D = column_D,
-                           t = column_tw, R1 = column_R1, R2 = column_R2, alpha = column_alpha, length = 1000)
+                           t = column_tw, R1 = column_R1, R2 = column_R2, alpha = column_alpha, length = 1000,notchObj = None)
         
         #### WELD,PLATE,BOLT AND NUT PARAMETERS #####
         
@@ -1248,6 +1247,7 @@ class MainController(QtGui.QMainWindow):
 
         #bolt = Bolt(R = bolt_R,T = bolt_T, H = 38.0, r = 4.0 )
         bolt = Bolt(R = bolt_R,T = bolt_T, H = bolt_Ht, r = bolt_r )
+        
          
         #nut =Nut(R = bolt_R, T = 10.0,  H = 11, innerR1 = 4.0, outerR2 = 8.3)
         nut = Nut(R = bolt_R, T = nut_T,  H = nut_Ht, innerR1 = bolt_r)
@@ -1347,7 +1347,7 @@ class MainController(QtGui.QMainWindow):
         self.validateInputsOnDesignBtn()
         # FinPlate Design Calculations. 
         self.resultObj = finConn(self.uiObj)
-        
+        print self.resultObj
         
         # Displaying Design Calculations To Output Window
         self.display_output(self.resultObj)
@@ -1471,7 +1471,6 @@ class MainController(QtGui.QMainWindow):
         Closing finPlate window.
         '''
         uiInput = self.getuser_inputs()
-        print uiInput
         self.save_inputs(uiInput)
         reply = QtGui.QMessageBox.question(self, 'Message',
             "Are you sure to quit?", QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)

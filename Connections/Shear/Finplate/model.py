@@ -28,7 +28,7 @@ def set_databaseconnection():
                              "how to build it.\n\n"
                              "Click Cancel to exit."),
                QtGui.QMessageBox.Cancel)
-        return False   
+        return False 
 
     logger.info("feching records from database")
     

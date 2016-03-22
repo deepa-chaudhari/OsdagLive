@@ -55,7 +55,7 @@ class FinCommonData(object):
         self.beam_L = 350
         self.gap = 20 # Clear distance between Column and Beam as per subramanyam's book ,range 15-20 mm
         self.plate_pos_dist =self.beam_T + self.beam_R1 + 5 if self.beam_T + self.beam_R1 + 5  > 50 else  50 # Joints in Steel construction simple connections Publication P212,chapter no4 name: double angle web cleats
-        
+        self.beamToBeamDist = 10
     
     def addSMarker(self, dwg):
         '''
@@ -389,6 +389,7 @@ class FinCommonData(object):
                 fin2DTop.callCWBWTop(fileName)
             
         else:
+            
             self.callBWBWSide()
 
 class Fin2DCreatorFront(object):
@@ -396,6 +397,9 @@ class Fin2DCreatorFront(object):
     def __init__(self,finCommonObj):
         
         self.dataObj = finCommonObj
+        #------------------------------------------------------------------------------ 
+        #              COLUMN WEB BEAM WEB CONNECTIVITY (FRONT VIEW)
+        #------------------------------------------------------------------------------ 
         
         self.A2 =(self.dataObj.col_B,(self.dataObj.col_L-self.dataObj.D_beam)/2)
         self.B = (self.dataObj.col_B,0)
@@ -481,8 +485,9 @@ class Fin2DCreatorFront(object):
         ptP1y = ((self.dataObj.col_L - self.dataObj.D_beam)/2 +(self.dataObj.col_tw + self.dataObj.beam_R1 + 3)+ self.dataObj.end_dist)
         self.P1 = (ptP1x,ptP1y)
         
-
-        #### Column flange points for column flange beam web connectivity #####
+        #------------------------------------------------------------------------------ 
+        #              COLUMN FLANGE BEAM WEB CONNECTIVITY (FRONT VIEW)
+        #------------------------------------------------------------------------------ 
         
         fromPlate_pt = self.dataObj.D_col + self.dataObj.gap # 20 mm clear distance between colume and beam
         ptFAx = 0
@@ -578,10 +583,40 @@ class Fin2DCreatorFront(object):
         ptFB4x = fromPlate_pt
         ptFB4y = ((self.dataObj.col_L - self.dataObj.D_beam)/2 + self.dataObj.D_beam) - self.dataObj.beam_T
         self.FB4 = ptFB4x, ptFB4y
-        
-    def callBWBWfront(self):
-        pass
-    
+
+        #------------------------------------------------------------------------------ 
+        #                BEAM BEAM CONNECTIVITY (FRONT VIEW)
+        #------------------------------------------------------------------------------ 
+        self.BA = np.array([0,0])
+        self.BB = self.BA + self.dataObj.col_B * np.array([1,0])
+        self.BC = self.BB + (self.dataObj.col_T)* np.array([0,1])
+        self.BD = self.BA +  (self.dataObj.col_B + self.dataObj.col_tw)/2 * np.array([1,0]) + (self.dataObj.col_T) * np.array([0,1])
+        self.BE = self.BD + (self.dataObj.D_col - 2.0*(self.dataObj.col_T))* np.array([0,1])
+        self.BF = self.BB + (self.dataObj.D_col - self.dataObj.col_T)* np.array([0,1])
+        self.BG = self.BB + (self.dataObj.D_col)* np.array([0,1])
+        self.BH = self.BA + (self.dataObj.D_col)* np.array([0,1])
+        self.BI = self.BA + (self.dataObj.D_col - self.dataObj.col_T)* np.array([0,1])
+        self.BJ = self.BE - (self.dataObj.col_tw) * np.array([1,0])
+        self.BK = self.BD - (self.dataObj.col_tw) * np.array([1,0])
+        self.BL = self.BA + (self.dataObj.col_T)* np.array([0,1])
+        self.BP = self.BD + self.dataObj.col_R1 * np.array([0,1])
+        self.Bx = self.BP + 12 * np.array([1,0]) # To represent weld in 2D, Osdag uses 12 mm thickness of weld instead of actual size produced by Osdag.
+        self.BQ = self.BP + self.dataObj.plate_width * np.array([1,0])
+        self.BO = self.BP + self.dataObj.edge_dist * np.array([1,0])
+        self.BA5 = self.BP + self.dataObj.gap * np.array([1,0])    
+        self.BB5 = self.BA5 + self.dataObj.plate_ht * np.array([0,1])
+        self.BA1 = self.BB + 10 * np.array([1,0]) # 10 mm is minimum distance between two beams in Beam-Beam connectivity.
+        self.BA4 = self.BA1 + self.dataObj.beam_T * np.array([0,1])
+        self.BA6 = self.BA1 + self.dataObj.notch_ht * np.array([0,1])
+        self.BA2 = self.BA1 + (self.dataObj.beam_L - self.dataObj.notch_L) * np.array([1,0])
+        self.BA3 = self.BA4 + (self.dataObj.beam_L - self.dataObj.notch_L) * np.array([1,0])
+        self.BB2 = self.BA2 + self.dataObj.D_beam * np.array([0,1])
+        self.BB3 = self.BB2 + self.dataObj.beam_T * np.array([0,-1])
+        self.BB1 = self.BB2 + (self.dataObj.beam_L +10) * np.array([-1,0])
+        self.BB4 = self.BB1 + self.dataObj.beam_T * np.array([0,-1])
+        self.B1 = self.BA5 + 80 * np.array([0,1])
+        self.BC2 = self.BA6 + self.dataObj.col_R1 * np.array([-1,0])
+        self.BC1 = self.BA6 + self.dataObj.col_R1 * np.array([0,-1])
     
     def callCFBWfront(self,fileName):
         dwg = svgwrite.Drawing(fileName, size=('1200mm', '1350mm'), viewBox=('-340 -350 1200 1350'))
@@ -803,8 +838,6 @@ class Fin2DCreatorFront(object):
         dwg.save()
         print"########### Column Flange Beam Web Saved ############"
         
-        
-        
     def callCWBWfront(self,fileName):
         
         dwg = svgwrite.Drawing(fileName, size=('1250mm', '1340mm'), viewBox=('-410 -350 1250 1340'))
@@ -1018,6 +1051,45 @@ class Fin2DCreatorFront(object):
         dwg.save()
         print"########### Column Web Beam Web Saved ############"
     
+    
+    def callBWBWfront(self,fileName):
+        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('-50 -300 850 850'))
+        
+        dwg.add(dwg.polyline(points=[(self.BA),(self.BB),(self.BC),(self.BD),(self.BE),(self.BF),(self.BG),(self.BH),(self.BI),(self.BJ),(self.BK),(self.BL),(self.BA)], stroke='blue', fill='#E0E0E0', stroke_width=2.5))
+        dwg.add(dwg.line((self.BA5),(self.BC2)).stroke('blue', width = 2.5, linecap = 'square'))
+        dwg.add(dwg.polyline(points=[(self.BC1),(self.BA4),(self.BA1),(self.BA2),(self.BB2),(self.BB1),(self.BB5)], stroke='blue', fill= 'none', stroke_width=2.5))
+        dwg.add(dwg.line((self.BA5),(self.BB5)).stroke('red',width = 2.5,linecap = 'square').dasharray(dasharray = ([5,5])))
+        pattern = dwg.defs.add(dwg.pattern(id ="diagonalHatch",size=(6, 8), patternUnits="userSpaceOnUse",patternTransform="rotate(45 2 2)"))
+        pattern.add(dwg.path(d = "M -1,2 l 6,0", stroke='#000000',stroke_width = 2.5))
+        dwg.add(dwg.rect(insert=(self.BP), size=(8, self.plate_ht),fill = 'url(#diagonalHatch)', stroke='white', stroke_width=2.5))
+        dwg.add(dwg.rect(insert=(self.BP), size=(self.plate_width, self.plate_ht),fill = 'none', stroke='blue', stroke_width=2.5))
+        dwg.add(dwg.line((self.BA4),(self.BA3)).stroke('blue', width = 2.5, linecap = 'square'))
+        dwg.add(dwg.line((self.BB4),(self.BB3)).stroke('blue', width = 2.5, linecap = 'square'))
+        curveList = ["M",self.BC1,"A",np.array([self.col_R1, self.col_R1]),"0","0","1",self.BC2]
+        dwg.add(dwg.path(d = curveList, stroke='blue',fill = 'none', stroke_width = 2.5))
+        
+        nr = self.no_of_rows
+        nc = self.no_of_col
+        bolt_r = self.bolt_dia/2
+        ptList = []
+        
+        for i in range(1,(nr+1)):
+            colList = []
+            for j in range (1,(nc+1)):
+                pt = self.BP + self.dataObj.edge_dist * np.array([1,0]) + self.dataObj.end_dist * np.array ([0,1]) + \
+                    (i-1) * self.dataObj.pitch * np.array([0,1]) + (j-1) * self.dataObj.gauge * np.array([1,0])
+                dwg.add(dwg.circle(center=(pt), r = bolt_r, stroke='blue',fill = 'none',stroke_width=1.5))
+                ptC = pt - (bolt_r + 4) * np.array([1,0])
+                PtD = pt + (bolt_r + 4) * np.array([1,0])
+                dwg.add(dwg.line((ptC),(PtD)).stroke('red',width = 2.0,linecap = 'square'))
+                ptE = self.BP + self.dataObj.edge_dist * np.array([1,0]) +(j-1) * self.dataObj.gauge * np.array([1,0])
+                ptF = ptE + self.dataObj.plate_ht * np.array([0,1])
+                dwg.add(dwg.line((ptE),(ptF)).stroke('blue',width = 1.5,linecap = 'square').dasharray(dasharray = ([20, 5, 1, 5])))   
+                colList.append(pt)
+            ptList.append(colList)
+        dwg.save()
+        
+        pass
              
 class Fin2DCreatorTop(object):
     
@@ -1064,7 +1136,9 @@ class Fin2DCreatorTop(object):
         self.ptZ = self.Z + 2.5 * np.array([1,0]) + 2.5 * np.array([0,1]) 
         
         
-        #### CFBW connectivity points
+        #=======================================================================
+        # #### CFBW connectivity points
+        #=======================================================================
         self.FA = np.array([0,0])
         self.FB = self.FA + self.dataObj.col_T * np.array([1,0])
         self.FC = self.FB + (self.dataObj.col_B - self.dataObj.col_tw)/2 * np.array([0,1])
@@ -1105,7 +1179,37 @@ class Fin2DCreatorTop(object):
         self.ptFY = self.FY + 2.5 * np.array([1,0]) + 2.5 * np.array([0,1]) 
         self.FZ = self.FX + (self.dataObj.weld_thick) * np.array([1,0])
         self.ptFZ = self.FZ + 2.5 * np.array([1,0]) + 2.5 * np.array([0,1]) 
-
+        
+        #=======================================================================
+        # Beam-Beam Connectivity
+        #=======================================================================
+        self.BA = np.array([0,0])
+        self.BB = self.BA + self.dataObj.col_B * np.array([1,0])
+        self.BC = self.BB + self.dataObj.col_L * np.array([0,1])
+        self.BD = self.BA + self.dataObj.col_L * np.array([0,1])
+        self.BE = self.BA +((self.dataObj.col_B - self.dataObj.col_tw)/2.0) * np.array([1,0])
+        self.BF = self.BE + self.dataObj.col_tw * np.array([1,0])
+        self.BH = self.BE + self.dataObj.col_L * np.array([0,1])
+        self.BG = self.BH + self.dataObj.col_tw * np.array([1,0])
+        beamLocY_DIR = (self.dataObj.col_L - self.dataObj.beam_B)/2.0
+        beamLocX_DIR  = (self.dataObj.col_B + self.dataObj.col_tw)/2.0 + self.dataObj.gap
+        self.BA1 = self.BF + self.dataObj.gap * np.array([1,0]) + beamLocY_DIR * np.array([0,1])
+        self.BA2 = self.BA1 + (self.dataObj.col_B/2.0 - ((self.dataObj.col_tw /2.0) + self.dataObj.gap)) * np.array([1,0])
+        self.BA3 = self.BA2 + self.dataObj.beamToBeamDist * np.array([1,0])
+        self.BA4 = self.BA1 + self.dataObj.beam_L * np.array([1,0])
+        self.BB0 = self.BA1 + ((self.dataObj.beam_B - self.dataObj.beam_tw)/2.0) * np.array([0,1])
+        self.BB1 = self.BA2 + ((self.dataObj.beam_B - self.dataObj.beam_tw)/2.0) * np.array([0,1])
+        self.BB2 = self.BA3 + ((self.dataObj.beam_B - self.dataObj.beam_tw)/2.0) * np.array([0,1])
+        self.BB5 = self.BB2 + self.dataObj.beam_tw * np.array([0,1])
+        self.BB3 = self.BB2 + self.dataObj.beam_L * np.array([1,0])
+        self.BP1 = self.BB1 + self.dataObj.beam_tw * np.array([0,1])
+        self.BT = self.BP1 + self.dataObj.plate_thick * np.array([0,1])
+        self.BP0 = self.BB0 + self.dataObj.beam_tw * np.array([0,1])
+        self.BP = self.BP0 + self.dataObj.gap * np.array([-1,0])
+        self.BX = self.BP + self.dataObj.plate_thick * np.array([0,1])
+        
+        
+        
     def callCFBWTop(self,fileName):
         '''
         '''
@@ -1392,15 +1496,18 @@ class Fin2DCreatorTop(object):
         
         dwg.save()
         print"$$$$$$$$$ Saved Column Web Beam Web Top $$$$$$$$$$$"
-
-
-            
+    
+    def callBWBWTop(self,fileName):
+        pass
+    
 class Fin2DCreatorSide(object):
     def __init__(self,finCommonObj):
         
         self.dataObj = finCommonObj
         
-        # CWBW connectivity points
+        #=======================================================================
+        # # CWBW connectivity points
+        #=======================================================================
         self.A = np.array([0,0])
         self.B = self.A + self.dataObj.col_T * np.array([1,0])
         self.E = self.B + self.dataObj.col_L * np.array([0,1])
@@ -1428,7 +1535,9 @@ class Fin2DCreatorSide(object):
         self.R = self.P + self.dataObj.plate_ht * np.array([0,1])
         self.Y = self.R + (self.dataObj.plate_thick + self.dataObj.weld_thick) * np.array([-1,0])
         
-        #### CFBW connectivity
+        #=======================================================================
+        # #### CFBW connectivity
+        #=======================================================================
         self.FA = np.array([0,0])
         self.FB = self.FA + self.dataObj.col_B * np.array([1,0])
         self.ptMid = self.FA + ((self.dataObj.col_B/2) + (self.dataObj.col_tw/2))* np.array([1,0])
@@ -1454,6 +1563,35 @@ class Fin2DCreatorSide(object):
         self.FX = self.FQ + 8 * np.array([-1,0])
         self.FR = self.FP + self.dataObj.plate_ht * np.array([0,1])
         self.FY = self.FX + self.dataObj.plate_ht * np.array([0,1])
+        
+        
+        #=======================================================================
+        # Sideview Points
+        #=======================================================================
+        self.BA1 = np.array([0,0])
+        self.BA2 = self.BA1 + self.col_L * np.array([1,0])
+        self.BA3 = self.BA2 + self.col_T * np.array([0,1])
+        self.BA4 = self.BA2 + (self.D_col - self.col_T) * np.array([0,1])
+        self.BA5 = self.BA4 + self.col_T * np.array([0,1])
+        self.BA6 = self.BA5 + self.col_L * np.array([-1,0])
+        self.BA7 = self.BA4 + self.col_L * np.array([-1,0])
+        self.BA8 = self.BA1 + self.col_T * np.array([0,1])
+        beamStartPt = (self.col_L - self.beam_B)/2.0
+        self.BA = self.BA1 + beamStartPt * np.array([1,0])
+        self.BB = self.BA + self.beam_B * np.array([1,0])
+        self.BC = self.BB + (self.beam_T)* np.array([0,1])
+        self.BD = self.BA +  (self.beam_B + self.beam_tw)/2 * np.array([1,0]) + (self.beam_T) * np.array([0,1])
+        self.BE = self.BD + (self.D_col - 2.0*(self.beam_T))* np.array([0,1])
+        self.BF = self.BB + (self.D_col - self.beam_T)* np.array([0,1])
+        self.BG = self.BB + (self.D_col)* np.array([0,1])
+        self.BH = self.BA + (self.D_col)* np.array([0,1])
+        self.BI = self.BA + (self.D_col - self.beam_T)* np.array([0,1])
+        self.BJ = self.BE - (self.beam_tw) * np.array([1,0])
+        self.BK = self.BD - (self.beam_tw) * np.array([1,0])
+        self.BL = self.BA + (self.beam_T)* np.array([0,1])
+        self.BP = self.BK + self.beam_R1 * np.array([0,1])
+        self.BQ =self.BP + self.plate_thick * np.array([-1,0])
+        self.BX =self.BQ + self.weld_thick * np.array([-1,0])
     
     def callCWBWSide(self,fileName):
         '''
@@ -1667,7 +1805,9 @@ class Fin2DCreatorSide(object):
         dwg.save()
         dwg.fit()
         print "********** Column Flange Beam Web Side Saved  *************"
-        
+    
+    def callBWBWSide(self,fileName):
+        pass
     
         
 
