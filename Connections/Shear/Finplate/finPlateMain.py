@@ -41,7 +41,7 @@ from PyQt4.QtWebKit import *
 from PyQt4.Qt import QPrinter
 # Developed by deepa
 from reportGenerator import *
-from Connections.Shear.Finplate.ModelUtils import getGpPt
+from ModelUtils import getGpPt
 ##### Testing imports
 from OCC.BRepPrimAPI import BRepPrimAPI_MakeSphere
 import OCC.V3d

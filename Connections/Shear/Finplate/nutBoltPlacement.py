@@ -81,6 +81,7 @@ pDir      |      |       | End distance  |
         self.gauge = boltPlaceObj['Bolt']['gauge']
         #self.gauge = 30
         self.edge = boltPlaceObj['Bolt']['edge']
+        self.plateedge = boltPlaceObj['Plate']['plateedge']
         self.end = boltPlaceObj['Bolt']['enddist']
         self.row = boltPlaceObj['Bolt']['numofrow']
         self.col = boltPlaceObj['Bolt']['numofcol']
@@ -94,7 +95,8 @@ pDir      |      |       | End distance  |
             for col in range(self.col):
                 pos = self.origin 
                 #pos = pos + self.end * self.gaugeDir
-                pos = pos + self.edge * self.gaugeDir
+                ##pos = pos + self.edge * self.gaugeDir
+                pos = pos + self.plateedge * self.gaugeDir
                 pos = pos + col * self.gauge * self.gaugeDir 
                 #pos = pos + self.edge * self.pitchDir 
                 pos = pos + self.end * self.pitchDir 
