@@ -5,7 +5,7 @@ Created on 16-Jun-2015
 '''
 import sys
 from PyQt4 import QtGui,QtCore
-from ui_osdagpageMainPage import Ui_MainWindow
+from ui_osdagpageMainPageOld import Ui_MainWindow
 #from ui_osdagpage import Ui_MainWindow
 from Connections.Shear.Finplate.finPlateMain import launchFinPlateController
 

@@ -1,4 +1,7 @@
 eclipse.preferences.version=1
 encoding//Connections/Shear/Finplate/icons_rc.py=utf-8
 encoding//Connections/Shear/Finplate/ui_finPlate.py=utf-8
-encoding/ui_osdagpage.py=utf-8
+encoding//Connections/Shear/Finplate/ui_finPlateold.py=utf-8
+encoding//Connections/Shear/Finplate/ui_summary_popup.py=utf-8
+encoding/ui_osdagMainPage.py=utf-8
+encoding/ui_osdagpageMainPageOld.py=utf-8

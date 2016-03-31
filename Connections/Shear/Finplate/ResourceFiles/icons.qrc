@@ -22,5 +22,7 @@
     <file>images/X-Y.png</file>
     <file>images/Z-X.png</file>
     <file>images/Z-Y.png</file>
+    <file>images/Z-Y.png</file>
+    <file>images/b-b.png</file>
   </qresource>
 </RCC>

@@ -78,11 +78,11 @@ class ColFlangeBeamWeb(object):
         # self.weld.place(origin3, uDir3, wDir3)
         
     def createPlateGeometry(self):
-        
-        plateOrigin = (((self.column.secOrigin + self.column.D/2 ) * (- self.column.vDir)) +
-                      (self.column.length/2 * self.column.wDir) + ((self.beam.t/2.0 )* (-self.beam.uDir))) + ((self.plate.T/2.0) * (-self.beam.uDir))
 #         plateOrigin = (((self.column.secOrigin + self.column.D/2 ) * (- self.column.vDir)) +
-#                        (self.column.length/2 * self.column.wDir) + ((self.beam.t/2.0 )* (self.beam.uDir))) + ((self.plate.T/2.0) * (self.beam.uDir))
+#                       (self.column.length/2 * self.column.wDir) + ((self.beam.t/2.0 )* (-self.beam.uDir))) + ((self.plate.T/2.0) * (-self.beam.uDir))
+        plateOrigin = (((self.column.secOrigin + self.column.D/2 ) * (- self.column.vDir)) +
+                      ((self.column.length/2.0 + (self.beam.T + self.beam.R1 + 5))* self.column.wDir) + ((self.beam.t/2.0 )* (-self.beam.uDir))) + ((self.plate.T/2.0) * (-self.beam.uDir))
+        
         uDir = numpy.array([1.0, 0.0, 0])
         wDir = numpy.array([0.0, -1.0, 0.0])
         self.plate.place(plateOrigin, uDir, wDir)

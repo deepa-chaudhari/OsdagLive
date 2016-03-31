@@ -11,6 +11,7 @@ from OCC.gp import gp_Pnt
 from nutBoltPlacement import NutBoltArray
 from OCC import VERSION, BRepTools
 from ui_finPlate import Ui_MainWindow
+from ui_summary_popup import Ui_Dialog
 from model import *
 from finPlateCalc import finConn
 import yaml
@@ -46,6 +47,14 @@ from ModelUtils import getGpPt
 from OCC.BRepPrimAPI import BRepPrimAPI_MakeSphere
 import OCC.V3d
 
+class MyPopupDialog(QtGui.QDialog):
+    def __init__(self, parent = None):
+        
+        QtGui.QDialog.__init__(self, parent)
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self)
+    
+    
 
 class MainController(QtGui.QMainWindow):
     
@@ -132,8 +141,10 @@ class MainController(QtGui.QMainWindow):
         
         #  $$$$$$$$$$$$$$ CHECKS NEEDS TO BE MODIFIED TO ARVIND AND SASIR
         self.ui.combo_Beam.currentIndexChanged[int].connect(lambda:self.fillPlateThickCombo("combo_Beam"))
-        self.ui.combo_Beam.currentIndexChanged[str].connect(self.checkBeam_B)
+        
         self.ui.comboColSec.currentIndexChanged[str].connect(self.checkBeam_B)
+        self.ui.combo_Beam.currentIndexChanged[str].connect(self.checkBeam_B)
+        #self.ui.comboColSec.currentIndexChanged[str].connect(self.checkBeam_B)
         #self.ui.comboColSec.currentIndexChanged[int].connect(lambda:self.populateWeldThickCombo("comboColSec"))
         #self.ui.comboConnLoc.currentIndexChanged[str].connect(self.populateWeldThickCombo)
         self.ui.comboPlateThick_2.currentIndexChanged[int].connect(lambda:self.populateWeldThickCombo("comboPlateThick_2"))
@@ -141,7 +152,7 @@ class MainController(QtGui.QMainWindow):
         
         self.ui.menuView.addAction(self.ui.inputDock.toggleViewAction())
         self.ui.menuView.addAction(self.ui.outputDock.toggleViewAction())
-        self.ui.btn_CreateDesign.clicked.connect(self.save_design)#Saves the create design report
+        self.ui.btn_CreateDesign.clicked.connect(self.save_design) #Saves the create design report
         self.ui.btn_SaveMessages.clicked.connect(self.save_log)
         
         
@@ -426,7 +437,10 @@ class MainController(QtGui.QMainWindow):
             picmap.scaledToWidth(50)
             self.ui.lbl_connectivity.setPixmap(picmap)
         else:
-            self.ui.lbl_connectivity.hide()
+            picmap = QtGui.QPixmap(":/newPrefix/images/b-b.png")
+            picmap.scaledToHeight(60)
+            picmap.scaledToWidth(50)
+            self.ui.lbl_connectivity.setPixmap(picmap)
             
         
     def getuser_inputs(self):
@@ -532,8 +546,16 @@ class MainController(QtGui.QMainWindow):
           
         QtCore.QObject.connect(self.web, QtCore.SIGNAL("loadFinished(bool)"), convertIt)
     
-    
+    def show_dialog(self):
+        dialog = MyPopupDialog(self)
+        dialog.show()
+        
+        
+        pass
     def save_design(self):
+        
+        self.show_dialog()
+        
         fileName,pat =QtGui.QFileDialog.getSaveFileNameAndFilter(self,"Save File As","output/finplate/","All Files (*);;Html Files (*.html)")
         self.call2D_Drawing("All")
         self.outdict = self.resultObj#self.outputdict()
@@ -910,22 +932,23 @@ class MainController(QtGui.QMainWindow):
         if loc  == "Column web-Beam web":
             if self.ui.comboColSec.currentIndex()== 0:
                 QtGui.QMessageBox.about(self,"Information", "Please select column section")
-            return
+                return
             column = self.ui.comboColSec.currentText()
             dictBeamData = self.fetchBeamPara()
             dictColData = self.fetchColumnPara()
             column_D = float(dictColData[QString("D")])
             column_T = float(dictColData[QString("T")])
             column_R1 = float(dictColData[QString("R1")])
-            columnWebDepth = column_D - 2.0 *( column_T)
-            
+            columnWebDepth = column_D - (2.0 *( column_T)+ 2.0 * (10))
             beam_B = float(dictBeamData[QString("B")])
             
             if columnWebDepth <= beam_B:
                 self.ui.btn_Design.setDisabled(True)
+                self.disableViewButtons()
                 QtGui.QMessageBox.about(self,'Information',"Beam flange is wider than clear depth of column web (No provision in Osdag till now)")
             else:
                 self.ui.btn_Design.setDisabled(False)
+                self.enableViewButtons()
         elif loc == "Beam-Beam":
             if self.ui.comboColSec.currentIndex()== 0:
                 QtGui.QMessageBox.about(self,"Information", "Please select column section")
@@ -1347,6 +1370,7 @@ class MainController(QtGui.QMainWindow):
         self.validateInputsOnDesignBtn()
         # FinPlate Design Calculations. 
         self.resultObj = finConn(self.uiObj)
+        print"printing new dict"
         print self.resultObj
         
         # Displaying Design Calculations To Output Window
@@ -1516,9 +1540,12 @@ def launchFinPlateController(osdagMainWindow):
     rawLogger.info('''<link rel="stylesheet" type="text/css" href="Connections/Shear/Finplate/log.css"/>''')
      
     #app = QtGui.QApplication(sys.argv)
+    module_setup()
+    #app = QtGui.QApplication(sys.argv)
     web = QWebView()
     window = MainController(web)
     osdagMainWindow.hide()
+    
      
     window.show()
     window.closed.connect(osdagMainWindow.show)
@@ -1542,6 +1569,7 @@ if __name__ == '__main__':
     rawLogger.info('''<link rel="stylesheet" type="text/css" href="Connections/Shear/Finplate/log.css"/>''')
        
     app = QtGui.QApplication(sys.argv)
+    #module_setup()
     web = QWebView()
     window = MainController(web)
     window.show()

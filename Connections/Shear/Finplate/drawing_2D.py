@@ -7,6 +7,7 @@ import svgwrite
 from PyQt4.QtCore import QString
 import numpy as np
 from numpy import math
+from __builtin__ import str
 
 
 class FinCommonData(object):
@@ -42,6 +43,7 @@ class FinCommonData(object):
 
         self.plate_width = ouputObj['Plate']['width']
         self.weld_len = ouputObj['Plate']['height']
+        self.plateEdge_dist = ouputObj['Plate']["plateedge"]
         self.weld_thick =  ouputObj['Weld']['thickness']
         self.bolt_dia  = inputObj["Bolt"]["Diameter (mm)"]
         self.connectivity =  inputObj['Member']['Connectivity']
@@ -51,7 +53,7 @@ class FinCommonData(object):
         self.edge_dist = ouputObj['Bolt']["edge"]
         self.no_of_rows = ouputObj['Bolt']["numofrow"] 
         self.no_of_col = ouputObj['Bolt']["numofcol"]
-        self.col_L = 800
+        self.col_L = 700
         self.beam_L = 350
         self.gap = 20 # Clear distance between Column and Beam as per subramanyam's book ,range 15-20 mm
         self.plate_pos_dist =self.beam_T + self.beam_R1 + 5 if self.beam_T + self.beam_R1 + 5  > 50 else  50 # Joints in Steel construction simple connections Publication P212,chapter no4 name: double angle web cleats
@@ -474,7 +476,7 @@ class Fin2DCreatorFront(object):
         
         ptB1x = ((self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.gap)
         ptB1y = ((self.dataObj.col_L + self.dataObj.D_beam)/2 ) 
-        self.B1 = np.array([ptB1x,ptB1y])
+        #self.B1 = np.array([ptB1x,ptB1y])
         self.ptB1 = np.array([ptB1x,ptB1y])
         
         ptC2x= ((self.dataObj.col_B + self.dataObj.col_tw)/2 + 20)
@@ -497,7 +499,7 @@ class Fin2DCreatorFront(object):
         ptBy5 = ((self.dataObj.col_L + self.dataObj.D_beam)/2 )  - self.dataObj.beam_T
         self.B5 = (ptBx5,ptBy5)
         
-        ptP1x = ((self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.edge_dist)
+        ptP1x = ((self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.plateEdge_dist)
         ptP1y = ((self.dataObj.col_L - self.dataObj.D_beam)/2 +(self.dataObj.col_tw + self.dataObj.beam_R1 + 3)+ self.dataObj.end_dist)
         self.P1 = (ptP1x,ptP1y)
         
@@ -618,7 +620,7 @@ class Fin2DCreatorFront(object):
         self.BS = self.BP + self.dataObj.plate_ht * np.array([0,1])
         self.Bx = self.BP + 12 * np.array([1,0]) # To represent weld in 2D, Osdag uses 12 mm thickness of weld instead of actual size produced by Osdag.
         self.BQ = self.BP + self.dataObj.plate_width * np.array([1,0])
-        self.BO = self.BP + self.dataObj.edge_dist * np.array([1,0])
+        self.BO = self.BP + self.dataObj.plateEdge_dist * np.array([1,0])
         self.BA5 = self.BP + self.dataObj.gap * np.array([1,0])    
         self.BB5 = self.BA5 + self.dataObj.plate_ht * np.array([0,1])
         self.BA1 = self.BB + 10 * np.array([1,0]) # 10 mm is minimum distance between two beams in Beam-Beam connectivity.
@@ -635,7 +637,7 @@ class Fin2DCreatorFront(object):
         self.BC1 = self.BA6 + self.dataObj.col_R1 * np.array([0,-1])
     
     def callCFBWfront(self,fileName):
-        dwg = svgwrite.Drawing(fileName, size=('1200mm', '1350mm'), viewBox=('-340 -350 1200 1350'))
+        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('-340 -350 1200 1300'))
         
         dwg.add(dwg.polyline(points = [(self.FA),(self.FB),(self.FC),(self.FD),(self.FA)],stroke = 'blue',fill = 'none',stroke_width = 2.5))
         dwg.add(dwg.line((self.FE),(self.FH)).stroke('blue',width = 2.5,linecap = 'square'))
@@ -662,13 +664,13 @@ class Fin2DCreatorFront(object):
         for i in range(1,(nr+1)):
             colList = []
             for j in range (1,(nc+1)):
-                pt = self.ptFP + self.dataObj.edge_dist * np.array([1,0]) + self.dataObj.end_dist * np.array ([0,1]) + \
+                pt = self.ptFP + self.dataObj.plateEdge_dist * np.array([1,0]) + self.dataObj.end_dist * np.array ([0,1]) + \
                     (i-1) * self.dataObj.pitch * np.array([0,1]) + (j-1) * self.dataObj.gauge * np.array([1,0])
                 dwg.add(dwg.circle(center=(pt), r = bolt_r, stroke='blue',fill = 'none',stroke_width=1.5))
                 ptC = pt - (bolt_r + 4) * np.array([1,0])
                 PtD = pt + (bolt_r + 4) * np.array([1,0])
                 dwg.add(dwg.line((ptC),(PtD)).stroke('red',width = 2.0,linecap = 'square'))
-                ptE = self.ptFP + self.dataObj.edge_dist * np.array([1,0]) +(j-1) * self.dataObj.gauge * np.array([1,0])
+                ptE = self.ptFP + self.dataObj.plateEdge_dist * np.array([1,0]) +(j-1) * self.dataObj.gauge * np.array([1,0])
                 ptF = ptE + self.dataObj.plate_ht * np.array([0,1])
                 dwg.add(dwg.line((ptE),(ptF)).stroke('blue',width = 1.5,linecap = 'square').dasharray(dasharray = ([20, 5, 1, 5])))   
                 colList.append(pt)
@@ -678,7 +680,7 @@ class Fin2DCreatorFront(object):
         for row in ptList:
             if len(row) > 0:
                 pitchPts.append(row[0])
-        params = {"offset": self.dataObj.D_col + self.dataObj.edge_dist + 50, "textoffset": 235, "lineori": "right", "endlinedim":10}
+        params = {"offset": self.dataObj.D_col + self.dataObj.plateEdge_dist + 50, "textoffset": 235, "lineori": "right", "endlinedim":10}
         self.dataObj.draw_dimension_outerArrow(dwg, np.array(pitchPts[0]), np.array(pitchPts[len( pitchPts)-1]), str(len(pitchPts)-1)+ u' \u0040'+ str(int(self.dataObj.pitch)) + " mm c/c", params)     
         
         # Cross section A-A
@@ -687,7 +689,7 @@ class Fin2DCreatorFront(object):
         txtpt = ptSecB +(10 * np.array([-1,0])) +(80 * np.array([0,1]))
         txt = "A"
         self.dataObj.draw_cross_section(dwg, ptSecA, ptSecB,txtpt,txt)
-        ptSecC = self.FA2 + (520 * np.array([0,-1]))
+        ptSecC = self.FA2 + (472 * np.array([0,-1]))
         ptSecD = ptSecC + (50 * np.array([0,1]))
         txtpt = ptSecD +(10 * np.array([-1,0])) +(80 * np.array([0,1]))
         self.dataObj.draw_cross_section(dwg, ptSecC, ptSecD,txtpt,txt)
@@ -706,30 +708,30 @@ class Fin2DCreatorFront(object):
         self.dataObj.drawFaintLine(ptOne, ptTwo, dwg)
         
         # End Distance from the starting point of plate Information
-        edgPtx = (self.dataObj.D_col) + self.dataObj.edge_dist
+        edgPtx = (self.dataObj.D_col) + self.dataObj.plateEdge_dist
         edgPty = ((self.dataObj.col_L - self.dataObj.D_beam)/2) + (self.dataObj.beam_T + self.dataObj.beam_R1 + 3)
         edgPt = (edgPtx,edgPty)
-        params = {"offset": self.dataObj.D_col + self.dataObj.edge_dist + 50, "textoffset": 125, "lineori": "left", "endlinedim":10}
+        params = {"offset": self.dataObj.D_col + self.dataObj.plateEdge_dist + 50, "textoffset": 125, "lineori": "left", "endlinedim":10}
         self.dataObj.draw_dimension_outerArrow(dwg, np.array(pitchPts[0]), np.array([edgPtx,edgPty]),  str(int(self.dataObj.end_dist)) + " mm", params)   
         
         # End Distance from plate end point.
         edgPt1x = edgPtx
         edgPt1y = edgPty + self.dataObj.plate_ht
         edgPt1 = (edgPt1x,edgPt1y)
-        params = {"offset": self.dataObj.D_col + self.dataObj.edge_dist + 50, "textoffset": 125, "lineori": "right", "endlinedim":10}
+        params = {"offset": self.dataObj.D_col + self.dataObj.plateEdge_dist + 50, "textoffset": 125, "lineori": "right", "endlinedim":10}
         self.dataObj.draw_dimension_outerArrow(dwg, np.array(pitchPts[len( pitchPts)-1]), np.array([edgPt1x,edgPt1y]),  str(int(self.dataObj.end_dist)) + " mm", params)   
         
         # Edge Distance information
-        pt1A = self.ptFP + self.dataObj.edge_dist * np.array([1,0])  + \
+        pt1A = self.ptFP + self.dataObj.plateEdge_dist * np.array([1,0])  + \
                (self.dataObj.no_of_col-1)*  self.dataObj.gauge * np.array([1,0]) + self.dataObj.end_dist * np.array ([0,1])
-        pt1B = self.ptFP + self.dataObj.edge_dist * np.array([1,0])  + \
+        pt1B = self.ptFP + self.dataObj.plateEdge_dist * np.array([1,0])  + \
                (self.dataObj.no_of_col-1)*  self.dataObj.gauge * np.array([1,0]) + self.dataObj.edge_dist *  np.array([1,0]) + self.dataObj.end_dist * np.array ([0,1])
         offset = self.dataObj.end_dist + self.dataObj.beam_T + self.dataObj.beam_R1 +3
-        params = {"offset": self.dataObj.D_col + self.dataObj.edge_dist , "textoffset": 20, "lineori": "left", "endlinedim":10}
+        params = {"offset": self.dataObj.D_col + self.dataObj.plateEdge_dist , "textoffset": 20, "lineori": "left", "endlinedim":10}
         self.dataObj.draw_dimension_outerArrow(dwg, pt1A, pt1B, str(int(self.dataObj.edge_dist)) + " mm" , params)   
         
         # Faint line for Edge distance dimension
-        ptB1 = self.ptFP + self.dataObj.edge_dist * np.array([1,0])  + \
+        ptB1 = self.ptFP + self.dataObj.plateEdge_dist * np.array([1,0])  + \
                (self.dataObj.no_of_col-1)*  self.dataObj.gauge * np.array([1,0]) + self.dataObj.edge_dist *  np.array([1,0])
         ptB2 = ptB1 + ((self.dataObj.end_dist + self.dataObj.beam_T + self.dataObj.beam_R1 +3) + 115)* np.array([0,-1])    
         self.dataObj.drawFaintLine(ptB1,ptB2,dwg)
@@ -737,14 +739,14 @@ class Fin2DCreatorFront(object):
         # Gauge Distance
         
         if self.dataObj.no_of_col > 1:
-            A = self.ptFP + self.dataObj.edge_dist * np.array([1,0]) + self.dataObj.end_dist * np.array([0,1])
-            B = self.ptFP + self.dataObj.edge_dist * np.array([1,0])  + \
+            A = self.ptFP + self.dataObj.plateEdge_dist * np.array([1,0]) + self.dataObj.end_dist * np.array([0,1])
+            B = self.ptFP + self.dataObj.plateEdge_dist * np.array([1,0])  + \
                (self.dataObj.no_of_col-1)*  self.dataObj.gauge * np.array([1,0]) + self.dataObj.end_dist * np.array ([0,1])
             offset = (self.dataObj.beam_T + self.dataObj.beam_R1 + 3) + 130
             params = {"offset": offset, "textoffset": 20, "lineori": "left", "endlinedim":10}
             self.dataObj.draw_dimension_outerArrow(dwg, A, B, str(int(self.dataObj.gauge)) + " mm" , params)  
-            FA = self.FP + self.dataObj.edge_dist * np.array([1,0])
-            FB = self.FP + self.dataObj.edge_dist * np.array([1,0]) + ((self.dataObj.beam_T + self.dataObj.beam_R1 + 3) + 70) * np.array([0,-1])
+            FA = self.FP + self.dataObj.plateEdge_dist * np.array([1,0])
+            FB = self.FP + self.dataObj.plateEdge_dist * np.array([1,0]) + ((self.dataObj.beam_T + self.dataObj.beam_R1 + 3) + 70) * np.array([0,-1])
             self.dataObj.drawFaintLine(FA, FB, dwg) 
         
         # Gap Distance
@@ -761,12 +763,12 @@ class Fin2DCreatorFront(object):
         self.dataObj.drawFaintLine(ptC1,ptC2,dwg)
         
         ptD1 = self.FB1
-        ptD2 = ptD1 + 220 * np.array([0,1])
+        ptD2 = ptD1 + 70 * np.array([0,1])
         self.dataObj.drawFaintLine(ptD1,ptD2,dwg)
         
         ###### Draws faint line to show dimensions #########
         # Faint lines for gauge and edge distances
-        ptA1 = self.ptFP + self.dataObj.edge_dist * np.array([1,0])  + \
+        ptA1 = self.ptFP + self.dataObj.plateEdge_dist * np.array([1,0])  + \
                (self.dataObj.no_of_col-1)*  self.dataObj.gauge * np.array([1,0]) 
         ptA2 = ptA1 + ((self.dataObj.end_dist + self.dataObj.beam_T + self.dataObj.beam_R1 +3) + 115)* np.array([0,-1])    
         self.dataObj.drawFaintLine(ptA1, ptA2, dwg)
@@ -808,9 +810,9 @@ class Fin2DCreatorFront(object):
         # Column Designation
         ptx = self.dataObj.D_col /2
         pty = 0
-        pt = np.array([ptx,pty])
-        theta = 30
-        offset = self.dataObj.col_L /10
+        pt = self.FA + 10 * np.array([0,1])#np.array([ptx,pty])
+        theta = 1
+        offset = 1#self.dataObj.col_L /7
         textUp =  "Column " + self.dataObj.col_Designation
         textDown = ""
         element = ""
@@ -821,14 +823,14 @@ class Fin2DCreatorFront(object):
 #         weldPty = ((self.dataObj.col_L - self.dataObj.D_beam)/2) + (self.dataObj.beam_T + self.dataObj.beam_R1 + 3)
         weldPt = self.ptFP + 6 * np.array([1,0])+ self.dataObj.end_dist* np.array([0,1])
         theta = 45
-        offset = self.dataObj.col_B 
+        offset = self.dataObj.col_B
         textUp = "         z " + str(int(self.dataObj.weld_thick)) + " mm"
         textDown = ""#u"\u25C1"
         element ="weld"
         self.dataObj.drawOrientedArrow(dwg, weldPt, theta, "NW", offset, textUp, textDown,element)
         
         # Bolt Information
-        bltPtx = self.FP + self.dataObj.edge_dist * np.array([1,0]) + self.dataObj.end_dist * np.array ([0,1]) +(self.dataObj.no_of_col-1) * self.dataObj.gauge * np.array([1,0])
+        bltPtx = self.FP + self.dataObj.plateEdge_dist * np.array([1,0]) + self.dataObj.end_dist * np.array ([0,1]) +(self.dataObj.no_of_col-1) * self.dataObj.gauge * np.array([1,0])
         theta = 45
         offset = (self.dataObj.D_beam * 3)/8
         textUp = str(self.dataObj.no_of_rows) + " nos " + str(int(self.dataObj.bolt_dia)) + u'\u00d8' + " holes"
@@ -856,14 +858,14 @@ class Fin2DCreatorFront(object):
         
     def callCWBWfront(self,fileName):
         
-        dwg = svgwrite.Drawing(fileName, size=('1250mm', '1340mm'), viewBox=('-410 -350 1250 1340'))
+        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('-410 -350 1250 1280'))
         
         ptSecA = self.A + (320 * np.array([0,-1]))
         ptSecB = ptSecA + (50 * np.array([0,1]))
         txtpt = ptSecB +(10 * np.array([-1,0])) +(80 * np.array([0,1]))
         txt = "A"
         self.dataObj.draw_cross_section(dwg, ptSecA, ptSecB,txtpt,txt)
-        ptSecC = self.A3 + (520 * np.array([0,-1]))
+        ptSecC = self.A3 + (472 * np.array([0,-1]))
         ptSecD = ptSecC + (50 * np.array([0,1]))
         txtpt = ptSecD +(10 * np.array([-1,0])) +(80 * np.array([0,1]))
         self.dataObj.draw_cross_section(dwg, ptSecC, ptSecD,txtpt,txt)
@@ -883,7 +885,7 @@ class Fin2DCreatorFront(object):
         dwg.add(dwg.rect(insert=(self.P), size=(self.dataObj.plate_width, self.dataObj.plate_ht),fill = 'none', stroke='blue', stroke_width=2.5))
         
         #C1,A1,A3,B3,B1,C2
-        dwg.add(dwg.polyline(points=[(self.C1),(self.A1),(self.A3),(self.B3),(self.B1),(self.C2)],stroke = 'blue',fill= 'none',stroke_width =2.5))
+        dwg.add(dwg.polyline(points=[(self.C1),(self.A1),(self.A3),(self.B3),(self.ptB1),(self.C2)],stroke = 'blue',fill= 'none',stroke_width =2.5))
         #C1,C2
         dwg.add(dwg.line((self.C1),(self.C2)).stroke('red',width = 2.5,linecap = 'square').dasharray(dasharray = ([5,5])))
         #A2,B2
@@ -898,13 +900,13 @@ class Fin2DCreatorFront(object):
         for i in range(1,(nr+1)):
             colList = []
             for j in range (1,(nc+1)):
-                pt = self.ptP + self.dataObj.edge_dist * np.array([1,0]) + self.dataObj.end_dist * np.array ([0,1]) + \
+                pt = self.ptP + self.dataObj.plateEdge_dist * np.array([1,0]) + self.dataObj.end_dist * np.array ([0,1]) + \
                     (i-1) * self.dataObj.pitch * np.array([0,1]) + (j-1) * self.dataObj.gauge * np.array([1,0])
                 dwg.add(dwg.circle(center=(pt), r = bolt_r, stroke='blue',fill = 'none',stroke_width=1.5))
                 ptC = pt - (bolt_r + 4) * np.array([1,0])
                 PtD = pt + (bolt_r + 4) * np.array([1,0])
                 dwg.add(dwg.line((ptC),(PtD)).stroke('red',width = 2.0,linecap = 'square'))
-                ptE = self.ptP + self.dataObj.edge_dist * np.array([1,0]) +(j-1) * self.dataObj.gauge * np.array([1,0])
+                ptE = self.ptP + self.dataObj.plateEdge_dist * np.array([1,0]) +(j-1) * self.dataObj.gauge * np.array([1,0])
                 ptF = ptE + self.dataObj.plate_ht * np.array([0,1])
                 dwg.add(dwg.line((ptE),(ptF)).stroke('blue',width = 1.5,linecap = 'square').dasharray(dasharray = ([20, 5, 1, 5])))
                 colList.append(pt)
@@ -914,15 +916,15 @@ class Fin2DCreatorFront(object):
         for row in ptList:
             if len(row) > 0:
                 pitchPts.append(row[0])
-        txtOffset = (self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.edge_dist + 80
-        params = {"offset": (self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.edge_dist + 80, "textoffset": txtOffset, "lineori": "right", "endlinedim":10}
+        txtOffset = (self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.plateEdge_dist + 80
+        params = {"offset": (self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.plateEdge_dist + 80, "textoffset": txtOffset, "lineori": "right", "endlinedim":10}
         self.dataObj.draw_dimension_outerArrow(dwg, np.array(pitchPts[0]), np.array(pitchPts[len( pitchPts)-1]), str(len(pitchPts)-1)+ u' \u0040'+ str(int(self.dataObj. pitch)) + " mm c/c", params)     
         
         # End Distance from the starting point of plate Information
-        edgPtx = (self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.edge_dist
+        edgPtx = (self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.plateEdge_dist
         edgPty = ((self.dataObj.col_L - self.dataObj.D_beam)/2) + (self.dataObj.beam_T + self.dataObj.beam_R1 + 3)
         edgPt = (edgPtx,edgPty)
-        params = {"offset": (self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.edge_dist + 80, "textoffset": 120, "lineori": "left", "endlinedim":10}
+        params = {"offset": (self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.plateEdge_dist + 80, "textoffset": 120, "lineori": "left", "endlinedim":10}
         self.dataObj.draw_dimension_outerArrow(dwg, np.array(pitchPts[0]), np.array([edgPtx,edgPty]),  str(int(self.dataObj.end_dist)) + " mm", params)     
         
         # Distance between Beam Flange and Plate
@@ -959,20 +961,20 @@ class Fin2DCreatorFront(object):
         edgPt1x = edgPtx
         edgPt1y = edgPty + self.dataObj.plate_ht
         edgPt1 = (edgPt1x,edgPt1y)
-        params = {"offset": (self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.edge_dist + 80, "textoffset": 120, "lineori": "right", "endlinedim":10}
+        params = {"offset": (self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.plateEdge_dist + 80, "textoffset": 120, "lineori": "right", "endlinedim":10}
         self.dataObj.draw_dimension_outerArrow(dwg, np.array(pitchPts[len( pitchPts)-1]), np.array([edgPt1x,edgPt1y]), str(int(self.dataObj.end_dist)) + " mm" , params)   
         
         # Gap Distance
             # Draw Faint Lines to representation of Gap distance #
         dist1 = self.dataObj.col_L - ((self.dataObj.col_L - self.dataObj.D_beam)/2 + self.dataObj.D_beam)
-        ptA = self.B1
-        ptB = self.B1 + (dist1 + 100)* np.array([0,1])
+        ptA = self.ptB1
+        ptB = self.ptB1 + (dist1 + 100)* np.array([0,1])
         self.dataObj.drawFaintLine(ptA,ptB,dwg)
         ptC = self.G 
         ptD = ptC + (100)*np.array([0,1])
         self.dataObj.drawFaintLine(ptC,ptD,dwg)
-        ptG1 = self.B1 + (dist1 + 50)* np.array([0,1])
-        ptG2 = self.B1 + self.dataObj.gap * np.array([-1,0]) + (dist1 + 50)* np.array([0,1])
+        ptG1 = self.ptB1 + (dist1 + 50)* np.array([0,1])
+        ptG2 = self.ptB1 + self.dataObj.gap * np.array([-1,0]) + (dist1 + 50)* np.array([0,1])
         offset = 1
         params = {"offset": offset, "textoffset": 120, "lineori": "right", "endlinedim":10,"arrowlen":50}
         self.dataObj.draw_dimension_innerArrow(dwg, ptG1, ptG2, str(self.dataObj.gap) + " mm", params)
@@ -987,25 +989,25 @@ class Fin2DCreatorFront(object):
             self.dataObj.draw_dimension_outerArrow(dwg, ptP, ptQ, str(int(self.dataObj.gauge)) + " mm", params)
         
         if len(ptList[(len(ptList)-1)]) > 1:
-            ptA = self.ptP + self.dataObj.edge_dist * np.array([1,0])
+            ptA = self.ptP + self.dataObj.plateEdge_dist * np.array([1,0])
             ptB = ptA + (self.dataObj.end_dist + self.dataObj.beam_T + self.dataObj.beam_R1 + 3 + dist1 + 50)* np.array([0,-1])
             self.dataObj.drawFaintLine(ptA, ptB, dwg)  
             
-            ptC = self.ptP + self.dataObj.edge_dist * np.array([1,0]) +self.dataObj.gauge * np.array([1,0])   
+            ptC = self.ptP + self.dataObj.plateEdge_dist * np.array([1,0]) +self.dataObj.gauge * np.array([1,0])   
             ptD = ptC + (self.dataObj.end_dist + self.dataObj.beam_T + self.dataObj.beam_R1 + 3 + dist1 + 50)* np.array([0,-1])
             #self.dataObj.drawFaintLine(ptC, ptD, dwg)  
         
         # Edge Distance Information
-        ptA = self.ptP + self.dataObj.edge_dist * np.array([1,0]) + (self.dataObj.no_of_col-1) * self.dataObj.gauge * np.array([1,0])
+        ptA = self.ptP + self.dataObj.plateEdge_dist * np.array([1,0]) + (self.dataObj.no_of_col-1) * self.dataObj.gauge * np.array([1,0])
         ptB  = ptA + self.dataObj.edge_dist * np.array([1,0])
         offsetDist =  -(self.dataObj.end_dist + self.dataObj.beam_T + self.dataObj.beam_R1 + 3 + dist1 + 120)
         params = {"offset": offsetDist, "textoffset": 35, "lineori": "right", "endlinedim":10}
         self.dataObj.draw_dimension_outerArrow(dwg,ptA,ptB, str(int(self.dataObj.edge_dist)) + " mm", params)  
             # Draw Faint line for Edge distance
-        ptC = self.ptP + self.dataObj.edge_dist * np.array([1,0]) + (self.dataObj.no_of_col-1) * self.dataObj.gauge * np.array([1,0])   
+        ptC = self.ptP + self.dataObj.plateEdge_dist * np.array([1,0]) + (self.dataObj.no_of_col-1) * self.dataObj.gauge * np.array([1,0])   
         ptD = ptC + (self.dataObj.end_dist + self.dataObj.beam_T + self.dataObj.beam_R1 + 3 + dist1 + 100)* np.array([0,-1])
         self.dataObj.drawFaintLine(ptC, ptD, dwg) 
-        ptE = self.ptP + self.dataObj.edge_dist * np.array([1,0]) + (self.dataObj.no_of_col-1) * self.dataObj.gauge * np.array([1,0]) + self.dataObj.edge_dist * np.array([1,0])  
+        ptE = self.ptP + self.dataObj.plateEdge_dist * np.array([1,0]) + (self.dataObj.no_of_col-1) * self.dataObj.gauge * np.array([1,0]) + self.dataObj.edge_dist * np.array([1,0])  
         ptF = ptE + (self.dataObj.end_dist + self.dataObj.beam_T + self.dataObj.beam_R1 + 3 + dist1 + 100)* np.array([0,-1])
         self.dataObj.drawFaintLine(ptE, ptF, dwg)   
         
@@ -1022,18 +1024,17 @@ class Fin2DCreatorFront(object):
         
         
         # Column Designation
-        ptx = self.dataObj.col_B /2
-        pty = 0
-        pt = np.array([ptx,pty])
-        theta = 30
-        offset = self.dataObj.col_L /10
+        
+        pt = self.D + 20 * np.array([0,-1])
+        theta = 1
+        offset = 1
         textUp =  "Column " + self.dataObj.col_Designation
         textDown = ""
         element =""
         self.dataObj.drawOrientedArrow(dwg, pt, theta, "NW", offset, textUp,textDown,element)
         
         # Bolt Information
-        bltPtx = self.ptP + self.dataObj.edge_dist * np.array([1,0]) + self.dataObj.end_dist * np.array ([0,1]) +(self.dataObj.no_of_col-1) * self.dataObj.gauge * np.array([1,0])
+        bltPtx = self.ptP + self.dataObj.plateEdge_dist * np.array([1,0]) + self.dataObj.end_dist * np.array ([0,1]) +(self.dataObj.no_of_col-1) * self.dataObj.gauge * np.array([1,0])
         theta = 45
         offset = (self.dataObj.D_beam * 3)/8
         textUp = str(self.dataObj.no_of_rows) + " nos " + str(self.dataObj.bolt_dia) + u'\u00d8' + " holes"
@@ -1061,7 +1062,7 @@ class Fin2DCreatorFront(object):
         self.dataObj.drawOrientedArrow(dwg, weldPt, theta, "NW", offset, textUp, textDown,element)
         
         # 2D view name
-        ptx =  self.H + (self.dataObj.col_L/5)* np.array([0,1]) + 30 * np.array([-1,0])
+        ptx =  self.H + (self.dataObj.col_L/3.5)* np.array([0,1]) + 30 * np.array([-1,0])
         dwg.add(dwg.text('Front view (Sec C-C)', insert=(ptx), fill='black',font_family = "sans-serif",font_size = 30))
         
         dwg.save()
@@ -1070,7 +1071,7 @@ class Fin2DCreatorFront(object):
     
     def callBWBWfront(self,fileName):
         
-        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('-50 -300 850 850'))
+        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('-350 -400 1150 1200'))
         
         dwg.add(dwg.polyline(points=[(self.BA),(self.BB),(self.BC),(self.BD),(self.BE),(self.BF),(self.BG),(self.BH),(self.BI),(self.BJ),(self.BK),(self.BL),(self.BA)], stroke='blue', fill='#E0E0E0', stroke_width=2.5))
         dwg.add(dwg.line((self.BA5),(self.BC2)).stroke('blue', width = 2.5, linecap = 'square'))
@@ -1093,13 +1094,13 @@ class Fin2DCreatorFront(object):
         for i in range(1,(nr+1)):
             colList = []
             for j in range (1,(nc+1)):
-                pt = self.BP + self.dataObj.edge_dist * np.array([1,0]) + self.dataObj.end_dist * np.array ([0,1]) + \
+                pt = self.BP + self.dataObj.plateEdge_dist * np.array([1,0]) + self.dataObj.end_dist * np.array ([0,1]) + \
                     (i-1) * self.dataObj.pitch * np.array([0,1]) + (j-1) * self.dataObj.gauge * np.array([1,0])
                 dwg.add(dwg.circle(center=(pt), r = bolt_r, stroke='blue',fill = 'none',stroke_width=1.5))
                 ptC = pt - (bolt_r + 4) * np.array([1,0])
                 PtD = pt + (bolt_r + 4) * np.array([1,0])
                 dwg.add(dwg.line((ptC),(PtD)).stroke('red',width = 2.0,linecap = 'square'))
-                ptE = self.BP + self.dataObj.edge_dist * np.array([1,0]) +(j-1) * self.dataObj.gauge * np.array([1,0])
+                ptE = self.BP + self.dataObj.plateEdge_dist * np.array([1,0]) +(j-1) * self.dataObj.gauge * np.array([1,0])
                 ptF = ptE + self.dataObj.plate_ht * np.array([0,1])
                 dwg.add(dwg.line((ptE),(ptF)).stroke('blue',width = 1.5,linecap = 'square').dasharray(dasharray = ([20, 5, 1, 5])))   
                 colList.append(pt)
@@ -1109,8 +1110,8 @@ class Fin2DCreatorFront(object):
         for row in ptList:
             if len(row) > 0:
                 pitchPts.append(row[0])
-        txtOffset = (self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.edge_dist + 100
-        params = {"offset": (self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.edge_dist + 40, "textoffset": txtOffset, "lineori": "right", "endlinedim":10}
+        txtOffset = (self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.plateEdge_dist + 100
+        params = {"offset": (self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.plateEdge_dist + 40, "textoffset": txtOffset, "lineori": "right", "endlinedim":10}
         self.dataObj.draw_dimension_outerArrow(dwg, np.array(pitchPts[0]), np.array(pitchPts[len( pitchPts)-1]), str(len(pitchPts)-1)+ u' \u0040'+ str(int(self.dataObj. pitch)) + " mm c/c", params)    
         #print ptList[0][0],ptList[0][1]
         
@@ -1130,12 +1131,12 @@ class Fin2DCreatorFront(object):
         # End Distance from the starting point of plate Information
    
         edgPt = np.array(pitchPts[0]) + self.dataObj.end_dist * np.array([0,-1])
-        params = {"offset": (self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.edge_dist + 40, "textoffset": 120, "lineori": "left", "endlinedim":10}
+        params = {"offset": (self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.plateEdge_dist + 40, "textoffset": 120, "lineori": "left", "endlinedim":10}
         self.dataObj.draw_dimension_outerArrow(dwg, np.array(pitchPts[0]), edgPt,  str(int(self.dataObj.end_dist)) + " mm", params)    
        
         # Draw Faint line for  end dimensions
         ptEndStart3 = np.array(pitchPts[0])
-        ptEndStart4 = ptEndStart3 + ((self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.edge_dist + 30) * np.array([-1,0])
+        ptEndStart4 = ptEndStart3 + ((self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.plateEdge_dist + 30) * np.array([-1,0])
         self.dataObj.drawFaintLine(ptEndStart3,ptEndStart4,dwg)
         
         # Distance between Beam Flange and Plate (Notch dimension)
@@ -1156,16 +1157,16 @@ class Fin2DCreatorFront(object):
         ############## End Distance from plate end point.
 
         edgPt1 = np.array(pitchPts[-1]) + self.dataObj.end_dist * np.array([0,1])
-        params = {"offset": (self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.edge_dist + 40, "textoffset": 120, "lineori": "right", "endlinedim":10}
+        params = {"offset": (self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.plateEdge_dist + 40, "textoffset": 120, "lineori": "right", "endlinedim":10}
         self.dataObj.draw_dimension_outerArrow(dwg, np.array(pitchPts[len( pitchPts)-1]), edgPt1, str(int(self.dataObj.end_dist)) + " mm" , params)  
         
         # Faintline for end distance
         ptEndLast1 = np.array(pitchPts[-1])
-        ptEndLast2 = ptEndLast1 + ((self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.edge_dist + 30) * np.array([-1,0])
+        ptEndLast2 = ptEndLast1 + ((self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.plateEdge_dist + 30) * np.array([-1,0])
         self.dataObj.drawFaintLine(ptEndLast1,ptEndLast2,dwg)
         
         ptEndLast3 = self.BS
-        ptEndLast4 = ptEndLast3 + ((self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.edge_dist + 30) * np.array([-1,0])
+        ptEndLast4 = ptEndLast3 + ((self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.plateEdge_dist + 30) * np.array([-1,0])
         self.dataObj.drawFaintLine(ptEndLast3,ptEndLast4,dwg)
         
         # Gap Distance
@@ -1186,19 +1187,19 @@ class Fin2DCreatorFront(object):
         # Gauge Distance Information
         gaugePts = ptList[0]  
         for i in range (len( gaugePts)-1):
-            offset_dist = -(self.dataObj.end_dist + self.dataObj.beam_T + self.dataObj.beam_R1  + 120)
+            offset_dist = -(self.dataObj.end_dist + self.dataObj.beam_T + self.dataObj.beam_R1  + 200)
             params = {"offset": offset_dist, "textoffset": 35, "lineori": "right", "endlinedim":10}
             ptP = np.array(gaugePts[i])
             ptQ = np.array(gaugePts[i + 1])
             self.dataObj.draw_dimension_outerArrow(dwg, ptP, ptQ, str(int(self.dataObj.gauge)) + " mm", params)
        
         if len(ptList[(len(ptList)-1)]) > 1:
-            ptA = self.ptP + self.dataObj.edge_dist * np.array([1,0])
-            ptB = ptA + (self.dataObj.end_dist + self.dataObj.beam_T + self.dataObj.beam_R1 + 3 + dist1 + 50)* np.array([0,-1])
+            ptA = self.BP + self.dataObj.plateEdge_dist * np.array([1,0])
+            ptB = ptA + (self.dataObj.end_dist + self.dataObj.beam_T + self.dataObj.beam_R1 + 3  + 150)* np.array([0,-1])
             self.dataObj.drawFaintLine(ptA, ptB, dwg) 
            
-            ptC = self.ptP + self.dataObj.edge_dist * np.array([1,0]) +self.dataObj.gauge * np.array([1,0])  
-            ptD = ptC + (self.dataObj.end_dist + self.dataObj.beam_T + self.dataObj.beam_R1 + 3 + dist1 + 50)* np.array([0,-1])
+            ptC = self.BP + self.dataObj.plateEdge_dist * np.array([1,0]) +self.dataObj.gauge * np.array([1,0])  
+            ptD = ptC + (self.dataObj.end_dist + self.dataObj.beam_T + self.dataObj.beam_R1 + 3  + 170)* np.array([0,-1])
             self.dataObj.drawFaintLine(ptC, ptD, dwg) 
        
         # Edge Distance Information
@@ -1230,12 +1231,12 @@ class Fin2DCreatorFront(object):
         ptx = self.dataObj.col_B /2
         pty = 0
         pt = np.array([ptx,pty])
-        theta = 90
-        offset = 150
-        textUp =  "Column " + self.dataObj.col_Designation
+        theta = 30
+        offset = self.dataObj.D_col /10
+        textUp =  "Beam " + self.dataObj.col_Designation
         textDown = ""
         element =""
-        self.dataObj.drawOrientedArrow(dwg, pt, theta, "NE", offset, textUp,textDown,element)
+        self.dataObj.drawOrientedArrow(dwg, pt, theta, "NW", offset, textUp,textDown,element)
        
         # Bolt Information
         bltPtx = np.array(gaugePts[-1])
@@ -1258,15 +1259,15 @@ class Fin2DCreatorFront(object):
        
         # Weld Information
         weldPt = self.BS + self.dataObj.weld_thick/2 * np.array([1,0]) + 20 * np.array([0,-1])
-        theta = 30
-        offset = self.dataObj.col_B
+        theta = 45
+        offset = self.dataObj.col_B + 100
         textUp = "          z " + str(self.dataObj.weld_thick) + " mm"
         textDown = ""
         element = "weld"
         self.dataObj.drawOrientedArrow(dwg, weldPt, theta, "SE", offset, textUp, textDown,element)
        
         # 2D view name
-        ptx =  self.BH + 150* np.array([0,1]) + 200* np.array([1,0])
+        ptx =  self.BH + 150* np.array([0,1]) + 100* np.array([1,0])
         dwg.add(dwg.text('Front view (Sec C-C)', insert=(ptx), fill='black',font_family = "sans-serif",font_size = 30))
 
         dwg.save()
@@ -1293,7 +1294,7 @@ class Fin2DCreatorTop(object):
         self.J = self.E - (self.dataObj.col_tw) * np.array([1,0])
         self.K = self.D - (self.dataObj.col_tw) * np.array([1,0])
         self.L = self.A + (self.dataObj.col_T)* np.array([0,1])
-        self.A1 = self.A + ((self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.gap)* np.array([1,0]) + (self.dataObj.col_T + self.dataObj.beam_R1)  * np.array([0,1])
+        self.A1 = self.A + ((self.dataObj.col_B + self.dataObj.col_tw)/2 + self.dataObj.gap)* np.array([1,0]) + ((self.dataObj.col_T) +  (10))  * np.array([0,1])
         self.A4 = self.A1 + self.dataObj.beam_B * np.array([0,1])
         self.A7 = self.A1 + (self.dataObj.beam_B - self.dataObj.beam_tw) /2 * np.array([0,1])
         self.A5 = self.A7 - 20 * np.array([1,0])
@@ -1415,7 +1416,9 @@ class Fin2DCreatorTop(object):
     def callCFBWTop(self,fileName):
         '''
         '''
-        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('-50 -250 1000 750'))
+        vb_width = str(int(self.dataObj.D_col) + 750)
+        vb_ht = str(800)
+        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('-50 -250 '+ vb_width + ' ' + vb_ht))
         
         ptSecA = self.FF + ((230+ self.dataObj.gap + self.dataObj.beam_L) * np.array([1,0]))
         ptSecB = ptSecA + (50 * np.array([-1,0]))
@@ -1455,7 +1458,7 @@ class Fin2DCreatorTop(object):
         ptList = []
         if nc >= 1:
             for col in range (nc):
-                pt = self.FP5  + self.dataObj.edge_dist * np.array([1,0]) + (col) * self.dataObj.gauge * np.array([1,0])
+                pt = self.FP5  + self.dataObj.plateEdge_dist * np.array([1,0]) + (col) * self.dataObj.gauge * np.array([1,0])
                 pt1 = pt - bolt_r *  np.array([1,0])
                 rect_width = self.dataObj.bolt_dia
                 rect_ht = self.dataObj.beam_tw + self.dataObj.plate_thick
@@ -1474,11 +1477,11 @@ class Fin2DCreatorTop(object):
                     self.dataObj.draw_dimension_outerArrow(dwg,np.array(ptList[0]),np.array(ptList[1]),  str(int(self.dataObj.gauge)) + " mm", params)  
                 
         # Draw Faint line to represent edge distance
-        ptB = self.FP5 + self.dataObj.edge_dist * np.array([1,0]) + (col) * self.dataObj.gauge * np.array([1,0]) + self.dataObj.edge_dist * np.array([1,0])
+        ptB = self.FP5 + self.dataObj.plateEdge_dist * np.array([1,0]) + (col) * self.dataObj.gauge * np.array([1,0]) + self.dataObj.edge_dist * np.array([1,0])
         ptC = ptB + (self.dataObj.beam_B/2 + self.dataObj.col_T + self.dataObj.col_R1 + 90) * np.array([0,-1])
         self.dataObj.drawFaintLine(ptB,ptC,dwg)
         
-        ptx = self.FP5 + self.dataObj.edge_dist * np.array([1,0]) + (col) * self.dataObj.gauge * np.array([1,0])
+        ptx = self.FP5 + self.dataObj.plateEdge_dist * np.array([1,0]) + (col) * self.dataObj.gauge * np.array([1,0])
         ptY = ptx + self.dataObj.edge_dist * np.array([1,0])
         offset = self.dataObj.beam_B/2 + self.dataObj.col_T + self.dataObj.col_R1 + 100
         params = {"offset": offset, "textoffset": 20, "lineori": "left", "endlinedim":10}
@@ -1514,7 +1517,7 @@ class Fin2DCreatorTop(object):
         self.dataObj.drawOrientedArrow(dwg, plt_pt, theta, "SE", offset, textUp, textDown,element)
         
         # Bolt Information
-        bltPt = self.FP5 + self.dataObj.edge_dist * np.array([1,0]) + (nc -1) * self.dataObj.gauge * np.array([1,0]) 
+        bltPt = self.FP5 + self.dataObj.plateEdge_dist * np.array([1,0]) + (nc -1) * self.dataObj.gauge * np.array([1,0]) 
         theta = 55
         offset = (self.dataObj.beam_B) + 130
         textUp = str(self.dataObj.no_of_rows) + " nos " + str(self.dataObj.bolt_dia) + u'\u00d8' + " holes"
@@ -1554,7 +1557,8 @@ class Fin2DCreatorTop(object):
     def callCWBWTop(self,fileName):
         '''
         '''
-        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('-50 -300 850 850'))
+        vb_ht = str( float(self.dataObj.D_col) + 750)
+        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('-50 -300 850 '+ vb_ht))
         
         dwg.add(dwg.polyline(points=[(self.A),(self.B),(self.C),(self.D),(self.E),(self.F),(self.G),(self.H),(self.I),(self.J),(self.K),(self.L),(self.A)], stroke='blue', fill='#E0E0E0', stroke_width=2.5))
         dwg.add(dwg.rect(insert=(self.A1), size=(self.dataObj.beam_L, self.dataObj.beam_B),fill = 'none', stroke='blue', stroke_width=2.5))
@@ -1571,7 +1575,7 @@ class Fin2DCreatorTop(object):
         ptList = []
         if nc >= 1:
             for col in range (nc):
-                pt = self.A5  + self.dataObj.edge_dist * np.array([1,0]) + (col) * self.dataObj.gauge * np.array([1,0])
+                pt = self.A5  + self.dataObj.plateEdge_dist * np.array([1,0]) + (col) * self.dataObj.gauge * np.array([1,0])
                 
                 pt1 = pt - bolt_r *  np.array([1,0])
                 rect_width = self.dataObj.bolt_dia
@@ -1599,36 +1603,36 @@ class Fin2DCreatorTop(object):
         
         dwg.add(dwg.line((ptSecA),(ptSecC)).stroke('#666666',width = 1.0,linecap = 'square'))
         
-        ptSecA = self.I + (07 * np.array([0,-1])) + (10* np.array([-1,0]))
+        ptSecA = self.I + (07 * np.array([0,-1])) + (0* np.array([-1,0]))
         ptSecB = ptSecA + (50 * np.array([0,-1]))
         txtpt = ptSecB +(50 * np.array([0,-1])) +(15 * np.array([-1,0]))
         txt = "C"
         self.dataObj.draw_cross_section(dwg, ptSecA, ptSecB,txtpt,txt)
-        ptSecC = ptSecA + (520 * np.array([1,0]))
+        ptSecC = ptSecA + (530 * np.array([1,0]))
         ptSecD = ptSecC + (50 * np.array([0,-1]))
-        txtpt = ptSecD +(50 * np.array([0,-1])) +(15 * np.array([-1,0]))
+        txtpt = ptSecD +(50 * np.array([0,-1])) +(25 * np.array([-1,0]))
         self.dataObj.draw_cross_section(dwg, ptSecC, ptSecD,txtpt,txt)
         
         dwg.add(dwg.line((ptSecA),(ptSecC)).stroke('#666666',width = 1.0,linecap = 'square'))
         
         
         # Draw Faint line to represent edge distance
-        ptB = self.A5 + self.dataObj.edge_dist * np.array([1,0]) + (nc -1) * self.dataObj.gauge * np.array([1,0]) + self.dataObj.edge_dist * np.array([1,0])
+        ptB = self.A5 + self.dataObj.plateEdge_dist * np.array([1,0]) + (nc -1) * self.dataObj.gauge * np.array([1,0]) + self.dataObj.edge_dist * np.array([1,0])
         ptC = ptB + (self.dataObj.beam_B/2 + self.dataObj.col_T + self.dataObj.col_R1 + 150) * np.array([0,-1])
         self.dataObj.drawFaintLine(ptB,ptC,dwg)
-        ptL = self.A5 + self.dataObj.edge_dist * np.array([1,0]) + (nc-1) * self.dataObj.gauge * np.array([1,0])
+        ptL = self.A5 + self.dataObj.plateEdge_dist * np.array([1,0]) + (nc-1) * self.dataObj.gauge * np.array([1,0])
         ptM = ptL + (self.dataObj.beam_B/2 + self.dataObj.col_T + self.dataObj.col_R1 + 150) * np.array([0,-1])
         self.dataObj.drawFaintLine(ptL,ptM,dwg)
         
         # Edge Distance
-        ptx = self.A5 + self.dataObj.edge_dist * np.array([1,0]) + (nc-1) * self.dataObj.gauge * np.array([1,0])
+        ptx = self.A5 + self.dataObj.plateEdge_dist * np.array([1,0]) + (nc-1) * self.dataObj.gauge * np.array([1,0])
         ptY = ptx + self.dataObj.edge_dist * np.array([1,0])
         offset = self.dataObj.beam_B/2 + self.dataObj.col_T + self.dataObj.col_R1 + 150
         params = {"offset": offset, "textoffset": 20, "lineori": "left", "endlinedim":10}
         self.dataObj.draw_dimension_outerArrow(dwg,ptx,ptY,  str(int(self.dataObj.edge_dist)) + " mm", params)  
         
         #  Draws Faint line to represent Gauge Distance
-        ptK = self.A5 + self.dataObj.edge_dist * np.array([1,0])
+        ptK = self.A5 + self.dataObj.plateEdge_dist * np.array([1,0])
         ptM = ptK + (self.dataObj.beam_B/2 + self.dataObj.col_T + self.dataObj.col_R1 + 50)* np.array([0,-1])
         self.dataObj.drawFaintLine(ptK,ptM,dwg)
         
@@ -1644,7 +1648,7 @@ class Fin2DCreatorTop(object):
         # column  Information
         col_pt = self.H 
         theta = 70
-        offset = 250
+        offset = 270
         textUp = "Column " + self.dataObj.col_Designation
         textDown = " " 
         element = ""
@@ -1661,7 +1665,7 @@ class Fin2DCreatorTop(object):
         
         
         # Bolt Information
-        bltPt = self.A5 + self.dataObj.edge_dist * np.array([1,0]) + (nc -1) * self.dataObj.gauge * np.array([1,0]) 
+        bltPt = self.A5 + self.dataObj.plateEdge_dist * np.array([1,0]) + (nc -1) * self.dataObj.gauge * np.array([1,0]) 
         theta = 60
         offset = (self.dataObj.beam_B) + 160
         textUp = str(self.dataObj.no_of_rows) + " nos " + str(self.dataObj.bolt_dia) + u'\u00d8' + " holes"
@@ -1693,15 +1697,15 @@ class Fin2DCreatorTop(object):
         self.dataObj.drawFaintLine(ptC,ptD,dwg)
         
         # 2D view name
-        ptx =  self.G + (80)* np.array([1,0]) + (self.dataObj.D_col + 130)* np.array([0,1])
+        ptx =  self.G + (30)* np.array([1,0]) + (400)* np.array([0,1])
         dwg.add(dwg.text('Top view (Sec A-A)', insert=(ptx), fill='black',font_family = "sans-serif",font_size = 32)) 
         
         dwg.save()
         print"$$$$$$$$$ Saved Column Web Beam Web Top $$$$$$$$$$$"
     
     def callBWBWTop(self,fileName):
-        
-        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('-50 -300 850 850'))
+        vb_ht = str(float(1.8* self.dataObj.col_L))
+        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('-50 -300 950 '+vb_ht ))
         
         dwg.add(dwg.polyline(points=[(self.BA),(self.BB),(self.BC),(self.BD),(self.BA)], stroke='blue', fill='none', stroke_width=2.5))
         dwg.add(dwg.line((self.BE),(self.BH)).stroke('blue', width = 2.5, linecap = 'square'))
@@ -1727,7 +1731,7 @@ class Fin2DCreatorTop(object):
         ptList = []
         if nc >= 1:
             for col in range (nc):
-                pt = self.BBB  + self.dataObj.edge_dist * np.array([1,0]) + (col) * self.dataObj.gauge * np.array([1,0])
+                pt = self.BBB  + self.dataObj.plateEdge_dist * np.array([1,0]) + (col) * self.dataObj.gauge * np.array([1,0])
                 
                 pt1 = pt - bolt_r *  np.array([1,0])
                 rect_width = self.dataObj.bolt_dia
@@ -1738,7 +1742,7 @@ class Fin2DCreatorTop(object):
                 dwg.add(dwg.line((B1),(B2)).stroke('black',width = 2.5,linecap = 'square'))
                 ptList.append(pt)
                 if len(ptList) > 1:
-                    dimOffset = self.dataObj.beam_B/2 + self.dataObj.col_T + self.dataObj.col_R1 + 50
+                    dimOffset = self.dataObj.col_L/2  + 50
                     params = {"offset": dimOffset, "textoffset": 20, "lineori": "left", "endlinedim":10}
                     self.dataObj.draw_dimension_outerArrow(dwg,np.array(ptList[0]),np.array(ptList[1]),  str(int(self.dataObj.gauge)) + "mm", params)  
         
@@ -1768,22 +1772,22 @@ class Fin2DCreatorTop(object):
         dwg.add(dwg.line((ptSecA),(ptSecC)).stroke('#666666',width = 1.0,linecap = 'square'))
         
         # Draw Faint line to represent edge distance
-        ptB = self.BBB + self.dataObj.edge_dist * np.array([1,0]) + (nc -1) * self.dataObj.gauge * np.array([1,0]) + self.dataObj.edge_dist * np.array([1,0])
-        ptC = ptB + (self.dataObj.col_L/2   + 50 ) * np.array([0,-1])
+        ptB = self.BBB + self.dataObj.plateEdge_dist * np.array([1,0]) + (nc -1) * self.dataObj.gauge * np.array([1,0]) + self.dataObj.edge_dist * np.array([1,0])
+        ptC = ptB + (self.dataObj.col_L/2   + 140 ) * np.array([0,-1])
         self.dataObj.drawFaintLine(ptB,ptC,dwg)
-        ptL = self.BBB + self.dataObj.edge_dist * np.array([1,0]) + (nc-1) * self.dataObj.gauge * np.array([1,0])
-        ptM = ptL + (self.dataObj.col_L/2   + 50 ) * np.array([0,-1])
+        ptL = self.BBB + self.dataObj.plateEdge_dist * np.array([1,0]) + (nc-1) * self.dataObj.gauge * np.array([1,0])
+        ptM = ptL + (self.dataObj.col_L/2   + 140 ) * np.array([0,-1])
         self.dataObj.drawFaintLine(ptL,ptM,dwg)
         
         # Edge Distance
-        ptx = self.BBB + self.dataObj.edge_dist * np.array([1,0]) + (nc-1) * self.dataObj.gauge * np.array([1,0])
+        ptx = self.BBB + self.dataObj.plateEdge_dist * np.array([1,0]) + (nc-1) * self.dataObj.gauge * np.array([1,0])
         ptY = ptx + self.dataObj.edge_dist * np.array([1,0])
-        offset = self.dataObj.col_L/2   + 50 
+        offset = self.dataObj.col_L/2   + 150 
         params = {"offset": offset, "textoffset": 20, "lineori": "left", "endlinedim":10}
         self.dataObj.draw_dimension_outerArrow(dwg,ptx,ptY,  str(int(self.dataObj.edge_dist)) + " mm", params)  
         
         #  Draws Faint line to represent Gauge Distance
-        ptK = self.BBB + self.dataObj.edge_dist * np.array([1,0])
+        ptK = self.BBB + self.dataObj.plateEdge_dist * np.array([1,0])
         ptM = ptK + (self.dataObj.col_L/2   + 50)* np.array([0,-1])
         self.dataObj.drawFaintLine(ptK,ptM,dwg)
         
@@ -1797,9 +1801,9 @@ class Fin2DCreatorTop(object):
         self.dataObj.drawOrientedArrow(dwg, beam_pt, theta, "NE", offset, textUp, textDown,element)
         
         # column  Information
-        col_pt = self.BD
-        theta = 70
-        offset = 250
+        col_pt = self.BD + self.dataObj.col_B/2 * np.array([1,0])
+        theta = 90
+        offset = 50
         textUp = "Column " + self.dataObj.col_Designation
         textDown = " " 
         element = ""
@@ -1807,7 +1811,7 @@ class Fin2DCreatorTop(object):
         
         # Plate  Information
         plt_pt = self.BP3 
-        theta = 70
+        theta = 60
         offset =  self.dataObj.beam_B /2 + 130
         textUp = "PLT. " + str(int(self.dataObj.plate_ht))+'x'+ str(int(self.dataObj.plate_width))+ 'x' + str(int(self.dataObj.plate_thick))
         textDown = ""
@@ -1816,7 +1820,7 @@ class Fin2DCreatorTop(object):
         
         
         # Bolt Information
-        bltPt = self.BBB + self.dataObj.edge_dist * np.array([1,0]) + (nc -1) * self.dataObj.gauge * np.array([1,0]) 
+        bltPt = self.BBB + self.dataObj.plateEdge_dist * np.array([1,0]) + (nc -1) * self.dataObj.gauge * np.array([1,0]) 
         theta = 60
         offset = (self.dataObj.beam_B) + 160
         textUp = str(self.dataObj.no_of_rows) + " nos " + str(self.dataObj.bolt_dia) + u'\u00d8' + " holes"
@@ -1826,8 +1830,8 @@ class Fin2DCreatorTop(object):
         
         # Weld Information
         weldPt = self.BY
-        theta = 70
-        offset = self.dataObj.D_col* 3/4 + 100
+        theta = 60
+        offset = self.dataObj.col_L/2.8
         textUp = "          z " + str(int(self.dataObj.weld_thick)) + " mm"
         textDown = ""#u"\u25C1"
         element = "weld"
@@ -1844,11 +1848,11 @@ class Fin2DCreatorTop(object):
         ptB = ptA + (240) * np.array([0,-1])
         self.dataObj.drawFaintLine(ptA,ptB,dwg)
         ptC = self.BA1
-        ptD = ptC + (440) * np.array([0,-1])
+        ptD = ptC + (520) * np.array([0,-1])
         self.dataObj.drawFaintLine(ptC,ptD,dwg)
         
         # 2D view name
-        ptx =  self.BC + (80)* np.array([1,0]) + (self.dataObj.D_col + 130)* np.array([0,1])
+        ptx =  self.BC + (80)* np.array([1,0]) + (200)* np.array([0,1])
         dwg.add(dwg.text('Top view (Sec A-A)', insert=(ptx), fill='black',font_family = "sans-serif",font_size = 32)) 
         
         dwg.save()
@@ -1956,7 +1960,10 @@ class Fin2DCreatorSide(object):
     def callCWBWSide(self,fileName):
         '''
         '''
-        dwg = svgwrite.Drawing(fileName,size=('100%', '100%'), viewBox=('-10 -70 700 1050'))
+        vb_width = str(float(3.5 * self.dataObj.D_col))
+        vb_ht = str(float(1.4 * self.dataObj.col_L))
+        
+        dwg = svgwrite.Drawing(fileName,size=('100%', '100%'), viewBox=('-10 -100 '+vb_width+ ' ' +vb_ht))
         dwg.add(dwg.rect(insert=(self.A), size=(self.dataObj.D_col, self.dataObj.col_L),fill = 'none', stroke='blue', stroke_width=2.5))
         dwg.add(dwg.line((self.C),(self.H)).stroke('blue',width = 2.5,linecap = 'square'))
         dwg.add(dwg.line((self.B),(self.G)).stroke('blue',width = 2.5,linecap = 'square'))
@@ -2061,7 +2068,9 @@ class Fin2DCreatorSide(object):
     def callCFBWSide(self,fileName):
         '''
         '''
-        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('-10 -70 700 1050'))
+        vb_width = str(float(3.5 * self.dataObj.D_col))
+        vb_ht = str(float(1.4 * self.dataObj.col_L))
+        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('-10 -100 '+vb_width+ ' ' +vb_ht))
         dwg.add(dwg.rect(insert=(self.FA), size=(self.dataObj.col_B, self.dataObj.col_L),fill = 'none', stroke='blue', stroke_width=2.5))
         dwg.add(dwg.polyline(points=[(self.FA1),(self.FA2),(self.FA3),(self.FA4),(self.FA5),(self.FA6),(self.FA7),(self.FA8),(self.FA9),(self.FA10),(self.FA11),(self.FA12),(self.FA1)], stroke='blue', fill='#E0E0E0', stroke_width=2.5))
         
@@ -2166,7 +2175,9 @@ class Fin2DCreatorSide(object):
         print "********** Column Flange Beam Web Side Saved  *************"
     
     def callBWBWSide(self,fileName):
-        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('-10 -70 700 1050'))
+        vb_width = str(float(1.6 * self.dataObj.col_L))
+        vb_ht = str(float(1.7 * self.dataObj.D_col))
+        dwg = svgwrite.Drawing(fileName, size=('100%', '100%'), viewBox=('-10 -200 '+ vb_width+ ' '+vb_ht))
         
         dwg.add(dwg.polyline(points = [(self.BA1),(self.BA2),(self.BA5),(self.BA6),(self.BA1)],stroke = 'blue',fill = 'none',stroke_width = 2.5))
         dwg.add(dwg.line((self.BA8),(self.BA3)).stroke('blue',width = 2.5,linecap = 'square'))
@@ -2198,28 +2209,28 @@ class Fin2DCreatorSide(object):
             pitchPts.append(pt)
         
         # Draw Faint Line
-        pt2 = self.BP + ((self.dataObj.D_col /2) + 100) * np.array([1,0])
+        pt2 = self.BP + ((self.dataObj.col_L /2) + 100) * np.array([1,0])
         self.dataObj.drawFaintLine(self.BP,pt2,dwg)
-        pt1 = np.array(pitchPts[0]) + ((self.dataObj.D_col /2) + 100) * np.array([1,0])
+        pt1 = np.array(pitchPts[0]) + ((self.dataObj.col_L /2) + 100) * np.array([1,0])
         self.dataObj.drawFaintLine(np.array(pitchPts[0]),pt1,dwg)
-        ptA = self.BS + ((self.dataObj.D_col /2) + 100) * np.array([1,0])
+        ptA = self.BS + ((self.dataObj.col_L /2) + 100) * np.array([1,0])
         self.dataObj.drawFaintLine(self.BS,ptA,dwg)
         ptB = np.array(pitchPts[len( pitchPts)-1]) + ((self.dataObj.D_col /2) + 100) * np.array([1,0])
         self.dataObj.drawFaintLine(np.array(pitchPts[len( pitchPts)-1]),ptB,dwg)
 
         # End and Pitch Distance Information
-        params = {"offset": self.dataObj.D_col / 2 + 100, "textoffset": 15, "lineori": "left", "endlinedim":10}
+        params = {"offset": self.dataObj.col_L / 2 + 100, "textoffset": 15, "lineori": "left", "endlinedim":10}
         self.dataObj.draw_dimension_outerArrow(dwg, np.array(pitchPts[0]), np.array(pitchPts[len( pitchPts)-1]),str(len(pitchPts)-1)+u' \u0040'+ str(int(self.dataObj.pitch)) + " mm c/c", params)     
-        params = {"offset": self.dataObj.D_col / 2 + 100, "textoffset": 15, "lineori": "left", "endlinedim":10}
+        params = {"offset": self.dataObj.col_L / 2 + 100, "textoffset": 15, "lineori": "left", "endlinedim":10}
         self.dataObj.draw_dimension_outerArrow(dwg, self.BP, np.array(pitchPts[0]), str(int(self.dataObj.end_dist)) + " mm ", params)     
-        params = {"offset": self.dataObj.D_col / 2 + 100, "textoffset": 15, "lineori": "left", "endlinedim":10}
+        params = {"offset": self.dataObj.col_L / 2 + 100, "textoffset": 15, "lineori": "left", "endlinedim":10}
         self.dataObj.draw_dimension_outerArrow(dwg, np.array(pitchPts[len( pitchPts)-1]), self.BS, str(int(self.dataObj.end_dist)) + " mm", params)     
         
         # Column Information
-        beam_pt = self.BA5 + self.dataObj.col_L/2.0 * np.array([-1,0])
+        beam_pt = self.BA5 
         theta = 30
         offset = 50
-        textUp = "Column " + self.dataObj.col_Designation
+        textUp = "Beam " + self.dataObj.col_Designation
         textDown = ""
         element =""
         self.dataObj.drawOrientedArrow(dwg, beam_pt, theta, "SE", offset, textUp, textDown,element)
@@ -2227,7 +2238,7 @@ class Fin2DCreatorSide(object):
         # Beam  Information
         col_pt = self.BB + self.dataObj.beam_B/2 * np.array([-1,0])
         theta = 45
-        offset = self.dataObj.col_L/4
+        offset = self.dataObj.col_L/5
         textUp = "Beam " + self.dataObj.beam_Designation
         textDown = " " 
         element = ""
@@ -2236,7 +2247,7 @@ class Fin2DCreatorSide(object):
         # Plate  Information
         beam_pt = self.BP + self.dataObj.plate_thick/2 * np.array([-1,0]) + (self.dataObj.end_dist + self.dataObj.pitch/2.0)* np.array([0,1])
         theta = 45
-        offset =  self.dataObj.col_L/4
+        offset =  self.dataObj.col_L/5
         textUp = "PLT. " + str(int(self.dataObj.plate_ht))+'x'+ str(int(self.dataObj.plate_width))+ 'x' + str(int(self.dataObj.plate_thick))
         textDown = ""
         element =""
@@ -2245,7 +2256,7 @@ class Fin2DCreatorSide(object):
         # Bolt Information
         boltPt = self.BS + self.dataObj.end_dist * np.array([0,-1])
         theta = 35
-        offset = self.dataObj.col_L/2.38
+        offset = self.dataObj.col_L/3.0
         
         textUp = str(self.dataObj.no_of_rows) + " nos " + str(self.dataObj.bolt_dia) + u'\u00d8' + " holes"
         textDown = "for M20 bolts (grade 8.8)"
@@ -2262,7 +2273,7 @@ class Fin2DCreatorSide(object):
         self.dataObj.drawOrientedArrow(dwg, weldPt, theta, "SE", offset, textUp, textDown,element)
         
         # 2D view name
-        ptx =  self.BA6 + (self.dataObj.col_L/5.5)* np.array([0,1]) + 150 * np.array([1,0])
+        ptx =  self.BA6 + (self.dataObj.col_L/5.5)* np.array([0,1]) + self.dataObj.col_L/2 * np.array([1,0])
         dwg.add(dwg.text('Side view (Sec B-B)', insert=(ptx), fill='black',font_family = "sans-serif",font_size = 30)) 
         dwg.fit()
         dwg.save()
