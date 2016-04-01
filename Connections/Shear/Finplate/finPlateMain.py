@@ -47,14 +47,7 @@ from ModelUtils import getGpPt
 from OCC.BRepPrimAPI import BRepPrimAPI_MakeSphere
 import OCC.V3d
 
-class MyPopupDialog(QtGui.QDialog):
-    def __init__(self, parent = None):
-        
-        QtGui.QDialog.__init__(self, parent)
-        self.ui = Ui_Dialog()
-        self.ui.setupUi(self)
-    
-    
+
 
 class MainController(QtGui.QMainWindow):
     
@@ -152,7 +145,7 @@ class MainController(QtGui.QMainWindow):
         
         self.ui.menuView.addAction(self.ui.inputDock.toggleViewAction())
         self.ui.menuView.addAction(self.ui.outputDock.toggleViewAction())
-        self.ui.btn_CreateDesign.clicked.connect(self.save_design) #Saves the create design report
+        self.ui.btn_CreateDesign.clicked.connect(self.createDesignReport) #Saves the create design report
         self.ui.btn_SaveMessages.clicked.connect(self.save_log)
         
         
@@ -547,23 +540,62 @@ class MainController(QtGui.QMainWindow):
         QtCore.QObject.connect(self.web, QtCore.SIGNAL("loadFinished(bool)"), convertIt)
     
     def show_dialog(self):
+        
         dialog = MyPopupDialog(self)
         dialog.show()
+        dialog.ui.lbl_browse.clear()
+        dialog.ui.btn_browse.clicked.connect(lambda:self.getLogoFilePath(dialog.ui.lbl_browse))
+        input_summary = dialog.getUserInputs()
+        dialog.ui.btn_saveProfile.clicked.connect(lambda:self.saveUserProfile(input_summary["ProfileSummary"]))
+        #dialog.ui.btn_useProfile.clicked.connect(self.useUserProfile)
+        #dialog.accepted.connect(lambda:self.save_design(input_summary))
+    
+    
         
+    def getLogoFilePath(self,lblwidget):
         
-        pass
-    def save_design(self):
+        filename = QtGui.QFileDialog.getOpenFileName(self, 'Open File', " ", 'Images (*.png *.svg *.jpg)',None, QtGui.QFileDialog.DontUseNativeDialog)
+
+        base = os.path.basename(str(filename))
+        lblwidget.setText(base)
+        
+    def saveUserProfile(self,inputData):
+        print"printing user profile"
+        print inputData
+        filename= QtGui.QFileDialog.getSaveFileName(self, 'Save Files', "output/finplate/Profile", filter= '*.txt')
+        
+        infile = open(filename, 'w')
+        pickle.dump(inputData, infile)
+        infile.close()                                
+        
+    def useUserProfile(self):
+        
+        filename = QtGui.QFileDialog.getOpenFileName(self, 'Open Files', "output/finplate/Profile", filter = '*.txt')
+        
+        if os.path.isfile(filename):
+            outfile = open(filename, 'r')
+            reportsummary = pickle.load(outfile)            
+            self.lineEdit_companyName.setText(reportsummary["CompanyName"])
+            self.lbl_browse.setText(reportsummary["CompanyLogo"])                      
+            self.lineEdit_groupName.setText(reportsummary["Group/TeamName"])
+            self.lineEdit_designer.setText(reportsummary["Designer"])
+        else:
+            pass
+
+    def createDesignReport(self):
         
         self.show_dialog()
+       # self.save_design()
+    
+    def save_design(self,popup_summary):
         
         fileName,pat =QtGui.QFileDialog.getSaveFileNameAndFilter(self,"Save File As","output/finplate/","All Files (*);;Html Files (*.html)")
         self.call2D_Drawing("All")
         self.outdict = self.resultObj#self.outputdict()
         self.inputdict = self.uiObj#self.getuser_inputs()
-        #self.save_yaml(self.outdict,self.inputdict)
         dictBeamData  = self.fetchBeamPara()
         dictColData  = self.fetchColumnPara()
-        save_html(self.outdict, self.inputdict, dictBeamData, dictColData,fileName)
+        save_html(self.outdict, self.inputdict, dictBeamData, dictColData,popup_summary,fileName)
         self.htmlToPdf()
         
         QtGui.QMessageBox.about(self,'Information',"Report Saved")
@@ -595,6 +627,7 @@ class MainController(QtGui.QMainWindow):
         #QtGui.QMessageBox.about(self,'Information',"File saved")
        
     def save_yaml(self,outObj,uiObj):
+        
         '''(dictiionary,dictionary) -> NoneType
         Saving input and output to file in following format.
         Bolt:
@@ -612,7 +645,6 @@ class MainController(QtGui.QMainWindow):
         
         #return self.save_file(fileName+".txt")
         #QtGui.QMessageBox.about(self,'Information',"File saved")
-
         
     def resetbtn_clicked(self):
         '''(NoneType) -> NoneType
@@ -1370,8 +1402,6 @@ class MainController(QtGui.QMainWindow):
         self.validateInputsOnDesignBtn()
         # FinPlate Design Calculations. 
         self.resultObj = finConn(self.uiObj)
-        print"printing new dict"
-        print self.resultObj
         
         # Displaying Design Calculations To Output Window
         self.display_output(self.resultObj)
@@ -1504,7 +1534,36 @@ class MainController(QtGui.QMainWindow):
             event.accept()
         else:
             event.ignore() 
+            
+class MyPopupDialog(QtGui.QDialog):
+    
+    def __init__(self, parent = None):
+        
+        QtGui.QDialog.__init__(self, parent)
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self)
 
+    def getUserInputs(self):
+        compName = str(self.ui.lineEdit_companyName.text())
+        print "printing compNsme"
+        print compName
+        
+        input_summary = {}
+        input_summary["ProfileSummary"] = {}
+        input_summary["ProfileSummary"]["CompanyName"] = "Deepa" #self.ui.lineEdit_companyName.text()
+        input_summary["ProfileSummary"]["CompanyLogo"] = str(self.ui.lbl_browse.text())
+        input_summary["ProfileSummary"]["Group/TeamName"] = str(self.ui.lineEdit_groupName.text())
+        input_summary["ProfileSummary"]["Designer"] = str(self.ui.lineEdit_designer.text())
+        
+        input_summary["ProjectTitle"] = str(self.ui.lineEdit_projectTitle.text())
+        input_summary["Subtitle"] = str(self.ui.lineEdit_subtitle.text())
+        input_summary["JobNumber"] = str(self.ui.lineEdit_jobNumber.text())
+        input_summary["AdditionalComments"] = str(self.ui.txt_additionalComments.toPlainText())
+        input_summary["Method"] = str(self.ui.comboBox_method.currentText())
+        
+        return input_summary
+    
+    
                         
 def set_osdaglogger():
     

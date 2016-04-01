@@ -37,13 +37,13 @@ p16
 (dp17
 S'ShearForce (kN)'
 p18
-I140
+I120
 ssS'Weld'
 p19
 (dp20
 S'Size (mm)'
 p21
-I6
+I8
 ssS'Bolt'
 p22
 (dp23
@@ -52,7 +52,7 @@ p24
 F8.8
 sS'Diameter (mm)'
 p25
-I20
+I12
 sS'Type'
 p26
 S'HSFG'
