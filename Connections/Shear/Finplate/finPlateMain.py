@@ -46,7 +46,77 @@ from ModelUtils import getGpPt
 ##### Testing imports
 from OCC.BRepPrimAPI import BRepPrimAPI_MakeSphere
 import OCC.V3d
+import pdfkit
 
+class MyPopupDialog(QtGui.QDialog):
+    
+    def __init__(self, parent = None):
+        
+        QtGui.QDialog.__init__(self, parent)
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self)
+        self.mainController = parent
+        self.ui.btn_browse.clicked.connect(lambda:self.getLogoFilePath(self.ui.lbl_browse))
+        self.ui.btn_saveProfile.clicked.connect(self.saveUserProfile)
+        self.ui.btn_useProfile.clicked.connect(self.useUserProfile)
+        self.accepted.connect(self.save_inputSummary)
+    
+    def save_inputSummary(self):
+        input_summary = self.getPopUpInputs()
+        self.mainController.save_design(input_summary)
+        #return input_summary
+        
+    def getLogoFilePath(self,lblwidget):
+        
+        self.ui.lbl_browse.clear
+        filename = QtGui.QFileDialog.getOpenFileName(self, 'Open File', " ", 'Images (*.png *.svg *.jpg)',None, QtGui.QFileDialog.DontUseNativeDialog)
+
+        base = os.path.basename(str(filename))
+        lblwidget.setText(base)
+        print str(filename)
+        return str(filename)
+        
+    def saveUserProfile(self):
+        inputData = self.getPopUpInputs()
+        print"printing user profile"
+        print inputData["ProfileSummary"]
+        filename= QtGui.QFileDialog.getSaveFileName(self, 'Save Files', "output/finplate/Profile",  '*.txt')
+        
+        infile = open(filename, 'w')
+        pickle.dump(inputData, infile)
+        infile.close()                                
+        
+    def getPopUpInputs(self):
+        
+        
+        input_summary = {}
+        input_summary["ProfileSummary"] = {}
+        input_summary["ProfileSummary"]["CompanyName"] = str(self.ui.lineEdit_companyName.text())
+        input_summary["ProfileSummary"]["CompanyLogo"] = str(self.ui.lbl_browse.text())
+        input_summary["ProfileSummary"]["Group/TeamName"] = str(self.ui.lineEdit_groupName.text())
+        input_summary["ProfileSummary"]["Designer"] = str(self.ui.lineEdit_designer.text())
+        
+        input_summary["ProjectTitle"] = str(self.ui.lineEdit_projectTitle.text())
+        input_summary["Subtitle"] = str(self.ui.lineEdit_subtitle.text())
+        input_summary["JobNumber"] = str(self.ui.lineEdit_jobNumber.text())
+        input_summary["AdditionalComments"] = str(self.ui.txt_additionalComments.toPlainText())
+        input_summary["Method"] = str(self.ui.comboBox_method.currentText())
+        
+        return input_summary
+    
+    def useUserProfile(self):
+        files_types = "All Files (*))"
+        filename = QtGui.QFileDialog.getOpenFileName(self, 'Open Files', "output/finplate/Profile", "All Files (*)")
+        if os.path.isfile(filename):
+            outfile = open(filename, 'r')
+            reportsummary = pickle.load(outfile)            
+            self.ui.lineEdit_companyName.setText(reportsummary["ProfileSummary"]['CompanyName'])
+            self.ui.lbl_browse.setText(reportsummary["ProfileSummary"]['CompanyLogo'])                      
+            self.ui.lineEdit_groupName.setText(reportsummary["ProfileSummary"]['Group/TeamName'])
+            self.ui.lineEdit_designer.setText(reportsummary["ProfileSummary"]['Designer'])
+           
+        else:
+            pass
 
 
 class MainController(QtGui.QMainWindow):
@@ -525,82 +595,37 @@ class MainController(QtGui.QMainWindow):
         
         return outObj
     
-    def htmlToPdf(self):
+    
         
-        self.web.load(QtCore.QUrl("file:///home/deepa/EclipseWorkspace/OsdagLive/output/finplate/finPlateReport.html"))
-        printer = QtGui.QPrinter(QtGui.QPrinter.HighResolution)
-        printer.setPageSize(QPrinter.A4)
-        printer.setOutputFormat(QPrinter.PdfFormat)
-        printer.setColorMode(QPrinter.Color)
-        printer.setOutputFileName("output/finplate/designReport.pdf")
-        
-        def convertIt():
-            self.web.print_(printer)
-          
-        QtCore.QObject.connect(self.web, QtCore.SIGNAL("loadFinished(bool)"), convertIt)
+    #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     
     def show_dialog(self):
         
         dialog = MyPopupDialog(self)
         dialog.show()
-        dialog.ui.lbl_browse.clear()
-        dialog.ui.btn_browse.clicked.connect(lambda:self.getLogoFilePath(dialog.ui.lbl_browse))
-        input_summary = dialog.getUserInputs()
-        dialog.ui.btn_saveProfile.clicked.connect(lambda:self.saveUserProfile(input_summary["ProfileSummary"]))
-        #dialog.ui.btn_useProfile.clicked.connect(self.useUserProfile)
-        #dialog.accepted.connect(lambda:self.save_design(input_summary))
     
-    
-        
-    def getLogoFilePath(self,lblwidget):
-        
-        filename = QtGui.QFileDialog.getOpenFileName(self, 'Open File', " ", 'Images (*.png *.svg *.jpg)',None, QtGui.QFileDialog.DontUseNativeDialog)
-
-        base = os.path.basename(str(filename))
-        lblwidget.setText(base)
-        
-    def saveUserProfile(self,inputData):
-        print"printing user profile"
-        print inputData
-        filename= QtGui.QFileDialog.getSaveFileName(self, 'Save Files', "output/finplate/Profile", filter= '*.txt')
-        
-        infile = open(filename, 'w')
-        pickle.dump(inputData, infile)
-        infile.close()                                
-        
-    def useUserProfile(self):
-        
-        filename = QtGui.QFileDialog.getOpenFileName(self, 'Open Files', "output/finplate/Profile", filter = '*.txt')
-        
-        if os.path.isfile(filename):
-            outfile = open(filename, 'r')
-            reportsummary = pickle.load(outfile)            
-            self.lineEdit_companyName.setText(reportsummary["CompanyName"])
-            self.lbl_browse.setText(reportsummary["CompanyLogo"])                      
-            self.lineEdit_groupName.setText(reportsummary["Group/TeamName"])
-            self.lineEdit_designer.setText(reportsummary["Designer"])
-        else:
-            pass
-
     def createDesignReport(self):
         
         self.show_dialog()
-       # self.save_design()
+        
     
     def save_design(self,popup_summary):
         
-        fileName,pat =QtGui.QFileDialog.getSaveFileNameAndFilter(self,"Save File As","output/finplate/","All Files (*);;Html Files (*.html)")
+        fileName,pat =QtGui.QFileDialog.getSaveFileNameAndFilter(self,"Save File As","output/finplate/","Html Files (*.html)")
+        fileName = str(fileName)
         self.call2D_Drawing("All")
         self.outdict = self.resultObj#self.outputdict()
         self.inputdict = self.uiObj#self.getuser_inputs()
         dictBeamData  = self.fetchBeamPara()
         dictColData  = self.fetchColumnPara()
         save_html(self.outdict, self.inputdict, dictBeamData, dictColData,popup_summary,fileName)
-        self.htmlToPdf()
+        print 'printing html file path'
+        print fileName
+        pdfkit.from_file(fileName,'output/finplate/report.pdf')
         
         QtGui.QMessageBox.about(self,'Information',"Report Saved")
     
-        #self.save(self.outdict,self.inputdict)
+    #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         
     def save_log(self):
         
@@ -1535,33 +1560,7 @@ class MainController(QtGui.QMainWindow):
         else:
             event.ignore() 
             
-class MyPopupDialog(QtGui.QDialog):
-    
-    def __init__(self, parent = None):
-        
-        QtGui.QDialog.__init__(self, parent)
-        self.ui = Ui_Dialog()
-        self.ui.setupUi(self)
 
-    def getUserInputs(self):
-        compName = str(self.ui.lineEdit_companyName.text())
-        print "printing compNsme"
-        print compName
-        
-        input_summary = {}
-        input_summary["ProfileSummary"] = {}
-        input_summary["ProfileSummary"]["CompanyName"] = "Deepa" #self.ui.lineEdit_companyName.text()
-        input_summary["ProfileSummary"]["CompanyLogo"] = str(self.ui.lbl_browse.text())
-        input_summary["ProfileSummary"]["Group/TeamName"] = str(self.ui.lineEdit_groupName.text())
-        input_summary["ProfileSummary"]["Designer"] = str(self.ui.lineEdit_designer.text())
-        
-        input_summary["ProjectTitle"] = str(self.ui.lineEdit_projectTitle.text())
-        input_summary["Subtitle"] = str(self.ui.lineEdit_subtitle.text())
-        input_summary["JobNumber"] = str(self.ui.lineEdit_jobNumber.text())
-        input_summary["AdditionalComments"] = str(self.ui.txt_additionalComments.toPlainText())
-        input_summary["Method"] = str(self.ui.comboBox_method.currentText())
-        
-        return input_summary
     
     
                         
