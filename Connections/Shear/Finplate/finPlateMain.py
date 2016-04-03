@@ -619,9 +619,7 @@ class MainController(QtGui.QMainWindow):
         dictBeamData  = self.fetchBeamPara()
         dictColData  = self.fetchColumnPara()
         save_html(self.outdict, self.inputdict, dictBeamData, dictColData,popup_summary,fileName)
-        print 'printing html file path'
-        print fileName
-        pdfkit.from_file(fileName,'output/finplate/report.pdf')
+        pdfkit.from_file(fileName,'output/finplate/finReport.pdf')
         
         QtGui.QMessageBox.about(self,'Information',"Report Saved")
     

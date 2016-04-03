@@ -767,13 +767,13 @@ def save_html(outObj, uiObj, dictBeamData, dictColData,reportsummary, filename):
     #rstr += t('td class=" viewtbl "') + row[2] + t('/td')
     rstr += t('/tr')
      
-    row = [0, '<object type="image/PNG" data="3D_Model.png" width ="550"></object>', '<object type="image/SVG" data="finTop.svg" width ="480"></object>']
+    row = [0, '<object type="image/PNG" data="3D_Model.png" width ="550"></object>', '<object type="image/SVG" data="finTop.svg" width ="520"></object>']
     rstr += t('tr')
     rstr += t('td  align="center" class=" viewtbl"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td  align="center" class=" viewtbl"') + row[2] + t('/td')
     rstr += t('/tr')
      
-    row = [0, '<object type="image/SVG" data="finSide.svg" width ="480"></object>', '<object type="image/SVG" data="finFront.svg" width ="480"></object>']
+    row = [0, '<object type="image/SVG" data="finSide.svg" width ="480"></object>', '<object type="image/SVG" data="finFront.svg" width ="600"></object>']
     rstr += t('tr')
     rstr += t('td align="center" class=" viewtbl"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td align="center" class=" viewtbl "') + row[2] + t('/td')
