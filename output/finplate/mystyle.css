@@ -1,79 +1,89 @@
 
-table {
-  width:100%;
-  border: 1px solid black;
-  /*padding-left: 1em;
-  padding-right: 1em;*/
-}
+
+.break {
+	page-break-before:always;	
+	}
 
 
+table 	{
+	width:100%;
+	border-collapse: collapse;
+	}
+table, td, th{
+	border:1px solid black;
+	/*text-align: left;*/
+	}
+th, td {
+	padding: 5px;
+	}
 
 .header0{
-  background-color:#8fac3a;
-  font-weight: bold;
-   font-size: 22;
-  font-family: Helvetica;
-	
-}
+	background-color:#8fac3a;
+	font-weight: bold;
+	font-size: 20;
+	font-family: Helvetica, Arial, Sans Serif;	
+	}
 
 .header1{
-  font-weight: bold;
-  font-size: 20;
-  font-family: Helvetica;
-}
+	font-weight: bold;
+	font-size: 20;
+	font-family: Helvetica, Arial, Sans Serif;
+	text-align :left;
+	}
+
 .header1_1{
-  font-weight: bold;
-  background-color:#D5DF93;  
-  font-weight: bold;
-   font-size: 20;
-  font-family: Helvetica;
-}
+	font-weight: bold;
+	background-color:#D5DF93;  
+	font-weight: bold;
+	font-size: 20;
+	font-family: Helvetica, Arial, Sans Serif;
+	}
 
 .header1_2{
-  font-weight: bold;
-  background-color:#E6E6E6;  
-  font-weight: bold;
-   font-size: 20;
-  font-family: Helvetica;
-}
+	font-weight: bold;
+	background-color:#E6E6E6;  
+	font-weight: bold;
+
+	font-size: 20;
+	font-family: Helvetica, Arial, Sans Serif;
+	}
+.header1_3{
+	font-weight: bold;
+	background-color:#925A5B;  
+	font-weight: bold;
+	font-size: 20;
+	color:#FFFFFF;
+	font-family: Helvetica, Arial, Sans Serif;
+	}
+
 .header2{
-  font-size: 20;
-  font-family: Helvetica;
-}
+	font-size: 20;
+	font-family: Helvetica, Arial, Sans Serif;
+	}
+
 .viewtbl{
 	width : 50%;
-	
-}
+	font-size: 20;
+	}
+
+.viewtbl1{
+	width : 50%;
+	font-size: 30;
+	font-weight: bold;
+	}
+
 .header2_col1{
-   font-weight: bold; 
-   font-size: 20;
-   font-family: Helvetica;
-}
+	font-weight: bold; 
+	font-size: 20;
+	font-family: Helvetica, Arial, Sans Serif;
+	}
 
-.safe{
-  color:green;
-}
-/*
-.secondCol {
-  background-color:#0F0;
-}
-*/
+.safe  {
+	color:green;
+	}
 
-#logodiv {
-    /*border: solid;*/
-}
+.header3{
+	font-size: 20;
+	font-family: Helvetica, Arial, Sans Serif;
+	}
 
-#dateDiv {
-    float: right;
-    font-weight: bold;
-    margin-right: 2em;
-}
-
-body {
-    width:80%;
-    margin-left:10%;
-    margin-right:10%;
-}
-td{
-    padding:0.2em;
-}
