@@ -94,11 +94,12 @@ def save_html(outObj, uiObj, dictBeamData, dictColData,reportsummary, filename):
     bearingcapacity = str(round(outObj['Bolt']['bearingcapacity'],4))
     momentDemand = str(outObj['Plate']['externalmoment'])
     
+    
 #&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 # Header of the pdf fetched from dialogbox
     rstr = t('table')
     rstr += t('tr')
-    row = [0, companylogo,'Created with'' &nbsp'' &nbsp' '<object type= "image/PNG" data= "Osdag_header.png" width= 150></object>']
+    row = [0, '<object type= "image/PNG" data= "Fossee_logo.png" width= 150></object>','Created with'' &nbsp'' &nbsp' '<object type= "image/PNG" data= "Osdag_header.png" width= 150></object>']
     rstr += t('td colspan="2" align= "center" class= "viewbl" ') + space(row[0]) + row[1] + t('/td')
     rstr += t('td colspan="2" align= "right" class="viewbl"') + row[2] + t('/td')
     rstr += t('/tr')
@@ -141,7 +142,7 @@ def save_html(outObj, uiObj, dictBeamData, dictColData,reportsummary, filename):
     rstr += t('td class= "header1_3"') + space(row[0]) + row[1] + t('/td')
     row = [0, time.strftime("%d /%m /%Y")]
     rstr += t('td class= "header1_3"') + space(row[0]) + row[1] + t('/td')
-    row = [0, 'Metdod']
+    row = [0, 'Method']
     rstr += t('td class= "header1_3"') + space(row[0]) + row[1] + t('/td')
     row = [0, method]
     rstr += t('td class= "header1_3"') + space(row[0]) + row[1] + t('/td')
@@ -209,12 +210,7 @@ def save_html(outObj, uiObj, dictBeamData, dictColData,reportsummary, filename):
     rstr += t('td class="header2 "') + row[2] + t('/td')
     rstr += t('/tr')
      
-    row = [1, "Beam Connection", "Bolted"]
-    rstr += t('tr')
-    rstr += t('td class="header2"') + space(row[0]) + row[1] + t('/td')
-    rstr += t('td class="header2 "') + row[2] + t('/td')
-    rstr += t('/tr')
- 
+   
     row = [1, "Beam Connection", "Bolted"]
     rstr += t('tr')
     rstr += t('td class="header2"') + space(row[0]) + row[1] + t('/td')
@@ -254,7 +250,7 @@ def save_html(outObj, uiObj, dictBeamData, dictColData,reportsummary, filename):
     rstr += t('td class="header2 "') + row[2] + t('/td')
     rstr += t('/tr')
      
-    row = [2, "Material", "Fe 410"]
+    row = [2, "Material", "Fe "+beam_fu]
     rstr += t('tr')
     rstr += t('td class="header2"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td class="header2 "') + row[2] + t('/td')
@@ -267,7 +263,7 @@ def save_html(outObj, uiObj, dictBeamData, dictColData,reportsummary, filename):
     rstr += t('td class="header2 "') + row[2] + t('/td')
     rstr += t('/tr')
      
-    row = [2, "Material", "Fe 410"]
+    row = [2, "Material", "Fe "+beam_fu]
     rstr += t('tr')
     rstr += t('td class="header2"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td class="header2 "') + row[2] + t('/td')
@@ -427,7 +423,7 @@ def save_html(outObj, uiObj, dictBeamData, dictColData,reportsummary, filename):
 # Header of the pdf fetched from dialogbox
     rstr += t('table')
     rstr += t('tr')
-    row = [0, companylogo,'Created with'' &nbsp'' &nbsp' '<object type= "image/PNG" data= "Osdag_header.png" width= 150></object>']
+    row = [0, '<object type= "image/PNG" data= "Fossee_logo.png" width= 150></object>','Created with'' &nbsp'' &nbsp' '<object type= "image/PNG" data= "Osdag_header.png" width= 150></object>']
     rstr += t('td colspan="2" align= "center" class= "viewbl" ') + space(row[0]) + row[1] + t('/td')
     rstr += t('td colspan="2" align= "right" class="viewbl"') + row[2] + t('/td')
     rstr += t('/tr')
@@ -470,7 +466,7 @@ def save_html(outObj, uiObj, dictBeamData, dictColData,reportsummary, filename):
     rstr += t('td class= "header1_3"') + space(row[0]) + row[1] + t('/td')
     row = [0, time.strftime("%d /%m /%Y")]
     rstr += t('td class= "header1_3"') + space(row[0]) + row[1] + t('/td')
-    row = [0, 'Metdod']
+    row = [0, 'Method']
     rstr += t('td class= "header1_3"') + space(row[0]) + row[1] + t('/td')
     row = [0, method]
     rstr += t('td class= "header1_3"') + space(row[0]) + row[1] + t('/td')
@@ -621,18 +617,22 @@ def save_html(outObj, uiObj, dictBeamData, dictColData,reportsummary, filename):
     rstr += t('tr')
 #     if
     minEdge = str(0.6 * float(beamdepth))
-    maxEdge = str(float(beamdepth) - float(beamflangethk) - float(beamrootradius) - float(colflangethk)- float(colrootradius) - 5)
-    row = [0, "Plate height (mm)", "&#8805;0.6*" + beamdepth+ "=" + minEdge+ ", &#8804;" + beamdepth+ "-"+beamflangethk+ "-"+beamrootradius+"-"+colflangethk+"-"+colrootradius+"- 5" "="+maxEdge+"<br> [cl. 10.2.4, Insdag Detailing Manual, 2002]",edge," <p align=right style=color:green><b>Pass</b></p>","300", ""]
-#     else
-#     minEdge = str(0.6 * float(beamdepth))
-#     maxEdge = str(float(beamdepth)- 2*float(beamflangethk)- 2*float(beamrootradius)- 10)
-#     row =[0,"Plate height (mm)"," &#8805;0.6*"+ beamdepth+ " = "+minEdge+", &#8804;"+beamdepth +"-"+ " 2*"+beamflangethk+ "-" + " 2*"+beamrootradius+ "-"+" 10" " = "+maxEdge+"<br> [cl. 10.2.4, Insdag Detailing Manual, 2002]",edge," <p align=right style=color:green><b>Pass</b></p>","300", ""]
-    #row =[0,"Plate height (mm)","",plateLength]
+    if connectivity == "Beam-Beam":
+        maxEdge = str(float(beamdepth) - float(beamflangethk) - float(beamrootradius) - float(colflangethk)- float(colrootradius) - 5)
+        maxedgestring =  beamdepth+ "-"+beamflangethk+ "-"+beamrootradius+"-"+colflangethk+"-"+colrootradius+"- 5"
+    else:
+        maxEdge = str(float(beamdepth)- 2*float(beamflangethk)- 2*float(beamrootradius)- 10)
+        maxedgestring =  beamdepth+ "-"+beamflangethk+ "-"+beamrootradius+"-"+"10"
+ 
+    row = [0, "Plate height (mm)", "&#8805;0.6*" + beamdepth+ "=" + minEdge+ ", &#8804;" + maxedgestring +"="+maxEdge+"<br> [cl. 10.2.4, Insdag Detailing Manual, 2002]",edge," <p align=right style=color:green><b>Pass</b></p>","300", ""]
+#        #row =[0,"Plate height (mm)","",plateLength]
     rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
     rstr += t('td class="header2"') + space(row[0]) + row[3] + t('/td')
     rstr += t('td class="header2"') + space(row[0]) + row[4] + t('/td')
     rstr += t('/tr')
+     
+     
      
     rstr += t('tr')
     row =[0,"Plate width (mm)","","100", ""]
@@ -680,11 +680,14 @@ def save_html(outObj, uiObj, dictBeamData, dictColData,reportsummary, filename):
      
     rstr += t('tr')
     #row =[0,"Weld thickness (mm)","(0.699*&#8730;3*1.25)/(0.7*410)=5.27<br>[cl. 10.5.7]","6","<p align=right style=color:green><b>Pass</b></p>"]
+
     weld_thickness = str(round((float(resultant_shear) * 1000*(math.sqrt(3) * 1.25))/(0.7 * float(weld_fu)),2))
     x = str((float( platethk)*0.8))
+    maxweld = str(max(float(weld_thickness),float(x)))
+#     maxweld = str(9) if str((float( platethk)*0.8)) > str(9) else str(round((float(resultant_shear) * 1000*(math.sqrt(3) * 1.25))/(0.7 * float(weld_fu)),2))
 #     maxWeld = str(9) if str(round((float(resultant_shear) * 1000*(math.sqrt(3) * 1.25))/(0.7 * float(weld_fu)),2)) == 9 else str((float( platethk)*0.8))
 #     row =[0,"Weld thickness (mm)","Max(("+resultant_shear+"*&#8730;3*1.25)/(0.7*"+weld_fu+")"+", 0.8*"+platethk+") = "+ maxWeld + "<br>[cl. 10.5.7, Insdag Detailing Manual, 2002]",weldSize,"<p align=right style=color:green><b>Pass</b></p>"]
-#     row =[0,"Weld thickness (mm)","max("+weld_thickness + ","+ x +") = " "<br>[cl. 10.5.7, Insdag Detailing Manual, 2002]",weldSize,"<p align=right style=color:green><b>Pass</b></p>"]
+    row =[0,"Weld thickness (mm)","Max(("+resultant_shear+"*1000*&#8730;3* 1.25)/(0.7 * "+ weld_fu+")" + ","+ platethk +"* 0.8" +") = "+maxweld+ "<br>[cl. 10.5.7, Insdag Detailing Manual, 2002]",weldSize,"<p align=right style=color:green><b>Pass</b></p>"]
 
     rstr += t('td class="header2_col1"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td class="header2"') + space(row[0]) + row[2] + t('/td')
@@ -700,7 +703,7 @@ def save_html(outObj, uiObj, dictBeamData, dictColData,reportsummary, filename):
 # Header of the pdf fetched from dialogbox
     rstr += t('table')
     rstr += t('tr')
-    row = [0, companylogo,'Created with'' &nbsp' '<object type= "image/PNG" data= "Osdag_header.png" width= 150></object>']
+    row = [0, '<object type= "image/PNG" data= "Fossee_logo.png" width= 150></object>','Created with'' &nbsp' '<object type= "image/PNG" data= "Osdag_header.png" width= 150></object>']
     rstr += t('td colspan="2" align= "center" class= "viewbl" ') + space(row[0]) + row[1] + t('/td')
     rstr += t('td colspan="2" align= "right" class="viewbl1"') + row[2] + t('/td')
     rstr += t('/tr')
@@ -743,7 +746,7 @@ def save_html(outObj, uiObj, dictBeamData, dictColData,reportsummary, filename):
     rstr += t('td class= "header1_3"') + space(row[0]) + row[1] + t('/td')
     row = [0, time.strftime("%d /%m /%Y")]
     rstr += t('td class= "header1_3"') + space(row[0]) + row[1] + t('/td')
-    row = [0, 'Metdod']
+    row = [0, 'Method']
     rstr += t('td class= "header1_3"') + space(row[0]) + row[1] + t('/td')
     row = [0, method]
     rstr += t('td class= "header1_3"') + space(row[0]) + row[1] + t('/td')
@@ -767,13 +770,14 @@ def save_html(outObj, uiObj, dictBeamData, dictColData,reportsummary, filename):
     #rstr += t('td class=" viewtbl "') + row[2] + t('/td')
     rstr += t('/tr')
      
-    row = [0, '<object type="image/PNG" data="3D_Model.png" width ="550"></object>', '<object type="image/SVG" data="finTop.svg" width ="520"></object>']
+    row = [0, '<object type="image/PNG" data="3D_Model.png" width ="550"></object>', '<object type="image/svg+xml" data="finTop.svg" width ="500"></object>']
     rstr += t('tr')
     rstr += t('td  align="center" class=" viewtbl"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td  align="center" class=" viewtbl"') + row[2] + t('/td')
     rstr += t('/tr')
      
-    row = [0, '<object type="image/SVG" data="finSide.svg" width ="480"></object>', '<object type="image/SVG" data="finFront.svg" width ="600"></object>']
+    row = [0, '<object type="image/svg+xml"" data="finSide.svg" width ="460"></object>', '<object type="image/svg+xml" data="finFront.svg" width ="640"></object>']
+    #img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0...">
     rstr += t('tr')
     rstr += t('td align="center" class=" viewtbl"') + space(row[0]) + row[1] + t('/td')
     rstr += t('td align="center" class=" viewtbl "') + row[2] + t('/td')
@@ -788,7 +792,7 @@ def save_html(outObj, uiObj, dictBeamData, dictColData,reportsummary, filename):
 # Header of the pdf fetched from dialogbox
     rstr += t('table')
     rstr += t('tr')
-    row = [0, companylogo,'Created with'' &nbsp'' &nbsp' '<object type= "image/PNG" data= "Osdag_header.png" width= 150></object>']
+    row = [0, '<object type= "image/PNG" data= "Fossee_logo.png" width= 150></object>','Created with'' &nbsp'' &nbsp' '<object type= "image/PNG" data= "Osdag_header.png" width= 150></object>']
     rstr += t('td colspan="2" align= "center" class= "viewbl" ') + space(row[0]) + row[1] + t('/td')
     rstr += t('td colspan="2" align= "right" class="viewbl"') + row[2] + t('/td')
     rstr += t('/tr')
@@ -831,7 +835,7 @@ def save_html(outObj, uiObj, dictBeamData, dictColData,reportsummary, filename):
     rstr += t('td class= "header1_3"') + space(row[0]) + row[1] + t('/td')
     row = [0, time.strftime("%d /%m /%Y")]
     rstr += t('td class= "header1_3"') + space(row[0]) + row[1] + t('/td')
-    row = [0, 'Metdod']
+    row = [0, 'Method']
     rstr += t('td class= "header1_3"') + space(row[0]) + row[1] + t('/td')
     row = [0, method]
     rstr += t('td class= "header1_3"') + space(row[0]) + row[1] + t('/td')
@@ -874,7 +878,6 @@ def t(n):
 
 def quote(m):
     return '"' + m + '"'
-
 
 
 

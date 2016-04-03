@@ -14,7 +14,7 @@ table, td, th{
 	/*text-align: left;*/
 	}
 th, td {
-	padding: 5px;
+	padding: 1px;
 	}
 
 .header0{
@@ -49,10 +49,11 @@ th, td {
 	}
 .header1_3{
 	font-weight: bold;
-	background-color:#925A5B;  
+	background-color:#D5DF93;  
+	/*background-color:#E2D0D0; */ 
 	font-weight: bold;
 	font-size: 20;
-	color:#FFFFFF;
+	/*color:#FFFFFF;*/
 	font-family: Helvetica, Arial, Sans Serif;
 	}
 
